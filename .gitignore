@@ -1,3 +1,5 @@
 code-server/
-password
+.env
 .htpasswd
+password-traefik
+password-vscode
