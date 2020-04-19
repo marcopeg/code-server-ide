@@ -39,7 +39,10 @@ ln -s /home/ubuntu/.humble-cli/bin/humble.sh /usr/local/bin/humble
 VSCODE_VERSION=$(curl --silent https://api.github.com/repos/cdr/code-server/releases/latest | jq .name -r)
 VSCODE_SRC=/home/ubuntu/vscode-ide/code-server
 VSCODE_DATA=/var/lib/code-server
-VSCODE_PASSWD="foobar"
+VSCODE_PASSWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)
+
+# Save generated password to a local file
+echo ${VSCODE_PASSWD} >> /home/ubuntu/vscode-ide/password
 
 # Ensure the directory for the source files exists
 mkdir -p ${VSCODE_SRC}
