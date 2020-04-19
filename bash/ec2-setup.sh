@@ -2,9 +2,7 @@
 apt-get update -y
 apt-get install jq apache2-utils -y
 
-
-# Setup the VSCode root:
-VSCODE_ROOT=${VSCODE_ROOT}
+#VSCODE_ROOT=/home/ubuntu/vscode-ide
 
 
 #
@@ -40,12 +38,13 @@ ln -s /home/ubuntu/.humble-cli/bin/humble.sh /usr/local/bin/humble
 # Code Server
 #
 VSCODE_VERSION=$(curl --silent https://api.github.com/repos/cdr/code-server/releases/latest | jq .name -r)
-VSCODE_SRC=${VSCODE_ROOT}/code-server
+VSCODE_SRC=/home/ubuntu/vscode-ide/code-server
 VSCODE_DATA=/var/lib/code-server
 VSCODE_PASSWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)
 
 # Save generated password to a local file
-echo ${VSCODE_PASSWD} >> ${VSCODE_ROOT}/password-vscode
+touch /home/ubuntu/vscode-ide/password-vscode
+echo ${VSCODE_PASSWD} >> /home/ubuntu/vscode-ide/password-vscode
 
 # Ensure the directory for the source files exists
 mkdir -p ${VSCODE_SRC}
@@ -99,21 +98,23 @@ TRAEFIK_DATA=/var/lib/traefik
 TRAEFIK_PASSWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)
 
 # Save generated password to a local file
-echo ${TRAEFIK_PASSWD} >> ${VSCODE_ROOT}/password-traefik
+touch /home/ubuntu/vscode-ide/password-traefik
+echo ${TRAEFIK_PASSWD} >> /home/ubuntu/vscode-ide/password-traefik
 
 # Ensure the directory for the source files exists
 mkdir -p ${TRAEFIK_DATA}
 
 # Generate the password into an htpasswd file for the ide
-htpasswd -b -c ${VSCODE_ROOT}/.htpasswd vscode ${TRAEFIK_PASSWD}
+htpasswd -b -c /home/ubuntu/vscode-ide/.htpasswd vscode ${TRAEFIK_PASSWD}
 
 
 
 #
 # Create .env file
-echo "TRAEFIK_DATA=${TRAEFIK_DATA}" >> ${VSCODE_ROOT}
-echo "TRAEFIK_BASIC_AUTH=${VSCODE_ROOT}/.htpasswd" >> ${VSCODE_ROOT}
-echo "TRAEFIK_EMAIL=postmaster@gopigtail.com"  >> ${VSCODE_ROOT}
-echo "TRAEFIK_DNS=proxy.t1.marcopeg.com" >> ${VSCODE_ROOT}
-echo "VSCODE_DNS=code.t1.marcopeg.com" >> ${VSCODE_ROOT}
+touch /home/ubuntu/vscode-ide/.env
+echo "TRAEFIK_DATA=${TRAEFIK_DATA}" >> /home/ubuntu/vscode-ide/.env
+echo "TRAEFIK_BASIC_AUTH=/home/ubuntu/vscode-ide/.htpasswd" >> /home/ubuntu/vscode-ide/.env
+echo "TRAEFIK_EMAIL=postmaster@gopigtail.com"  >> /home/ubuntu/vscode-ide/.env
+echo "TRAEFIK_DNS=proxy.t1.marcopeg.com" >> /home/ubuntu/vscode-ide/.env
+echo "VSCODE_DNS=code.t1.marcopeg.com" >> /home/ubuntu/vscode-ide/.env
 
