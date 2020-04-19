@@ -1,3 +1,3 @@
 #!/bin/bash
-git clone git@github.com:marcopeg/vscode-server-ide.git /home/ubuntu/vscode-server-ide
-/home/ubuntu/vscode-server-ide/ec2-setup.sh
+git clone https://github.com/marcopeg/vscode-server-ide.git /home/ubuntu/vscode-ide
+/home/ubuntu/vscode-ide/ec2-setup.sh
