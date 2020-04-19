@@ -63,14 +63,14 @@ mkdir -p ${VSCODE_SRC}
 
 # Download & Extract
 if [ ! -d "${VSCODE_SRC}/code-server-${VSCODE_VERSION}-linux-x86_64" ]; then
-  echo "Install Code Server [download sources]..." >> ${VSCODE_ROOT}/install.log
+  echo "> download sources" >> ${VSCODE_ROOT}/install.log
   wget https://github.com/cdr/code-server/releases/download/${VSCODE_VERSION}/code-server-${VSCODE_VERSION}-linux-x86_64.tar.gz -P ${VSCODE_SRC}
   tar -xzvf ${VSCODE_SRC}/code-server-${VSCODE_VERSION}-linux-x86_64.tar.gz --directory ${VSCODE_SRC}
 fi
 
 # Install command from the downloaded version
 # cd code-server-${VSCODE_VERSION}-linux-x86_64
-echo "Install Code Server [copy files]..." >> ${VSCODE_ROOT}/install.log
+echo "> copy files" >> ${VSCODE_ROOT}/install.log
 rm -f /usr/bin/code-server
 rm -rf /usr/lib/code-server
 cp -R ${VSCODE_SRC}/code-server-${VSCODE_VERSION}-linux-x86_64 /usr/lib/code-server
@@ -83,7 +83,7 @@ if [ ! -f "${VSCODE_DATA}" ]; then
 fi
 
 # Replace the service file
-echo "Install Code Server [install service]..." >> ${VSCODE_ROOT}/install.log
+echo "> install service" >> ${VSCODE_ROOT}/install.log
 rm -f /lib/systemd/system/code-server.service
 tee -a /lib/systemd/system/code-server.service > /dev/null <<EOT
 [Unit]

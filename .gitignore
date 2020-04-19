@@ -1,6 +1,4 @@
 code-server/
 .env
 .htpasswd
-password-traefik
-password-vscode
 install.log
