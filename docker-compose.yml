@@ -33,7 +33,7 @@ services:
       - 443:443
     volumes:
       - ${TRAEFIK_DATA}/letsencrypt:/letsencrypt
-      - ${TRAEFIK_BASIC_AUTH}:/basic-auth/.htpasswd
+      - ${VSCODE_ROOT}/.htpasswd:/basic-auth/.htpasswd
       - /var/run/docker.sock:/var/run/docker.sock:ro
     image: traefik:v2.2
     network_mode: host
@@ -54,7 +54,7 @@ services:
       - "traefik.http.routers.vscode-https.middlewares=https_redirect"
       - "traefik.http.services.vscode-http.loadbalancer.server.port=8082"
     volumes:
-      - /home/ubuntu/vscode-ide/src/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ${VSCODE_ROOT}/src/nginx.conf:/etc/nginx/conf.d/default.conf
     image: nginx:alpine
     network_mode: host
     restart: on-failure

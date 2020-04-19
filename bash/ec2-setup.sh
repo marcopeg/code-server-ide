@@ -86,7 +86,6 @@ Restart=always
 WantedBy=multi-user.target
 EOT
 systemctl daemon-reload
-systemctl start code-server
 
 
 
@@ -114,11 +113,10 @@ htpasswd -b -c ${VSCODE_ROOT}/.htpasswd vscode ${TRAEFIK_PASSWD}
 #
 touch ${VSCODE_ROOT}/.env
 echo "TRAEFIK_DATA=${TRAEFIK_DATA}" >> ${VSCODE_ROOT}/.env
-echo "TRAEFIK_BASIC_AUTH=${VSCODE_ROOT}/.htpasswd" >> ${VSCODE_ROOT}/.env
-echo "TRAEFIK_BASIC_AUTH=${VSCODE_ROOT}/.htpasswd" >> ${VSCODE_ROOT}/.env
 echo "TRAEFIK_EMAIL=postmaster@gopigtail.com"  >> ${VSCODE_ROOT}/.env
 echo "TRAEFIK_DNS=proxy.t1.marcopeg.com" >> ${VSCODE_ROOT}/.env
 echo "VSCODE_DNS=code.t1.marcopeg.com" >> ${VSCODE_ROOT}/.env
+echo "VSCODE_ROOT=${VSCODE_ROOT}" >> ${VSCODE_ROOT}/.env
 
 
 #
