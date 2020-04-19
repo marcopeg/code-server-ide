@@ -1,6 +1,7 @@
 #!/bin/bash
 apt-get update -y
-apt-get install jq -y
+apt-get install jq apache2-utils -y
+
 
 
 
@@ -42,7 +43,7 @@ VSCODE_DATA=/var/lib/code-server
 VSCODE_PASSWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)
 
 # Save generated password to a local file
-echo ${VSCODE_PASSWD} >> /home/ubuntu/vscode-ide/password
+echo ${VSCODE_PASSWD} >> /home/ubuntu/vscode-ide/password-vscode
 
 # Ensure the directory for the source files exists
 mkdir -p ${VSCODE_SRC}
@@ -93,7 +94,13 @@ systemctl start code-server
 #
 
 TRAEFIK_DATA=/var/lib/traefik
+TRAEFIK_PASSWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)
+
+# Save generated password to a local file
+echo ${TRAEFIK_PASSWD} >> /home/ubuntu/vscode-ide/password-traefik
 
 # Ensure the directory for the source files exists
 mkdir -p ${TRAEFIK_DATA}
 
+# Generate the password into an htpasswd file for the ide
+htpasswd -b -c /home/ubuntu/vscode-ide/.htpasswd vscode ${TRAEFIK_PASSWD}
