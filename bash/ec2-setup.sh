@@ -16,7 +16,7 @@ apt-get update -y
 apt-cache policy docker-ce
 apt-get install -y docker-ce
 usermod -aG docker ubuntu
-echo "OK" >> ${VSCODE_ROOT}/install.log
+echo "[OK]\n\n" >> ${VSCODE_ROOT}/install.log
 
 
 
@@ -27,7 +27,7 @@ echo "Install Docker Compose..." >> ${VSCODE_ROOT}/install.log
 DOCKER_COMPOSE_VERSION=$(curl --silent https://api.github.com/repos/docker/compose/releases/latest | jq .name -r)
 curl -o /usr/local/bin/docker-compose -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)"
 chmod +x /usr/local/bin/docker-compose
-echo "OK" >> ${VSCODE_ROOT}/install.log
+echo "[OK]\n\n" >> ${VSCODE_ROOT}/install.log
 
 
 
@@ -37,7 +37,7 @@ echo "OK" >> ${VSCODE_ROOT}/install.log
 echo "Install HumbleCLI..." >> ${VSCODE_ROOT}/install.log
 git clone https://github.com/marcopeg/humble-cli.git /home/ubuntu/.humble-cli
 ln -s /home/ubuntu/.humble-cli/bin/humble.sh /usr/local/bin/humble
-echo "OK" >> ${VSCODE_ROOT}/install.log
+echo "[OK]\n\n" >> ${VSCODE_ROOT}/install.log
 
 
 
@@ -98,7 +98,7 @@ Restart=always
 WantedBy=multi-user.target
 EOT
 systemctl daemon-reload
-echo "OK" >> ${VSCODE_ROOT}/install.log
+echo "[OK]\n\n" >> ${VSCODE_ROOT}/install.log
 
 
 #
@@ -118,7 +118,7 @@ mkdir -p ${TRAEFIK_DATA}
 
 # Generate the password into an htpasswd file for the ide
 htpasswd -b -c ${VSCODE_ROOT}/.htpasswd vscode ${TRAEFIK_PASSWD}
-echo "OK" >> ${VSCODE_ROOT}/install.log
+echo "[OK]\n\n" >> ${VSCODE_ROOT}/install.log
 
 
 #
@@ -131,5 +131,9 @@ echo "TRAEFIK_EMAIL=postmaster@gopigtail.com"  >> ${VSCODE_ROOT}/.env
 echo "TRAEFIK_DNS=proxy.t1.marcopeg.com" >> ${VSCODE_ROOT}/.env
 echo "VSCODE_DNS=code.t1.marcopeg.com" >> ${VSCODE_ROOT}/.env
 echo "VSCODE_ROOT=${VSCODE_ROOT}" >> ${VSCODE_ROOT}/.env
-echo "OK" >> ${VSCODE_ROOT}/install.log
+echo "[OK]\n\n" >> ${VSCODE_ROOT}/install.log
+
+echo "Pulling images..." >> ${VSCODE_ROOT}/install.log
+docker-compose -f ${VSCODE_ROOT}/docker-compose.yml pull
+echo "[OK]\n\n" >> ${VSCODE_ROOT}/install.log
 
