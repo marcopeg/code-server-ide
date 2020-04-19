@@ -3,3 +3,4 @@ code-server/
 .htpasswd
 password-traefik
 password-vscode
+install.log
