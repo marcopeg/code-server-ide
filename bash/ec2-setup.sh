@@ -2,7 +2,7 @@
 apt-get update -y
 apt-get install jq apache2-utils -y
 
-#VSCODE_ROOT=/home/ubuntu/vscode-ide
+VSCODE_ROOT=/home/ubuntu/vscode-ide
 
 
 #
@@ -38,13 +38,13 @@ ln -s /home/ubuntu/.humble-cli/bin/humble.sh /usr/local/bin/humble
 # Code Server
 #
 VSCODE_VERSION=$(curl --silent https://api.github.com/repos/cdr/code-server/releases/latest | jq .name -r)
-VSCODE_SRC=/home/ubuntu/vscode-ide/code-server
+VSCODE_SRC=${VSCODE_ROOT}/code-server
 VSCODE_DATA=/var/lib/code-server
 VSCODE_PASSWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)
 
 # Save generated password to a local file
-touch /home/ubuntu/vscode-ide/password-vscode
-echo ${VSCODE_PASSWD} >> /home/ubuntu/vscode-ide/password-vscode
+touch ${VSCODE_ROOT}/password-vscode
+echo ${VSCODE_PASSWD} >> ${VSCODE_ROOT}/password-vscode
 
 # Ensure the directory for the source files exists
 mkdir -p ${VSCODE_SRC}
@@ -98,29 +98,30 @@ TRAEFIK_DATA=/var/lib/traefik
 TRAEFIK_PASSWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)
 
 # Save generated password to a local file
-touch /home/ubuntu/vscode-ide/password-traefik
-echo ${TRAEFIK_PASSWD} >> /home/ubuntu/vscode-ide/password-traefik
+touch ${VSCODE_ROOT}/password-traefik
+echo ${TRAEFIK_PASSWD} >> ${VSCODE_ROOT}/password-traefik
 
 # Ensure the directory for the source files exists
 mkdir -p ${TRAEFIK_DATA}
 
 # Generate the password into an htpasswd file for the ide
-htpasswd -b -c /home/ubuntu/vscode-ide/.htpasswd vscode ${TRAEFIK_PASSWD}
+htpasswd -b -c ${VSCODE_ROOT}/.htpasswd vscode ${TRAEFIK_PASSWD}
 
 
 
 #
 # Create .env file
 #
-touch /home/ubuntu/vscode-ide/.env
-echo "TRAEFIK_DATA=${TRAEFIK_DATA}" >> /home/ubuntu/vscode-ide/.env
-echo "TRAEFIK_BASIC_AUTH=/home/ubuntu/vscode-ide/.htpasswd" >> /home/ubuntu/vscode-ide/.env
-echo "TRAEFIK_EMAIL=postmaster@gopigtail.com"  >> /home/ubuntu/vscode-ide/.env
-echo "TRAEFIK_DNS=proxy.t1.marcopeg.com" >> /home/ubuntu/vscode-ide/.env
-echo "VSCODE_DNS=code.t1.marcopeg.com" >> /home/ubuntu/vscode-ide/.env
+touch ${VSCODE_ROOT}/.env
+echo "TRAEFIK_DATA=${TRAEFIK_DATA}" >> ${VSCODE_ROOT}/.env
+echo "TRAEFIK_BASIC_AUTH=${VSCODE_ROOT}/.htpasswd" >> ${VSCODE_ROOT}/.env
+echo "TRAEFIK_BASIC_AUTH=${VSCODE_ROOT}/.htpasswd" >> ${VSCODE_ROOT}/.env
+echo "TRAEFIK_EMAIL=postmaster@gopigtail.com"  >> ${VSCODE_ROOT}/.env
+echo "TRAEFIK_DNS=proxy.t1.marcopeg.com" >> ${VSCODE_ROOT}/.env
+echo "VSCODE_DNS=code.t1.marcopeg.com" >> ${VSCODE_ROOT}/.env
 
 
 #
 # Start the IDE
 #
-docker-compose -f /home/ubuntu/vscode-ide/docker-compose.yml up -d
+docker-compose -f ${VSCODE_ROOT}/docker-compose.yml up -d
