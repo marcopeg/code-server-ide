@@ -111,6 +111,7 @@ htpasswd -b -c /home/ubuntu/vscode-ide/.htpasswd vscode ${TRAEFIK_PASSWD}
 
 #
 # Create .env file
+#
 touch /home/ubuntu/vscode-ide/.env
 echo "TRAEFIK_DATA=${TRAEFIK_DATA}" >> /home/ubuntu/vscode-ide/.env
 echo "TRAEFIK_BASIC_AUTH=/home/ubuntu/vscode-ide/.htpasswd" >> /home/ubuntu/vscode-ide/.env
@@ -118,3 +119,8 @@ echo "TRAEFIK_EMAIL=postmaster@gopigtail.com"  >> /home/ubuntu/vscode-ide/.env
 echo "TRAEFIK_DNS=proxy.t1.marcopeg.com" >> /home/ubuntu/vscode-ide/.env
 echo "VSCODE_DNS=code.t1.marcopeg.com" >> /home/ubuntu/vscode-ide/.env
 
+
+#
+# Start the IDE
+#
+docker-compose -f /home/ubuntu/vscode-ide/docker-compose.yml up -d
