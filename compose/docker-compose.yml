@@ -10,7 +10,7 @@ services:
       - "traefik.http.routers.api.rule=Host(`${TRAEFIK_DNS}`)"
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.routers.api.middlewares=auth"
-      - "traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_BASIC_AUTH}"
+      # - "traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_BASIC_AUTH}"
       - "traefik.http.routers.api.tls=true"
       - "traefik.http.routers.api.tls.certresolver=myresolver"
     command:
