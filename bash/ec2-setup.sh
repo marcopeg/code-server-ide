@@ -12,7 +12,7 @@ VSCODE_PASSWORD=${VSCODE_USERNAME:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -
 
 # Generate the install log
 touch ${VSCODE_CWD}.log
-echo "CWD: $(pwd)" >> ${VSCODE_CWD}.log
+echo "CWD: ${VSCODE_CWD}" >> ${VSCODE_CWD}.log
 echo $'\n' >> ${VSCODE_CWD}.log
 
 echo "Basic Auth:" >> ${VSCODE_CWD}.log
