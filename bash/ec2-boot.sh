@@ -13,4 +13,8 @@ export CLOUDFLARE_ZONE_ID=""
 # Clone the repo and run the install script:
 git clone https://github.com/marcopeg/vscode-server-ide.git ${VSCODE_CWD}
 ${VSCODE_CWD}/bash/ec2-setup.sh
-#${VSCODE_CWD}/cloudflare-dns-update.sh
+${VSCODE_CWD}/cloudflare-dns-update.sh
+
+# Start the system
+sudo systemctl start code-server
+(cd ${VSCODE_CWD} && humble up -d)
