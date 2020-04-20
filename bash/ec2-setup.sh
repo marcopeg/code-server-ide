@@ -96,14 +96,14 @@ After=nginx.service
 
 [Service]
 Type=simple
-Environment=PASSWORD=${VSCODE_PASSWORD}
-ExecStart=/usr/bin/code-server --host 0.0.0.0 --user-data-dir ${VSCODE_DATA} --auth password
+ExecStart=/usr/bin/code-server --host 0.0.0.0 --user-data-dir ${VSCODE_DATA}
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
 EOT
 systemctl daemon-reload
+echo $'VSCode files are stored to: ${VSCODE_DATA}\n\n' >> ${VSCODE_CWD}.log
 echo $'[OK]\n\n' >> ${VSCODE_CWD}.log
 
 
