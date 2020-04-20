@@ -4,6 +4,7 @@ apt-get install jq apache2-utils -y
 
 VSCODE_ROOT=/home/ubuntu/vscode-ide
 
+
 # Generate random access credentials
 #VSCODE_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)
 VSCODE_USERNAME=foo
@@ -13,6 +14,7 @@ VSCODE_PASSWORD=bar
 touch ${VSCODE_ROOT}/install.log
 echo "USERNAME: ${VSCODE_USERNAME}" >> ${VSCODE_ROOT}/install.log
 echo "PASSWORD: ${VSCODE_PASSWORD}" >> ${VSCODE_ROOT}/install.log
+echo "CWD: $(pwd)" >> ${VSCODE_ROOT}/install.log
 
 
 #
