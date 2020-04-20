@@ -11,11 +11,13 @@ VSCODE_PASSWORD=${VSCODE_USERNAME:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -
 
 # Generate the install log
 touch ${VSCODE_CWD}.log
-echo "IDE Basic Auth:" >> ${VSCODE_CWD}.log
+echo "CWS: $(pwd)" >> ${VSCODE_CWD}.log
+echo $'\n\n' >> ${VSCODE_CWD}.log
+
+echo "Basic Auth:" >> ${VSCODE_CWD}.log
 echo "USERNAME: ${VSCODE_USERNAME}" >> ${VSCODE_CWD}.log
 echo "PASSWORD: ${VSCODE_PASSWORD}" >> ${VSCODE_CWD}.log
-echo "CWD: $(pwd)" >> ${VSCODE_CWD}.log
-
+echo $'\n\n' >> ${VSCODE_CWD}.log
 
 #
 # Install Docker
