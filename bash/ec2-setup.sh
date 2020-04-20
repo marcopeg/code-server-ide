@@ -131,9 +131,9 @@ echo $'[OK]\n' >> ${VSCODE_CWD}.log
 echo "Create env file..." >> ${VSCODE_CWD}.log
 touch ${VSCODE_CWD}/.env
 echo "TRAEFIK_DATA=${TRAEFIK_DATA}" >> ${VSCODE_CWD}/.env
-echo "TRAEFIK_EMAIL=postmaster@gopigtail.com"  >> ${VSCODE_CWD}/.env
-echo "TRAEFIK_DNS=proxy.t1.marcopeg.com" >> ${VSCODE_CWD}/.env
-echo "VSCODE_DNS=code.t1.marcopeg.com" >> ${VSCODE_CWD}/.env
+echo "TRAEFIK_EMAIL=${VSCODE_EMAIL:-"vscode@vscode.com"}" >> ${VSCODE_CWD}/.env
+echo "TRAEFIK_DNS=proxy.${VSCODE_DNS}" >> ${VSCODE_CWD}/.env
+echo "VSCODE_DNS=code.${VSCODE_DNS}" >> ${VSCODE_CWD}/.env
 echo "VSCODE_CWD=${VSCODE_CWD}" >> ${VSCODE_CWD}/.env
 echo $'[OK]\n' >> ${VSCODE_CWD}.log
 
