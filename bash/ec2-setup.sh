@@ -2,8 +2,9 @@
 apt-get update -y
 apt-get install jq apache2-utils -y
 
-
+# Setup the CWD and assign it to the user "ubuntu"
 VSCODE_CWD=${VSCODE_CWD:-"/home/ubuntu/vscode-ide"}
+chown ubuntu -R ${VSCODE_CWD}
 
 # Generate random access credentials
 VSCODE_USERNAME=${VSCODE_USERNAME:-admin}
@@ -11,13 +12,13 @@ VSCODE_PASSWORD=${VSCODE_USERNAME:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -
 
 # Generate the install log
 touch ${VSCODE_CWD}.log
-echo "CWS: $(pwd)" >> ${VSCODE_CWD}.log
-echo $'\n\n' >> ${VSCODE_CWD}.log
+echo "CWD: $(pwd)" >> ${VSCODE_CWD}.log
+echo $'\n' >> ${VSCODE_CWD}.log
 
 echo "Basic Auth:" >> ${VSCODE_CWD}.log
 echo "USERNAME: ${VSCODE_USERNAME}" >> ${VSCODE_CWD}.log
 echo "PASSWORD: ${VSCODE_PASSWORD}" >> ${VSCODE_CWD}.log
-echo $'\n\n' >> ${VSCODE_CWD}.log
+echo $'\n' >> ${VSCODE_CWD}.log
 
 #
 # Install Docker
@@ -25,11 +26,13 @@ echo $'\n\n' >> ${VSCODE_CWD}.log
 echo "Install Docker..." >> ${VSCODE_CWD}.log
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+echo "> update apt-get" >> ${VSCODE_CWD}.log
 apt-get update -y
 apt-cache policy docker-ce
+echo "> run install script" >> ${VSCODE_CWD}.log
 apt-get install -y docker-ce
 usermod -aG docker ubuntu
-echo $'[OK]\n\n' >> ${VSCODE_CWD}.log
+echo $'[OK]\n' >> ${VSCODE_CWD}.log
 
 
 
@@ -40,7 +43,7 @@ echo "Install Docker Compose..." >> ${VSCODE_CWD}.log
 DOCKER_COMPOSE_VERSION=$(curl --silent https://api.github.com/repos/docker/compose/releases/latest | jq .name -r)
 curl -o /usr/local/bin/docker-compose -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)"
 chmod +x /usr/local/bin/docker-compose
-echo $'[OK]\n\n' >> ${VSCODE_CWD}.log
+echo $'[OK]\n' >> ${VSCODE_CWD}.log
 
 
 
@@ -50,7 +53,7 @@ echo $'[OK]\n\n' >> ${VSCODE_CWD}.log
 echo "Install HumbleCLI..." >> ${VSCODE_CWD}.log
 git clone https://github.com/marcopeg/humble-cli.git /home/ubuntu/.humble-cli
 ln -s /home/ubuntu/.humble-cli/bin/humble.sh /usr/local/bin/humble
-echo $'[OK]\n\n' >> ${VSCODE_CWD}.log
+echo $'[OK]\n' >> ${VSCODE_CWD}.log
 
 
 
@@ -103,8 +106,8 @@ Restart=always
 WantedBy=multi-user.target
 EOT
 systemctl daemon-reload
-echo $'VSCode files are stored in: ${VSCODE_DATA}\n\n' >> ${VSCODE_CWD}.log
-echo $'[OK]\n\n' >> ${VSCODE_CWD}.log
+echo $'* VSCode files are stored in: ${VSCODE_DATA}' >> ${VSCODE_CWD}.log
+echo $'[OK]\n' >> ${VSCODE_CWD}.log
 
 
 #
@@ -118,8 +121,8 @@ mkdir -p ${TRAEFIK_DATA}
 
 # Generate the password into an htpasswd file for the ide
 htpasswd -b -c ${VSCODE_CWD}/.htpasswd ${VSCODE_USERNAME} ${VSCODE_PASSWORD}
-echo $'Traefik files are stored in: ${TRAEFIK_DATA}\n\n' >> ${VSCODE_CWD}.log
-echo $'[OK]\n\n' >> ${VSCODE_CWD}.log
+echo $'* Traefik files are stored in: ${TRAEFIK_DATA}' >> ${VSCODE_CWD}.log
+echo $'[OK]\n' >> ${VSCODE_CWD}.log
 
 
 #
@@ -132,10 +135,10 @@ echo "TRAEFIK_EMAIL=postmaster@gopigtail.com"  >> ${VSCODE_CWD}/.env
 echo "TRAEFIK_DNS=proxy.t1.marcopeg.com" >> ${VSCODE_CWD}/.env
 echo "VSCODE_DNS=code.t1.marcopeg.com" >> ${VSCODE_CWD}/.env
 echo "VSCODE_CWD=${VSCODE_CWD}" >> ${VSCODE_CWD}/.env
-echo $'[OK]\n\n' >> ${VSCODE_CWD}.log
+echo $'[OK]\n' >> ${VSCODE_CWD}.log
 
 echo "Pulling images..." >> ${VSCODE_CWD}.log
 docker-compose -f ${VSCODE_CWD}/docker-compose.yml pull
-echo $'[OK]\n\n' >> ${VSCODE_CWD}.log
+echo $'[OK]\n' >> ${VSCODE_CWD}.log
 
 echo "IDE Setup completed" >> ${VSCODE_CWD}.log

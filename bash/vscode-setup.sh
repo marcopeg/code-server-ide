@@ -38,7 +38,7 @@ After=nginx.service
 [Service]
 Type=simple
 Environment=PASSWORD=foobar
-ExecStart=/usr/bin/code-server --host 0.0.0.0 --user-data-dir ${VSCODE_DATA} --auth password
+ExecStart=/usr/bin/code-server --host 0.0.0.0 --user-data-dir ${VSCODE_DATA} --no-auth
 Restart=always
 
 [Install]
