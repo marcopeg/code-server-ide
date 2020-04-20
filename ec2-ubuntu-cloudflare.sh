@@ -1,6 +1,8 @@
-# Load the environment variables
+# Calculate the CWD
 CWD="`dirname \"$0\"`"
 CWD="`( cd \"$CWD\" && pwd )`"
+
+# Load the environment variables
 set -o allexport
 source "${CWD}/.env"
 set +o allexport
