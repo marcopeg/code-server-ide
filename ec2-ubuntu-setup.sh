@@ -157,7 +157,4 @@ echo $'[OK]\n' >> ${VSCODE_CWD}.log
 echo $'IDE Setup completed :-)\n' >> ${VSCODE_CWD}.log
 
 # Kick the services up:
-echo "Start services..." >> ${VSCODE_CWD}.log
 ${VSCODE_CWD}/ec2-ubuntu-boot.sh
-echo "Register DNS Entries..." >> ${VSCODE_CWD}.log
-${VSCODE_CWD}/ec2-ubuntu-cloudflare.sh
