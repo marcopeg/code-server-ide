@@ -14,4 +14,4 @@ ${CWD}/ec2-ubuntu-cloudflare.sh
 
 # Start the processes
 sudo systemctl start code-server
-docker-compose -f ${CWD}/docker-compose.yml up -d
+(cd ${CWD} && docker-compose  up -d)
