@@ -155,6 +155,4 @@ chmod +x /var/lib/cloud/scripts/per-boot/vscode-ide.sh
 echo $'[OK]\n' >> ${VSCODE_CWD}.log
 
 echo $'IDE Setup completed :-)\n' >> ${VSCODE_CWD}.log
-
-# Kick the services up:
-#${VSCODE_CWD}/ec2-ubuntu-boot.sh
+reboot
