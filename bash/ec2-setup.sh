@@ -99,7 +99,7 @@ After=nginx.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/code-server --host 0.0.0.0 --user-data-dir ${VSCODE_DATA}
+ExecStart=/usr/bin/code-server --host 0.0.0.0 --user-data-dir ${VSCODE_DATA} --auth none
 Restart=always
 
 [Install]

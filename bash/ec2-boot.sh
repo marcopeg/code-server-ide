@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Setup your IDE:
-export VSCODE_DNS="t3.marcopeg.com"
+export VSCODE_DNS="t4.marcopeg.com"
 export VSCODE_PASSWORD="admin"
 export VSCODE_CWD="/home/ubuntu/vscode-ide"
 
