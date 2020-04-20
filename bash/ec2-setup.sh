@@ -103,7 +103,7 @@ Restart=always
 WantedBy=multi-user.target
 EOT
 systemctl daemon-reload
-echo $'VSCode files are stored to: ${VSCODE_DATA}\n\n' >> ${VSCODE_CWD}.log
+echo $'VSCode files are stored in: ${VSCODE_DATA}\n\n' >> ${VSCODE_CWD}.log
 echo $'[OK]\n\n' >> ${VSCODE_CWD}.log
 
 
@@ -118,6 +118,7 @@ mkdir -p ${TRAEFIK_DATA}
 
 # Generate the password into an htpasswd file for the ide
 htpasswd -b -c ${VSCODE_CWD}/.htpasswd ${VSCODE_USERNAME} ${VSCODE_PASSWORD}
+echo $'Traefik files are stored in: ${TRAEFIK_DATA}\n\n' >> ${VSCODE_CWD}.log
 echo $'[OK]\n\n' >> ${VSCODE_CWD}.log
 
 
