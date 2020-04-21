@@ -57,7 +57,7 @@ services:
       - "traefik.http.routers.vscode-nginx-https.tls.certresolver=myresolver"
       - "traefik.http.routers.vscode-nginx-https.middlewares=vscode-nginx-auth"
     volumes:
-      - ${VSCODE_CWD}/src/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ${VSCODE_CWD}/nginx.conf:/etc/nginx/conf.d/default.conf
     image: nginx:alpine
     network_mode: host
     restart: on-failure

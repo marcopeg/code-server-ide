@@ -10,7 +10,7 @@ chown ubuntu -R ${VSCODE_CWD}
 VSCODE_USERNAME=${VSCODE_USERNAME:-admin}
 VSCODE_PASSWORD=${VSCODE_USERNAME:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)}
 
-# Generate the install log
+# Generate the install log file
 touch ${VSCODE_CWD}.log
 echo "CWD: ${VSCODE_CWD}" >> ${VSCODE_CWD}.log
 echo $'\n' >> ${VSCODE_CWD}.log
@@ -22,6 +22,7 @@ echo $'\n' >> ${VSCODE_CWD}.log
 
 #
 # Install Docker
+# (latest version)
 #
 echo "Install Docker..." >> ${VSCODE_CWD}.log
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
@@ -37,7 +38,8 @@ echo $'[OK]\n' >> ${VSCODE_CWD}.log
 
 
 #
-# Docker Compose (latest version)
+# Docker Compose
+# (latest version)
 #
 echo "Install Docker Compose..." >> ${VSCODE_CWD}.log
 DOCKER_COMPOSE_VERSION=$(curl --silent https://api.github.com/repos/docker/compose/releases/latest | jq .name -r)
@@ -48,7 +50,7 @@ echo $'[OK]\n' >> ${VSCODE_CWD}.log
 
 
 #
-# Humble CLI (need to fix the -y compatibility)
+# Humble CLI
 #
 echo "Install HumbleCLI..." >> ${VSCODE_CWD}.log
 git clone https://github.com/marcopeg/humble-cli.git /home/ubuntu/.humble-cli
@@ -62,8 +64,8 @@ echo $'[OK]\n' >> ${VSCODE_CWD}.log
 #
 echo "Install Code Server..." >> ${VSCODE_CWD}.log
 VSCODE_VERSION=$(curl --silent https://api.github.com/repos/cdr/code-server/releases/latest | jq .name -r)
-VSCODE_SRC=${VSCODE_CWD}/code-server
-VSCODE_DATA=/var/lib/code-server
+VSCODE_SRC=${VSCODE_CWD}/data/code-server-src
+VSCODE_DATA=${VSCODE_CWD}/data/code-server-data
 
 # Ensure the directory for the source files exists
 mkdir -p ${VSCODE_SRC}
@@ -114,7 +116,7 @@ echo $'[OK]\n' >> ${VSCODE_CWD}.log
 # Traefik & IDE Compose setup
 #
 echo "Setup traefik data..." >> ${VSCODE_CWD}.log
-TRAEFIK_DATA=/var/lib/traefik
+TRAEFIK_DATA=${VSCODE_CWD}/data/traefik-data
 
 # Ensure the directory for the source files exists
 mkdir -p ${TRAEFIK_DATA}
@@ -143,10 +145,20 @@ echo "CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}" >> ${VSCODE_CWD}/.env
 echo "CLOUDFLARE_DNS_NAME=*.${VSCODE_DNS}" >> ${VSCODE_CWD}/.env
 echo $'[OK]\n' >> ${VSCODE_CWD}.log
 
+
+#
+# Preload Images
+#
 echo "Pulling images..." >> ${VSCODE_CWD}.log
 docker-compose -f ${VSCODE_CWD}/docker-compose.yml pull
 echo $'[OK]\n' >> ${VSCODE_CWD}.log
 
+
+
+#
+# Install Boot Script
+# (re-run services at boot time)
+#
 echo "Install boot script..." >> ${VSCODE_CWD}.log
 touch /var/lib/cloud/scripts/per-boot/vscode-ide.sh
 echo "#!/bin/bash" >> /var/lib/cloud/scripts/per-boot/vscode-ide.sh
