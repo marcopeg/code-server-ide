@@ -147,6 +147,17 @@ echo $'[OK]\n' >> ${VSCODE_CWD}.log
 
 
 #
+# Create id_rsa
+#
+echo "Create id_rsa file..." >> ${VSCODE_CWD}.log
+mkdir -p ${VSCODE_DATA}/.ssh
+ssh-keygen -f ${VSCODE_DATA}/.ssh/id_rsa -t rsa -N ''
+eval "$(ssh-agent -s)"
+ssh-add ${VSCODE_DATA}/.ssh/id_rsa
+cat ${VSCODE_DATA}/.ssh/id_rsa.pub >> ${VSCODE_CWD}.log
+echo $'[OK]\n' >> ${VSCODE_CWD}.log
+
+#
 # Preload Images
 #
 echo "Pulling images..." >> ${VSCODE_CWD}.log
