@@ -58,6 +58,7 @@ services:
       - "traefik.http.routers.vscode-nginx-https.middlewares=vscode-nginx-auth"
     volumes:
       - ${VSCODE_CWD}/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ${VSCODE_CWD}/.htpasswd:/basic-auth/.htpasswd
     image: nginx:alpine
     network_mode: host
     restart: on-failure
