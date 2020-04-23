@@ -160,6 +160,12 @@ echo "CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}" >> ${VSCODE_CWD}/.env
 echo "CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}" >> ${VSCODE_CWD}/.env
 echo $'[OK]\n' >> ${VSCODE_LOG}
 
+#
+# Export system wide variables
+#
+echo "VSCODE_CWD=${VSCODE_CWD}" >> /etc/environment
+echo "VSCODE_DNS=${VSCODE_DNS}" >> /etc/environment
+echo "VSCODE_XXX=foobar" >> /etc/environment
 
 #
 # Create id_rsa

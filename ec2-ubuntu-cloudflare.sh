@@ -7,6 +7,9 @@ set -o allexport
 source "${CWD}/.env"
 set +o allexport
 
+# Te
+echo "*** expected foobar> ${VSCODE_XXX}" >> /home/ubuntu/vscode-ide.log
+
 # Takes action only if the API KEY is set:
 if [ -z "$CLOUDFLARE_API_KEY" ]
 then
