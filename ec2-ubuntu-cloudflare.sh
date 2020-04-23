@@ -1,14 +1,11 @@
 # Calculate the CWD
-CWD="`dirname \"$0\"`"
-CWD="`( cd \"$CWD\" && pwd )`"
+# CWD="`dirname \"$0\"`"
+# CWD="`( cd \"$CWD\" && pwd )`"
 
 # Load the environment variables
-set -o allexport
-source "${CWD}/.env"
-set +o allexport
-
-# Te
-echo "*** expected foobar> ${VSCODE_XXX}" >> /home/ubuntu/vscode-ide.log
+# set -o allexport
+# source "${CWD}/.env"
+# set +o allexport
 
 # Takes action only if the API KEY is set:
 if [ -z "$CLOUDFLARE_API_KEY" ]

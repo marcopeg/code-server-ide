@@ -149,23 +149,26 @@ echo $'[OK]\n' >> ${VSCODE_LOG}
 # Create .env file
 #
 echo "Create env file..." >> ${VSCODE_LOG}
-touch ${VSCODE_CWD}/.env
-echo "# IDE Configuration" >> ${VSCODE_CWD}/.env
-echo "VSCODE_CWD=${VSCODE_CWD}" >> ${VSCODE_CWD}/.env
-echo "VSCODE_DNS=${VSCODE_DNS}" >> ${VSCODE_CWD}/.env
-echo "VSCODE_EMAIL=${VSCODE_EMAIL:-"vscode@vscode.com"}" >> ${VSCODE_CWD}/.env
-echo "" >> ${VSCODE_CWD}/.env
-echo "# Cloudflare Integration" >> ${VSCODE_CWD}/.env
-echo "CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}" >> ${VSCODE_CWD}/.env
-echo "CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}" >> ${VSCODE_CWD}/.env
-echo $'[OK]\n' >> ${VSCODE_LOG}
+#touch ${VSCODE_CWD}/.env
+# echo "# IDE Configuration" >> ${VSCODE_CWD}/.env
+# echo "VSCODE_CWD=${VSCODE_CWD}" >> ${VSCODE_CWD}/.env
+# echo "VSCODE_DNS=${VSCODE_DNS}" >> ${VSCODE_CWD}/.env
+# echo "VSCODE_EMAIL=${VSCODE_EMAIL:-"vscode@vscode.com"}" >> ${VSCODE_CWD}/.env
+# echo "" >> ${VSCODE_CWD}/.env
+# echo "# Cloudflare Integration" >> ${VSCODE_CWD}/.env
+# echo "CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}" >> ${VSCODE_CWD}/.env
+# echo "CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}" >> ${VSCODE_CWD}/.env
+# echo $'[OK]\n' >> ${VSCODE_LOG}
 
 #
 # Export system wide variables
 #
-echo "export VSCODE_CWD=${VSCODE_CWD}" >> /etc/environment
-echo "export VSCODE_DNS=${VSCODE_DNS}" >> /etc/environment
-echo "export VSCODE_XXX=foobar" >> /etc/environment
+echo "# vscode-ide" >> /etc/bash.bashrc
+echo "export VSCODE_CWD=${VSCODE_CWD}" >> /etc/bash.bashrc
+echo "export VSCODE_DNS=${VSCODE_DNS}" >> /etc/bash.bashrc
+echo "export VSCODE_EMAIL=${VSCODE_EMAIL:-"vscode@vscode.com"}" >> /etc/bash.bashrc
+echo "export CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}" >> /etc/bash.bashrc
+echo "export CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}" >> /etc/bash.bashrc
 
 #
 # Create id_rsa
