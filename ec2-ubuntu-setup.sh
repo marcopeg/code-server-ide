@@ -34,15 +34,23 @@ echo $'\n' >> ${VSCODE_LOG}
 # (latest version)
 #
 echo "Install Docker..." >> ${VSCODE_LOG}
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+apt update -y
+apt install -y apt-transport-https ca-certificates curl software-properties-common
 echo "> update apt-get" >> ${VSCODE_LOG}
-apt-get update -y
-apt-cache policy docker-ce
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+apt update -y
 echo "> run install script" >> ${VSCODE_LOG}
-apt-get install -y docker-ce
+apt-cache policy docker-ce
+apt install docker-ce
 usermod -aG docker ubuntu
 echo $'[OK]\n' >> ${VSCODE_LOG}
+
+# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+# add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+# apt-get update -y
+# apt-cache policy docker-ce
+# apt-get install -y docker-ce
 
 
 
