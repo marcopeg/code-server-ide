@@ -4,6 +4,9 @@
 CWD="`dirname \"$0\"`"
 CWD="`( cd \"$CWD\" && pwd )`"
 
+echo $CWD
+exit 0
+
 # Load the environment variables
 # set -o allexport
 # source "${CWD}/.env"
