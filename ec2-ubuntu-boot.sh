@@ -5,9 +5,9 @@ CWD="`dirname \"$0\"`"
 CWD="`( cd \"$CWD\" && pwd )`"
 
 # Load the environment variables
-# set -o allexport
-# source "${CWD}/.env"
-# set +o allexport
+set -o allexport
+source "${CWD}/.env"
+set +o allexport
 
 # Update DNS registry
 ${CWD}/ec2-ubuntu-cloudflare.sh
