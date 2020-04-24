@@ -5,7 +5,6 @@
 # Load the environment variables
 set -o allexport
 source "${CWD}/.env"
-#source /etc/bash.bashrc
 set +o allexport
 
 # Takes action only if the API KEY is set:

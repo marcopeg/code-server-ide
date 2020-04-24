@@ -193,11 +193,17 @@ echo $'[OK]\n' >> ${VSCODE_LOG}
 # Export system wide variables
 #
 echo "# vscode-ide" >> /etc/bash.bashrc
-echo "export VSCODE_CWD=${VSCODE_CWD}" >> /etc/bash.bashrc
-echo "export VSCODE_DNS=${VSCODE_DNS}" >> /etc/bash.bashrc
-echo "export VSCODE_EMAIL=${VSCODE_EMAIL:-"vscode@vscode.com"}" >> /etc/bash.bashrc
-echo "export CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}" >> /etc/bash.bashrc
-echo "export CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}" >> /etc/bash.bashrc
+
+
+
+echo "set -o allexport" >> /etc/bash.bashrc
+echo "source ${CWD}/.env" >> /etc/bash.bashrc
+echo "set +o allexport" >> /etc/bash.bashrc
+# echo "export VSCODE_CWD=${VSCODE_CWD}" >> /etc/bash.bashrc
+# echo "export VSCODE_DNS=${VSCODE_DNS}" >> /etc/bash.bashrc
+# echo "export VSCODE_EMAIL=${VSCODE_EMAIL:-"vscode@vscode.com"}" >> /etc/bash.bashrc
+# echo "export CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}" >> /etc/bash.bashrc
+# echo "export CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}" >> /etc/bash.bashrc
 
 #
 # Create id_rsa
