@@ -46,6 +46,7 @@ then
     apt install -y docker.io
     systemctl enable --now docker
     usermod -aG docker ubuntu
+    echo $'[OK]\n' >> ${VSCODE_LOG}
 fi
 
 if [ "${OSV}" -lt "20" ]
