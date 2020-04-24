@@ -2,10 +2,14 @@
 apt-get update -y
 apt-get install jq apache2-utils -y
 
+# Get OS major version
+# (Docker depends on this)
+OSV=$(cut -f2 <<< $(lsb_release -r))
+OSV=${OSV%.*}
+
 #
 # Setup Environment Variables
 #
-UBUNTU_MAJOR=$(cut -f2 <<< $(lsb_release -r))
 VSCODE_CWD=${VSCODE_CWD:-"/home/ubuntu/vscode-ide"}
 VSCODE_LOG=${VSCODE_CWD}.log
 VSCODE_DATA=${VSCODE_CWD}/data
@@ -23,7 +27,7 @@ chown ubuntu -R ${VSCODE_DATA}
 # Generate the install log file
 touch ${VSCODE_LOG}
 echo "CWD: ${VSCODE_CWD}" >> ${VSCODE_LOG}
-echo "OSV: ${UBUNTU_MAJOR}" >> ${VSCODE_LOG}
+echo "OSV: ${OSV}" >> ${VSCODE_LOG}
 echo $'\n' >> ${VSCODE_LOG}
 
 echo "Basic Auth:" >> ${VSCODE_LOG}
@@ -36,7 +40,7 @@ echo $'\n' >> ${VSCODE_LOG}
 # (latest version)
 #
 
-if [ "${UBUNTU_MAJOR}" -eq "20" ]
+if [ "${OSV}" -eq "20" ]
 then
     echo "Install Docker for Ubuntu 20.x..." >> ${VSCODE_LOG}
     apt install -y docker.io
@@ -44,7 +48,7 @@ then
     usermod -aG docker ubuntu
 fi
 
-if [ "${UBUNTU_MAJOR}" -lt "20" ]
+if [ "${OSV}" -lt "20" ]
 then
     echo "Install Docker for Ubuntu (16/18/19).x..." >> ${VSCODE_LOG}
     apt update -y
