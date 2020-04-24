@@ -5,6 +5,7 @@ apt-get install jq apache2-utils -y
 #
 # Setup Environment Variables
 #
+UBUNTU_MAJOR=$(cut -f2 <<< $(lsb_release -r))
 VSCODE_CWD=${VSCODE_CWD:-"/home/ubuntu/vscode-ide"}
 VSCODE_LOG=${VSCODE_CWD}.log
 VSCODE_DATA=${VSCODE_CWD}/data
@@ -33,18 +34,32 @@ echo $'\n' >> ${VSCODE_LOG}
 # Install Docker
 # (latest version)
 #
-echo "Install Docker..." >> ${VSCODE_LOG}
-apt update -y
-apt install -y apt-transport-https ca-certificates curl software-properties-common
-echo "> update apt-get" >> ${VSCODE_LOG}
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
-apt update -y
-echo "> run install script" >> ${VSCODE_LOG}
-apt-cache policy docker-ce
-apt install docker-ce
-usermod -aG docker ubuntu
-echo $'[OK]\n' >> ${VSCODE_LOG}
+
+if [ "${UBUNTU_MAJOR}" -eq "20" ]
+then
+    echo "Install Docker for Ubuntu 20.x..." >> ${VSCODE_LOG}
+    apt install -y docker.io
+    systemctl enable --now docker
+    usermod -aG docker ubuntu
+fi
+
+if [ "${UBUNTU_MAJOR}" -lt "20" ]
+then
+    echo "Install Docker for Ubuntu (16/18/19).x..." >> ${VSCODE_LOG}
+    apt update -y
+    apt install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+    echo "> update apt-get" >> ${VSCODE_LOG}
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+    # add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    apt update -y
+    echo "> run install script" >> ${VSCODE_LOG}
+    apt -y install docker-ce docker-ce-cli containerd.io
+    # apt-cache policy docker-ce
+    # apt install docker-ce
+    usermod -aG docker ubuntu
+    echo $'[OK]\n' >> ${VSCODE_LOG}
+fi
 
 # curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 # add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
