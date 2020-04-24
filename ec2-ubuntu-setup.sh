@@ -23,6 +23,7 @@ chown ubuntu -R ${VSCODE_DATA}
 # Generate the install log file
 touch ${VSCODE_LOG}
 echo "CWD: ${VSCODE_CWD}" >> ${VSCODE_LOG}
+echo "OSV: ${UBUNTU_MAJOR}" >> ${VSCODE_LOG}
 echo $'\n' >> ${VSCODE_LOG}
 
 echo "Basic Auth:" >> ${VSCODE_LOG}
