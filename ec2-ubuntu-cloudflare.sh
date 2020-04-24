@@ -3,9 +3,9 @@
 # CWD="`( cd \"$CWD\" && pwd )`"
 
 # Load the environment variables
-# set -o allexport
-# source "${CWD}/.env"
-# set +o allexport
+set -o allexport
+source "${CWD}/.env"
+set +o allexport
 
 # Takes action only if the API KEY is set:
 if [ -z "$CLOUDFLARE_API_KEY" ]

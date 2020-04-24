@@ -149,16 +149,16 @@ echo $'[OK]\n' >> ${VSCODE_LOG}
 # Create .env file
 #
 echo "Create env file..." >> ${VSCODE_LOG}
-#touch ${VSCODE_CWD}/.env
-# echo "# IDE Configuration" >> ${VSCODE_CWD}/.env
-# echo "VSCODE_CWD=${VSCODE_CWD}" >> ${VSCODE_CWD}/.env
-# echo "VSCODE_DNS=${VSCODE_DNS}" >> ${VSCODE_CWD}/.env
-# echo "VSCODE_EMAIL=${VSCODE_EMAIL:-"vscode@vscode.com"}" >> ${VSCODE_CWD}/.env
-# echo "" >> ${VSCODE_CWD}/.env
-# echo "# Cloudflare Integration" >> ${VSCODE_CWD}/.env
-# echo "CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}" >> ${VSCODE_CWD}/.env
-# echo "CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}" >> ${VSCODE_CWD}/.env
-# echo $'[OK]\n' >> ${VSCODE_LOG}
+touch ${VSCODE_CWD}/.env
+echo "# IDE Configuration" >> ${VSCODE_CWD}/.env
+echo "VSCODE_CWD=${VSCODE_CWD}" >> ${VSCODE_CWD}/.env
+echo "VSCODE_DNS=${VSCODE_DNS}" >> ${VSCODE_CWD}/.env
+echo "VSCODE_EMAIL=${VSCODE_EMAIL:-"vscode@vscode.com"}" >> ${VSCODE_CWD}/.env
+echo "" >> ${VSCODE_CWD}/.env
+echo "# Cloudflare Integration" >> ${VSCODE_CWD}/.env
+echo "CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}" >> ${VSCODE_CWD}/.env
+echo "CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}" >> ${VSCODE_CWD}/.env
+echo $'[OK]\n' >> ${VSCODE_LOG}
 
 #
 # Export system wide variables
