@@ -193,17 +193,9 @@ echo $'[OK]\n' >> ${VSCODE_LOG}
 # Export system wide variables
 #
 echo "# vscode-ide" >> /etc/bash.bashrc
-
-
-
 echo "set -o allexport" >> /etc/bash.bashrc
 echo "source ${CWD}/.env" >> /etc/bash.bashrc
 echo "set +o allexport" >> /etc/bash.bashrc
-# echo "export VSCODE_CWD=${VSCODE_CWD}" >> /etc/bash.bashrc
-# echo "export VSCODE_DNS=${VSCODE_DNS}" >> /etc/bash.bashrc
-# echo "export VSCODE_EMAIL=${VSCODE_EMAIL:-"vscode@vscode.com"}" >> /etc/bash.bashrc
-# echo "export CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}" >> /etc/bash.bashrc
-# echo "export CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}" >> /etc/bash.bashrc
 
 #
 # Create id_rsa
@@ -211,13 +203,20 @@ echo "set +o allexport" >> /etc/bash.bashrc
 echo "Create id_rsa file..." >> ${VSCODE_LOG}
 mkdir -p ${VSCODE_DATA}/.ssh
 chown ubuntu -R  ${VSCODE_DATA}/.ssh
-
 ssh-keygen -f ${VSCODE_DATA}/.ssh/id_rsa -t rsa -N ''
 cat ${VSCODE_DATA}/.ssh/id_rsa.pub >> ${VSCODE_LOG}
-
-#eval "$(ssh-agent -s)"
-#ssh-add ${VSCODE_DATA}/.ssh/id_rsa
 echo $'[OK]\n' >> ${VSCODE_LOG}
+
+#
+# Start the agent at boot time
+#
+echo "eval \"\$(ssh-agent -s)\"" >> /home/ubuntu/.profile
+echo "ssh-add ${VSCODE_DATA}/.ssh/id_rsa" >> /home/ubuntu/.profile
+
+#
+# Assign vscode folder to ubuntu
+#
+chown -R ubuntu:ubuntu ${VSCODE_CWD}
 
 #
 # Preload Images
