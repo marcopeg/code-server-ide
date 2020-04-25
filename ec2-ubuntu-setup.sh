@@ -240,4 +240,4 @@ chmod +x /var/lib/cloud/scripts/per-boot/vscode-ide.sh
 echo $'[OK]\n' >> ${VSCODE_LOG}
 
 echo $'IDE Setup completed :-)\n' >> ${VSCODE_LOG}
-reboot
+#reboot
