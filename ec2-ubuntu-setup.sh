@@ -192,9 +192,9 @@ echo $'[OK]\n' >> ${VSCODE_LOG}
 #
 # Export system wide variables
 #
-echo "# vscode-ide" >> /etc/bash.bashrc
+echo $'\nVSCode IDE: source environment variables' >> /etc/bash.bashrc
 echo "set -o allexport" >> /etc/bash.bashrc
-echo "source ${CWD}/.env" >> /etc/bash.bashrc
+echo "source ${VSCODE_CWD}/.env" >> /etc/bash.bashrc
 echo "set +o allexport" >> /etc/bash.bashrc
 
 #
@@ -210,6 +210,7 @@ echo $'[OK]\n' >> ${VSCODE_LOG}
 #
 # Start the agent at boot time
 #
+echo $'\n# VSCode IDE: start ssh agent and load the custom key' >> /home/ubuntu/.profile
 echo "eval \"\$(ssh-agent -s)\"" >> /home/ubuntu/.profile
 echo "ssh-add ${VSCODE_DATA}/.ssh/id_rsa" >> /home/ubuntu/.profile
 
