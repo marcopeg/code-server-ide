@@ -7,6 +7,29 @@ you can run any `docker-compose` projects, with custom DNS.
 - Self configure DNS entry
 - Automatic reverse proxy with SSL for any container
 
+## IDE Basic Auth
+
+VSCode web interface is protected by _basic auth_ with an `.htpasswd`
+file stored in  `~/vscode-ide/data/.htpasswd`.
+
+In order to make changes to the list of available users, `cd ~/vscode-ide/data`.
+
+```bash
+# Add New User / Change password
+htpasswd .htpasswd {username} 
+```
+
+**NOTE:** After changing the password it is necessary to reload Traefik:
+
+```bash
+# reboot the IDE
+(cd ~/vscode-ide && docker-compose down && docker-compose up -d)
+
+# reboot the machine
+sudo reboot
+```
+
+
 ## CloudFlare DNS
 
 In order to automatically setup a DNS entry for your development
