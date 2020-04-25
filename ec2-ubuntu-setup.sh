@@ -96,7 +96,7 @@ echo $'[OK]\n' >> ${VSCODE_LOG}
 echo "Install Code Server..." >> ${VSCODE_LOG}
 VSCODE_VERSION=$(curl --silent https://api.github.com/repos/cdr/code-server/releases/latest | jq .name -r)
 VSCODE_INSTALL_FILES=${VSCODE_DATA}/code-server-src
-VSCODE_XXX_DATA=${VSCODE_DATA}/code-server-data
+VSCODE_DATA_FILES=${VSCODE_DATA}/code-server-data
 
 # Ensure the directory for the source files exists
 mkdir -p ${VSCODE_INSTALL_FILES}
@@ -118,10 +118,13 @@ cp -R ${VSCODE_INSTALL_FILES}/code-server-${VSCODE_VERSION}-linux-x86_64 /usr/li
 ln -s /usr/lib/code-server/code-server /usr/bin/code-server
 
 # Prepare the data folder
-if [ ! -f "${VSCODE_XXX_DATA}" ]; then
-  mkdir -p ${VSCODE_XXX_DATA}
-  chown ubuntu ${VSCODE_XXX_DATA}
+if [ ! -f "${VSCODE_DATA_FILES}" ]; then
+  mkdir -p ${VSCODE_DATA_FILES}
+  mkdir -p ${VSCODE_DATA_FILES}/User
+  echo $'{"git.autofetch": true,"keyboard.dispatch": "keyCode","files.autoSave": "off"}' >> ${VSCODE_DATA_FILES}/User/settings.json
+  chown -R ubuntu:ubuntu ${VSCODE_DATA_FILES}
 fi
+
 
 # Replace the service file
 echo "> install service" >> ${VSCODE_LOG}
@@ -140,14 +143,14 @@ Environment=VSCODE_DNS=${VSCODE_DNS}
 Environment=VSCODE_EMAIL=${VSCODE_EMAIL:-"vscode@vscode.com"}
 Environment=CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
 Environment=CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}
-ExecStart=/usr/bin/code-server --host 0.0.0.0 --user-data-dir ${VSCODE_XXX_DATA} --auth none
+ExecStart=/usr/bin/code-server --host 0.0.0.0 --user-data-dir ${VSCODE_DATA_FILES} --auth none
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
 EOT
 systemctl daemon-reload
-echo $'* VSCode files are stored in: ${VSCODE_XXX_DATA}' >> ${VSCODE_LOG}
+echo $'* VSCode files are stored in: ${VSCODE_DATA_FILES}' >> ${VSCODE_LOG}
 echo $'[OK]\n' >> ${VSCODE_LOG}
 
 
