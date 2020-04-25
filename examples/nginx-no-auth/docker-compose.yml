@@ -6,28 +6,17 @@ services:
       - "traefik.enable=true"
       - "traefik.http.middlewares.test-ide1-redirect.redirectscheme.scheme=https"
       - "traefik.http.middlewares.test-ide1-redirect.redirectscheme.permanent=true"
-      - "traefik.http.middlewares.test-ide1-auth.basicauth.usersfile=/basic-auth/.htpasswd"
 
-      - "traefik.http.routers.test-ide1.rule=Host(`nginx-auth.${VSCODE_DNS}`)"
+      - "traefik.http.routers.test-ide1.rule=Host(`nginx.${VSCODE_DNS}`)"
       - "traefik.http.routers.test-ide1.entrypoints=web"
       - "traefik.http.routers.test-ide1.middlewares=test-ide1-redirect"
 
-      - "traefik.http.routers.test-ide1-secure.rule=Host(`nginx-auth.${VSCODE_DNS}`)"
+      - "traefik.http.routers.test-ide1-secure.rule=Host(`nginx.${VSCODE_DNS}`)"
       - "traefik.http.routers.test-ide1-secure.entrypoints=websecure"
       - "traefik.http.routers.test-ide1-secure.tls=true"
       - "traefik.http.routers.test-ide1-secure.tls.certresolver=myresolver"
-      - "traefik.http.routers.test-ide1-secure.middlewares=test-ide1-auth"
 
     image: nginx
     volumes:
-      - ./html:/usr/share/nginx/html:ro
-    # networks:
-    #   - web
-    #   - internal
+      - ./index.html:/usr/share/nginx/html/index.html:ro
     restart: on-failure
-
-# networks:
-#   web:
-#     external: true
-#     name: web
-#   internal:
