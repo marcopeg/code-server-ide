@@ -2,7 +2,9 @@
 Utilities to transform any Ubuntu machine into a VSCode cloud IDE where
 you can run any `docker-compose` projects, with custom DNS.
 
-- Edit with VSCode
+## Features
+
+- Edit with VSCode (install it as native shortcut in Chrome!)
 - Run `docker-compose` projects
 - Self configure DNS entry
 - Automatic reverse proxy with SSL for any container
@@ -27,6 +29,21 @@ htpasswd .htpasswd {username}
 
 # reboot the machine
 sudo reboot
+```
+
+## Setup GitHub
+
+The system generates an `id_rsa` file at setup time, that file is then loaded
+into the ssh-agent at boot time. Add it's public key to GitHub for a smooth experience.
+
+```
+cat ~/.ssh/id_rsa.pub
+```
+
+Also, you need to add GitHub to the `.ssh/known_hosts`:
+
+```
+ssh -T git@github.com
 ```
 
 
