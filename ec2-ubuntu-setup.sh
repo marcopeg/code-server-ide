@@ -209,6 +209,7 @@ echo $'[OK]\n' >> ${VSCODE_LOG}
 # Assign vscode folder to ubuntu
 #
 chown -R ubuntu:ubuntu ${VSCODE_CWD}
+chown -R ubuntu:ubuntu /home/ubuntu/.ssh
 
 #
 # Preload Images
