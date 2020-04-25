@@ -192,10 +192,14 @@ echo $'[OK]\n' >> ${VSCODE_LOG}
 #
 # Export system wide variables
 #
-echo $'\nVSCode IDE: source environment variables' >> /etc/bash.bashrc
+echo $'\n# VSCode IDE: source environment variables' >> /etc/bash.bashrc
 echo "set -o allexport" >> /etc/bash.bashrc
 echo "source ${VSCODE_CWD}/.env" >> /etc/bash.bashrc
 echo "set +o allexport" >> /etc/bash.bashrc
+
+echo $'\n# VSCode IDE: start ssh agent and load the custom key' >> /etc/bash.bashrc
+echo "eval \"\$(ssh-agent -s)\"" >> /etc/bash.bashrc
+echo "ssh-add ${VSCODE_DATA}/.ssh/id_rsa" >> /etc/bash.bashrc
 
 #
 # Create id_rsa
@@ -207,12 +211,6 @@ ssh-keygen -f ${VSCODE_DATA}/.ssh/id_rsa -t rsa -N ''
 cat ${VSCODE_DATA}/.ssh/id_rsa.pub >> ${VSCODE_LOG}
 echo $'[OK]\n' >> ${VSCODE_LOG}
 
-#
-# Start the agent at boot time
-#
-echo $'\n# VSCode IDE: start ssh agent and load the custom key' >> /home/ubuntu/.profile
-echo "eval \"\$(ssh-agent -s)\"" >> /home/ubuntu/.profile
-echo "ssh-add ${VSCODE_DATA}/.ssh/id_rsa" >> /home/ubuntu/.profile
 
 #
 # Assign vscode folder to ubuntu
