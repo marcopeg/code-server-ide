@@ -31,3 +31,18 @@ Enter CloudFlare admin, navigate to the domain's Overview panel and
 scroll down the page until you spot `Zone ID` on the right-hand panel.
 
 Copy that value.
+
+## Troubleshooting
+
+### Cmd + z
+
+This key binding does not work by default on OSX (it mapped to `Cmd + y`).
+
+As a temporary solution:
+
+- open `File > Preferences > Settings`
+- search `keyboard.dispatch`
+- change to: `keyCode`
+
+Some details are available here:  
+https://github.com/cdr/code-server/issues/1477
