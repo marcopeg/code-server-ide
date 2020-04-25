@@ -67,13 +67,6 @@ then
     echo $'[OK]\n' >> ${VSCODE_LOG}
 fi
 
-# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-# add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-# apt-get update -y
-# apt-cache policy docker-ce
-# apt-get install -y docker-ce
-
-
 
 #
 # Docker Compose
@@ -199,16 +192,16 @@ echo "set +o allexport" >> /etc/bash.bashrc
 
 echo $'\n# VSCode IDE: start ssh agent and load the custom key' >> /etc/bash.bashrc
 echo "eval \"\$(ssh-agent -s)\"" >> /etc/bash.bashrc
-echo "ssh-add ${VSCODE_DATA}/.ssh/id_rsa" >> /etc/bash.bashrc
+echo "ssh-add /home/ubuntu/.ssh/id_rsa" >> /etc/bash.bashrc
 
 #
 # Create id_rsa
 #
 echo "Create id_rsa file..." >> ${VSCODE_LOG}
-mkdir -p ${VSCODE_DATA}/.ssh
-chown ubuntu -R  ${VSCODE_DATA}/.ssh
-ssh-keygen -f ${VSCODE_DATA}/.ssh/id_rsa -t rsa -N ''
-cat ${VSCODE_DATA}/.ssh/id_rsa.pub >> ${VSCODE_LOG}
+mkdir -p /home/ubuntu/.ssh
+chown ubuntu -R  /home/ubuntu/.ssh
+ssh-keygen -f /home/ubuntu/.ssh/id_rsa -t rsa -N ''
+cat /home/ubuntu/.ssh/id_rsa.pub >> ${VSCODE_LOG}
 echo $'[OK]\n' >> ${VSCODE_LOG}
 
 
