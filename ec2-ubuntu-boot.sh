@@ -9,6 +9,10 @@ set -o allexport
 source "${CWD}/.env"
 set +o allexport
 
+# Start ssh agent
+eval "$(ssh-agent -s)"
+ssh-add ${CWD}/data/.ssh/id_rsa
+
 # Update DNS registry
 ${CWD}/ec2-ubuntu-cloudflare.sh
 
