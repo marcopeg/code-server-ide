@@ -1,0 +1,60 @@
+Description: >
+
+    Keeps up to date a code-ide on AWS
+
+    Last Modified: April 26th, 2020
+    Author: Marco Pegoraro <marco.pegoraro@gmail.com>
+
+Parameters:
+
+    S3TemplateRoot:
+        Description: How to resolve sub-stack templates
+        Type: String
+
+    VPCId:
+        Description: Target VPC id
+        Type: String
+        Default: vpc-02f3f069
+
+    VPCSubnets:
+        Description: Available subnets
+        Type: String
+        Default: subnet-230f2e5e,subnet-2489634e,subnet-ad2410e0
+
+    EC2ImageId:
+        Description: AMI ID to run the machine upon
+        Type: String
+        Default: ami-05c26ae4789875080
+
+    EC2InstanceType:
+        Description: Class of machine to run
+        Type: String
+        Default: t2.micro
+
+    EC2KeyPairName:
+        Description: PEM to access the machine
+        Type: String
+        Default: coder-traefik-docker-test
+
+
+Resources:
+
+    SecurityGroups:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL:            !Sub "${S3TemplateRoot}/sg.yaml"
+            Parameters:
+                StackName:          !Ref AWS::StackName
+                VPC:                !Ref VPCId
+                
+    EC2Box:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL:            !Sub "${S3TemplateRoot}/ec2.yaml"
+            Parameters:
+                StackName:          !Ref AWS::StackName
+                Subnets:            !Ref VPCSubnets
+                SecurityGroup:      !GetAtt SecurityGroups.Outputs.DevServer
+                ImageId:            !FindInMap [ AWSRegionToAMI, !Ref "AWS::Region", UbuntuAMI ]
+                InstanceType:       !Ref EC2InstanceType
+                KeyPairName:        !Ref EC2KeyPairName
