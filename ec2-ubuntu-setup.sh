@@ -105,8 +105,8 @@ chown ubuntu ${VSCODE_INSTALL_FILES}
 # Download & Extract
 if [ ! -d "${VSCODE_INSTALL_FILES}/code-server-${VSCODE_VERSION}-linux-x86_64" ]; then
   echo "> download sources" >> ${VSCODE_LOG}
-  wget https://github.com/cdr/code-server/releases/download/${VSCODE_VERSION}/code-server-${VSCODE_VERSION}-linux-x86_64.tar.gz -P ${VSCODE_INSTALL_FILES}
-  tar -xzvf ${VSCODE_INSTALL_FILES}/code-server-${VSCODE_VERSION}-linux-x86_64.tar.gz --directory ${VSCODE_INSTALL_FILES}
+  wget https://github.com/cdr/code-server/releases/download/${VSCODE_VERSION}/code-server-${VSCODE_VERSION:1}-linux-x86_64.tar.gz -P ${VSCODE_INSTALL_FILES}
+  tar -xzvf ${VSCODE_INSTALL_FILES}/code-server-${VSCODE_VERSION:1}-linux-x86_64.tar.gz --directory ${VSCODE_INSTALL_FILES}
 fi
 
 # Install command from the downloaded version
