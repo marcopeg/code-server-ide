@@ -103,7 +103,7 @@ mkdir -p ${VSCODE_INSTALL_FILES}
 chown ubuntu ${VSCODE_INSTALL_FILES}
 
 # Download & Extract
-if [ ! -d "${VSCODE_INSTALL_FILES}/code-server-${VSCODE_VERSION}-linux-x86_64" ]; then
+if [ ! -d "${VSCODE_INSTALL_FILES}/code-server-${VSCODE_VERSION:1}-linux-x86_64" ]; then
   echo "> download sources" >> ${VSCODE_LOG}
   wget https://github.com/cdr/code-server/releases/download/${VSCODE_VERSION}/code-server-${VSCODE_VERSION:1}-linux-x86_64.tar.gz -P ${VSCODE_INSTALL_FILES}
   tar -xzvf ${VSCODE_INSTALL_FILES}/code-server-${VSCODE_VERSION:1}-linux-x86_64.tar.gz --directory ${VSCODE_INSTALL_FILES}
@@ -114,7 +114,7 @@ fi
 echo "> copy files" >> ${VSCODE_LOG}
 rm -f /usr/bin/code-server
 rm -rf /usr/lib/code-server
-cp -R ${VSCODE_INSTALL_FILES}/code-server-${VSCODE_VERSION}-linux-x86_64 /usr/lib/code-server
+cp -R ${VSCODE_INSTALL_FILES}/code-server-${VSCODE_VERSION:1}-linux-x86_64 /usr/lib/code-server
 ln -s /usr/lib/code-server/code-server /usr/bin/code-server
 
 # Prepare the data folder
@@ -143,7 +143,7 @@ Environment=VSCODE_DNS=${VSCODE_DNS}
 Environment=VSCODE_EMAIL=${VSCODE_EMAIL:-"vscode@vscode.com"}
 Environment=CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
 Environment=CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}
-ExecStart=/usr/bin/code-server --host 0.0.0.0 --user-data-dir ${VSCODE_DATA_FILES} --auth none
+ExecStart=/bin/bash /usr/bin/code-server --host 0.0.0.0 --user-data-dir ${VSCODE_DATA_FILES} --auth none
 Restart=always
 
 [Install]
