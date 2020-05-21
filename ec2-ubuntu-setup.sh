@@ -115,7 +115,7 @@ echo "> copy files" >> ${VSCODE_LOG}
 rm -f /usr/bin/code-server
 rm -rf /usr/lib/code-server
 cp -R ${VSCODE_INSTALL_FILES}/code-server-${VSCODE_VERSION:1}-linux-x86_64 /usr/lib/code-server
-ln -s /usr/lib/code-server/code-server /usr/bin/code-server
+#ln -s /usr/lib/code-server/code-server /usr/bin/code-server
 
 # Prepare the data folder
 if [ ! -f "${VSCODE_DATA_FILES}" ]; then
@@ -143,7 +143,7 @@ Environment=VSCODE_DNS=${VSCODE_DNS}
 Environment=VSCODE_EMAIL=${VSCODE_EMAIL:-"vscode@vscode.com"}
 Environment=CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
 Environment=CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}
-ExecStart=/bin/bash /usr/bin/code-server --host 0.0.0.0 --user-data-dir ${VSCODE_DATA_FILES} --auth none
+ExecStart=/bin/bash /usr/lib/code-server/code-server --host 0.0.0.0 --user-data-dir ${VSCODE_DATA_FILES} --auth none
 Restart=always
 
 [Install]
