@@ -3,17 +3,4 @@
 source "$(dirname "$0")/profile.sh"
 source "$(dirname "$0")/setup-folders.sh"
 source "$(dirname "$0")/setup-logs.sh"
-
-
-# Basic utilities
-#apt-get update -y
-#apt-get install jq apache2-utils -y
-
-# Basic variables
-#CODE_SERVER_LOGS=${CODE_SERVER_CWD}/logs
-#CODE_SERVER_LOG=${CODE_SERVER_LOGS}/setup.txt
-
-# Setup logs
-#mkdir -p ${CODE_SERVER_LOGS}
-#touch ${CODE_SERVER_LOG}
-#echo "[$(date -u)] Warming up..." >> ${CODE_SERVER_LOG}
+source "$(dirname "$0")/apt-get.sh"

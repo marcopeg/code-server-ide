@@ -5,3 +5,4 @@
 ###
 
 apt-get update -y
+apt-get install jq apache2-utils -y
