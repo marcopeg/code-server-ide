@@ -6,6 +6,7 @@
 ###
 
 # Install Code Server
+echo "[$(date -u)] Installing CodeServer package..." >> ${CODE_SERVER_LOG}
 curl -fsSL https://code-server.dev/install.sh | sh
 
 
