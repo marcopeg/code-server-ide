@@ -23,7 +23,7 @@ Type=simple
 User=ubuntu
 Environment=SHELL=/bin/bash
 Environment=CODE_SERVER_CWD=${CODE_SERVER_CWD}
-ExecStart=/usr/bin/code-server --host 0.0.0.0 --user-data-dir ${CODE_SERVER_DATA} --auth none
+ExecStart=/usr/bin/code-server --host 0.0.0.0 --auth none
 Restart=always
 
 [Install]
