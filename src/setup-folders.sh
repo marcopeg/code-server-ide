@@ -1,4 +1,5 @@
 #!/bin/bash
+source "$(dirname "$0")/profile.sh"
 
 ###
 ### Destroys and re-create the folder structure that is needed for the

@@ -1,4 +1,5 @@
 #!/bin/bash
+source "$(dirname "$0")/profile.sh"
 
 ###
 ### Installs the CodeServer as documented in:

@@ -1,10 +1,9 @@
 #!/bin/bash
+source "$(dirname "$0")/profile.sh"
 
 ###
 ### Install Docker on Ubuntu
 ###
-
-source "$(dirname "$0")/profile.sh"
 
 if [ "${CODE_SERVER_OSV}" -eq "20" ]
 then

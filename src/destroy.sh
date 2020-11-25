@@ -1,5 +1,4 @@
 #!/bin/bash
-
 source "$(dirname "$0")/profile.sh"
 
 # Remove the entire data folder
