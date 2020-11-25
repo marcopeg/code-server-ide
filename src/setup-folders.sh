@@ -8,3 +8,4 @@ source "$(dirname "$0")/profile.sh"
 
 mkdir -p $CODE_SERVER_DATA
 mkdir -p $CODE_SERVER_LOGS
+
