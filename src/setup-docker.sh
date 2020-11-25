@@ -4,6 +4,8 @@
 ### Install Docker on Ubuntu
 ###
 
+source "$(dirname "$0")/profile.sh"
+
 # Get OS major version
 # (Docker depends on this)
 OSV=$(cut -f2 <<< $(lsb_release -r))
