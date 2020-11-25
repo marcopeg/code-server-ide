@@ -5,5 +5,5 @@ source "$(dirname "$0")/profile.sh"
 ### Setup Traefik
 ###
 
-mkdir -p ${TRAEFIK_DATA}
+mkdir -p ${CODE_SERVER_TRAEFIK}
 echo "[$(date -u)] Traefik files are stored in: ${CODE_SERVER_TRAEFIK}" >> ${CODE_SERVER_LOG}
