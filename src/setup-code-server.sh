@@ -16,14 +16,14 @@ rm -f /lib/systemd/system/code-server-ide.service
 tee -a /lib/systemd/system/code-server-ide.service > /dev/null <<EOT
 [Unit]
 Description=code-server-ide
-After=nginx.service
+After=network.target
 
 [Service]
-User=ubuntu
 Type=simple
+User=ubuntu
 Environment=SHELL=/bin/bash
 Environment=CODE_SERVER_CWD=${CODE_SERVER_CWD}
-ExecStart=/bin/bash code-server --host 0.0.0.0 --user-data-dir ${CODE_SERVER_DATA} --auth none
+ExecStart=/usr/bin/code-server --host 0.0.0.0 --user-data-dir ${CODE_SERVER_DATA} --auth none
 Restart=always
 
 [Install]
