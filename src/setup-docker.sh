@@ -14,7 +14,7 @@ then
     usermod -aG docker ubuntu
 fi
 
-if [ "${OSV}" -lt "20" ]
+if [ "${CODE_SERVER_OSV}" -lt "20" ]
 then
     echo "[$(date -u)] Install Docker for Ubuntu (16/18/19).x..." >> ${CODE_SERVER_LOG}
     apt update -y
