@@ -7,7 +7,7 @@ services:
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.services.dummyService.loadbalancer.server.port=1337"
       - "traefik.http.routers.traefik_http.rule=Host(`127.0.0.11`)"
-      - "traefik.http.routers.api.rule=Host(`traefik.${VSCODE_DNS}`)"
+      - "traefik.http.routers.api.rule=Host(`traefik.${CODE_SERVER_DNS}`)"
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.routers.api.middlewares=auth"
       - "traefik.http.middlewares.auth.basicauth.usersfile=/basic-auth/.htpasswd"
@@ -24,7 +24,7 @@ services:
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
       - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.myresolver.acme.email=${VSCODE_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.email=${CODE_SERVER_EMAIL}"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
 #      - "--log.level=DEBUG"
 #      - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
@@ -32,8 +32,8 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ${VSCODE_CWD}/data/letsencrypt:/letsencrypt
-      - ${VSCODE_CWD}/data/.htpasswd:/basic-auth/.htpasswd
+      - ${CODE_SERVER_CWD}/data/letsencrypt:/letsencrypt
+      - ${CODE_SERVER_CWD}/data/.htpasswd:/basic-auth/.htpasswd
       - /var/run/docker.sock:/var/run/docker.sock:ro
     image: traefik:v2.2
     network_mode: host
@@ -46,19 +46,19 @@ services:
       - "traefik.http.middlewares.vscode-nginx_redirect.redirectscheme.permanent=true"
       - "traefik.http.middlewares.vscode-nginx-auth.basicauth.usersfile=/basic-auth/.htpasswd"
 
-      - "traefik.http.routers.vscode-nginx-http.rule=Host(`${VSCODE_DNS}`)"
+      - "traefik.http.routers.vscode-nginx-http.rule=Host(`${CODE_SERVER_DNS}`)"
       - "traefik.http.routers.vscode-nginx-http.entrypoints=web"
       - "traefik.http.routers.vscode-nginx-http.middlewares=vscode-nginx_redirect"
       - "traefik.http.services.vscode-nginx-http.loadbalancer.server.port=8082"
 
-      - "traefik.http.routers.vscode-nginx-https.rule=Host(`${VSCODE_DNS}`)"
+      - "traefik.http.routers.vscode-nginx-https.rule=Host(`${CODE_SERVER_DNS}`)"
       - "traefik.http.routers.vscode-nginx-https.entrypoints=websecure"
       - "traefik.http.routers.vscode-nginx-https.tls=true"
       - "traefik.http.routers.vscode-nginx-https.tls.certresolver=myresolver"
       - "traefik.http.routers.vscode-nginx-https.middlewares=vscode-nginx-auth"
     volumes:
-      - ${VSCODE_CWD}/nginx.conf:/etc/nginx/conf.d/default.conf
-      - ${VSCODE_CWD}/data/.htpasswd:/basic-auth/.htpasswd
+      - ${CODE_SERVER_CWD}/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ${CODE_SERVER_CWD}/data/.htpasswd:/basic-auth/.htpasswd
     image: nginx:alpine
     network_mode: host
     restart: on-failure

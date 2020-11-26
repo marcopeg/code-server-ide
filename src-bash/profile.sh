@@ -15,3 +15,7 @@ export CODE_SERVER_DATA=${CODE_SERVER_CWD}/data/code-server
 export CODE_SERVER_LOGS=${CODE_SERVER_CWD}/data/logs
 export CODE_SERVER_LOG=${CODE_SERVER_LOGS}/setup.log
 export CODE_SERVER_TRAEFIK=${CODE_SERVER_CWD}/data/traefik
+
+# Default Environment Variables
+export CODE_SERVER_DNS=${CODE_SERVER_DNS:-"code-server-ide.foobar.com"}
+export CODE_SERVER_EMAIL=${CODE_SERVER_EMAIL:-"code-server-ide@foobar.com"}
