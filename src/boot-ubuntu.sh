@@ -10,7 +10,7 @@
 export CODE_SERVER_CWD="/home/ubuntu/code-server-ide"
 
 ## Configure Letsencrypt:
-export CODE_SERVER_DNS="xx1.marcopeg.com"
+export CODE_SERVER_DNS="xx2.marcopeg.com"
 export CODE_SERVER_EMAIL="marco.pegoraro+letsencrypt@gmail.com"
 
 
