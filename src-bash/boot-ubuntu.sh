@@ -9,6 +9,10 @@
 
 export CODE_SERVER_CWD="/home/ubuntu/.code-server-ide"
 
+## Configure Letsencrypt:
+#export CODE_SERVER_DNS="code-server-ide.foobar.com"
+#export CODE_SERVER_EMAIL="code-server-ide@foobar.com"
+
 
 
 #############################################

@@ -8,7 +8,9 @@ source "$(dirname "$0")/profile.sh"
 
 # Install Code Server
 echo "[$(date -u)] Installing CodeServer package..." >> ${CODE_SERVER_LOG}
-curl -fsSL https://code-server.dev/install.sh | sh
+# curl -fsSL https://code-server.dev/install.sh | sh
+curl -fOL https://github.com/cdr/code-server/releases/download/v3.7.2/code-server_3.7.2_amd64.deb
+dpkg -i code-server_3.7.2_amd64.deb
 
 
 # Replace the Service File
