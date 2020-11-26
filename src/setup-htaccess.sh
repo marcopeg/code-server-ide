@@ -12,3 +12,5 @@ CODE_SERVER_PASSWORD=${CODE_SERVER_USERNAME:-$(< /dev/urandom tr -dc _A-Z-a-z-0-
 # Generate the password into an htpasswd file for the ide
 htpasswd -b -c ${CODE_SERVER_CWD}/data/.htpasswd ${CODE_SERVER_USERNAME} ${CODE_SERVER_PASSWORD}
 echo "[$(date -u)] VSCode ACL is store in: ${CODE_SERVER_CWD}/data/.htpasswd" >> ${CODE_SERVER_LOG}
+echo "[$(date -u)] Username: ${CODE_SERVER_USERNAME}" >> ${CODE_SERVER_LOG}
+echo "[$(date -u)] Password: ${CODE_SERVER_PASSWORD}" >> ${CODE_SERVER_LOG}
