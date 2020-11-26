@@ -6,5 +6,5 @@ source "$(dirname "$0")/profile.sh"
 ###
 
 echo "[$(date -u)] Pulling images..." >> ${CODE_SERVER_LOG}
-docker-compose -f ${CODE_SERVER_CWD}/src-compose/docker-compose.yml pull
+docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml pull
 echo $'[OK]\n' >> ${CODE_SERVER_LOG}

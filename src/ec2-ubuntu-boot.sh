@@ -11,4 +11,4 @@ set +o allexport
 
 # Start the processes
 sudo systemctl start code-server-ide
-(cd ${CWD} && docker-compose -f ${CWD}/src-compose/docker-compose.yml up -d)
+(cd ${CWD} && docker-compose -f ${CWD}/docker-compose.yml up -d)
