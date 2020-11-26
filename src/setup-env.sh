@@ -11,3 +11,8 @@ echo "# Code Server IDE Configuration" >> ${CODE_SERVER_CWD}/.env
 echo "CODE_SERVER_CWD=${CODE_SERVER_CWD}" >> ${CODE_SERVER_CWD}/.env
 echo $'[OK]\n' >> ${CODE_SERVER_LOG}
 
+echo "[$(date -u)] Export environment variable at boot time..." >> ${CODE_SERVER_LOG}
+echo $'\n\n# CODE SERVER IDE' >> /etc/bash.bashrc
+echo "set -o allexport" >> /etc/bash.bashrc
+echo "source ${CODE_SERVER_CWD}/.env" >> /etc/bash.bashrc
+echo "set +o allexport" >> /etc/bash.bashrc
