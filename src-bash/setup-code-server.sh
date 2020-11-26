@@ -7,10 +7,10 @@ source "$(dirname "$0")/profile.sh"
 ###
 
 # Install Code Server
-echo "[$(date -u)] Installing CodeServer package..." >> ${CODE_SERVER_LOG}
-# curl -fsSL https://code-server.dev/install.sh | sh
-curl -fOL https://github.com/cdr/code-server/releases/download/v3.7.2/code-server_3.7.2_amd64.deb
-dpkg -i code-server_3.7.2_amd64.deb
+CODE_SERVER_VERSION=$(curl --silent https://api.github.com/repos/cdr/code-server/releases/latest | jq .name -r)
+echo "[$(date -u)] Installing CodeServer ${CODE_SERVER_VERSION} package..." >> ${CODE_SERVER_LOG}
+curl -fOL https://github.com/cdr/code-server/releases/download/${CODE_SERVER_VERSION}/code-server_${CODE_SERVER_VERSION:1}_amd64.deb
+dpkg -i code-server_${CODE_SERVER_VERSION:1}_amd64.deb
 
 
 # Replace the Service File
