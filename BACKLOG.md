@@ -1,6 +1,6 @@
 # Backlog
 
-- [ ] Create DNS Entry at boot time
+- [x] Create DNS Entry at boot time
 - [ ] Send welcome email via Sendgrid API
 - [ ] Add reset password CLI script
 - [ ] Add up/down/reboot script CLI script

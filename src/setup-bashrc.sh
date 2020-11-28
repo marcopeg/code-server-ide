@@ -18,4 +18,7 @@ echo $'[OK]\n' >> ${CODE_SERVER_LOG}
 echo "eval \"\$(ssh-agent -s)\"" >> /etc/bash.bashrc
 echo "ssh-add /home/ubuntu/.ssh/id_rsa" >> /etc/bash.bashrc
 
+# Add aliase to the main CLI utility
+echo "alias cs='${CODE_SERVER_CWD}/src/cs.sh'" >> /etc/bash.bashrc
+
 echo $'[OK]\n' >> ${CODE_SERVER_LOG}
