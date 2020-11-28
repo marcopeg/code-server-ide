@@ -44,7 +44,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.middlewares.vscode-nginx_redirect.redirectscheme.scheme=https"
       - "traefik.http.middlewares.vscode-nginx_redirect.redirectscheme.permanent=true"
-      - "traefik.http.middlewares.vscode-nginx-auth.basicauth.usersfile=/basic-auth/.htpasswd"
 
       - "traefik.http.routers.vscode-nginx-http.rule=Host(`${CODE_SERVER_DNS}`)"
       - "traefik.http.routers.vscode-nginx-http.entrypoints=web"
@@ -55,6 +54,8 @@ services:
       - "traefik.http.routers.vscode-nginx-https.entrypoints=websecure"
       - "traefik.http.routers.vscode-nginx-https.tls=true"
       - "traefik.http.routers.vscode-nginx-https.tls.certresolver=myresolver"
+      
+      - "traefik.http.middlewares.vscode-nginx-auth.basicauth.usersfile=/basic-auth/.htpasswd"
       - "traefik.http.routers.vscode-nginx-https.middlewares=vscode-nginx-auth"
     volumes:
       - ${CODE_SERVER_CWD}/nginx.conf:/etc/nginx/conf.d/default.conf

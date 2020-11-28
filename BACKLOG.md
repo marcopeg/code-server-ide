@@ -7,6 +7,8 @@
 - [ ] Add script to change machine layer
 - [ ] Collect the machine IP in the .env
 - [ ] Collect the machine EC2 ID in the .env
+- [ ] Basic auth prevents the IDE from running on iPad
+      (to make it run it's just a matter of disabling the Simple Auth and enable the Code Server auth)
 
 
 ## Add script to change machine layer

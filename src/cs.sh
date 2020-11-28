@@ -19,7 +19,7 @@ then
     CMD=${1}
 else
     PS3='Please enter your choice: '
-    options=("Start IDE" "Stop IDE" "Get CodeServer Status" "Read logs" "Change password" "Update DNS entries on CloudFlare" "Update Code Server IDE" "Cancel")
+    options=("Start IDE" "Stop IDE" "Restart IDE" "Get CodeServer Status" "Read logs" "Change password" "Update DNS entries on CloudFlare" "Update Code Server IDE" "Cancel")
     select opt in "${options[@]}"
     do
         case $opt in
@@ -29,6 +29,10 @@ else
                 ;;
             "Stop IDE")
                 CMD=stop
+                break
+                ;;
+            "Restart IDE")
+                CMD=restart
                 break
                 ;;
             "Get CodeServer Status")
@@ -67,12 +71,22 @@ case ${CMD} in
         ${CODE_SERVER_CWD}/src/cs-dns.sh ${@:2}
         ;;
     "start")
+        echo "[$(date -u)] Starting IDE" >> ${CODE_SERVER_LOGS}/cs.log
         sudo systemctl start code-server-ide
         docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml up -d
         ;;
     "stop")
-        sudo systemctl stop code-server-ide
+        echo "[$(date -u)] Stopping IDE" >> ${CODE_SERVER_LOGS}/cs.log
         docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml down
+        sudo systemctl stop code-server-ide
+        ;;
+    "restart")
+        echo "[$(date -u)] Stopping IDE" >> ${CODE_SERVER_LOGS}/cs.log
+        docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml down
+        sudo systemctl stop code-server-ide
+        echo "[$(date -u)] Starting IDE" >> ${CODE_SERVER_LOGS}/cs.log
+        sudo systemctl start code-server-ide
+        docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml up -d
         ;;
     "status")
         sudo systemctl status code-server-ide
@@ -84,6 +98,7 @@ case ${CMD} in
         ${CODE_SERVER_CWD}/src/cs-dns.sh ${@:2}
         ;;
     "update")
+        echo "[$(date -u)] Updating IDE" >> ${CODE_SERVER_LOGS}/cs.log
         (cd ${CODE_SERVER_CWD} && git pull)
         ;;
     "cancel")
