@@ -14,5 +14,3 @@ source "${CWD}/setup-final.sh"
 
 # First boot:
 source "${CWD}/ec2-ubuntu-boot.sh"
-
-# reboot

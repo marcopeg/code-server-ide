@@ -25,5 +25,10 @@ ${CODE_SERVER_CWD}/src/ec2-ubuntu-dns-cloudflare-upsert.sh
 # This phase needs the DNS in place for Letsencrypt to work properly
 (cd ${CWD} && docker-compose -f ${CWD}/docker-compose.yml up -d)
 
-# Send email
+# Send welcome email:
+# Awaits for Code Server to generate the password
+until [ -f /home/ubuntu/.config/code-server/config.yaml ]
+do
+  sleep 1
+done
 ${CODE_SERVER_CWD}/src/ec2-ubuntu-sendgrid.sh
