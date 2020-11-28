@@ -84,7 +84,7 @@ case ${CMD} in
         ${CODE_SERVER_CWD}/src/cs-dns.sh ${@:2}
         ;;
     "update")
-        (cs ${CODE_SERVER_CWD} && git pull)
+        (cd ${CODE_SERVER_CWD} && git pull)
         ;;
     "cancel")
         echo "Goobye."
