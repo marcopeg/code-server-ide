@@ -14,11 +14,15 @@ touch ${CODE_SERVER_LOGS}/boot.log
 
 echo "[$(date -u)] Booting up..." >> ${CODE_SERVER_LOGS}/boot.log
 
+# Start CodeServer:
+# If this is first run, it will generate the default password
+sudo systemctl start code-server-ide
+
 # Update DNS entry
 ${CODE_SERVER_CWD}/src/ec2-ubuntu-dns-cloudflare-upsert.sh
 
-# Start the processes
-sudo systemctl start code-server-ide
+# Start the Docker project:
+# This phase needs the DNS in place for Letsencrypt to work properly
 (cd ${CWD} && docker-compose -f ${CWD}/docker-compose.yml up -d)
 
 # Send email

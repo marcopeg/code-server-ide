@@ -13,7 +13,6 @@ source "${CWD}/setup-docker-compose.sh"
 source "${CWD}/setup-final.sh"
 
 # First boot:
-source "${CWD}/ec2-ubuntu-dns-cloudflare-upsert.sh"
-source "${CWD}/ec2-ubuntu-sendgrid.sh"
+source "${CWD}/ec2-ubuntu-boot.sh"
 
 # reboot

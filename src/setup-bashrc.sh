@@ -27,3 +27,5 @@ else
   echo "alias cs='${CODE_SERVER_CWD}/src/cs.sh'" >> /etc/bash.bashrc
 fi
 
+# Reload the bashrc so to activate the alias:
+source /etc/bash.bashrc
