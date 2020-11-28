@@ -19,3 +19,7 @@ export CODE_SERVER_TRAEFIK=${CODE_SERVER_CWD}/data/traefik
 # Default Environment Variables
 export CODE_SERVER_DNS=${CODE_SERVER_DNS:-"code-server-ide.foobar.com"}
 export CODE_SERVER_EMAIL=${CODE_SERVER_EMAIL:-"code-server-ide@foobar.com"}
+
+# Generate random access credentials for Simple Auth
+export SIMPLE_AUTH_USERNAME=${SIMPLE_AUTH_USERNAME:-admin}
+export SIMPLE_AUTH_PASSWORD=${SIMPLE_AUTH_PASSWORD:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)}

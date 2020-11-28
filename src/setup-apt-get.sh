@@ -1,5 +1,5 @@
 #!/bin/bash
-source "$(dirname "$0")/profile.sh"
+source "$(dirname "$0")/setup-profile.sh"
 
 ###
 ### Install basic utilities that are needed by the system

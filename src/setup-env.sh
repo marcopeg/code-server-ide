@@ -1,5 +1,5 @@
 #!/bin/bash
-source "$(dirname "$0")/profile.sh"
+source "$(dirname "$0")/setup-profile.sh"
 
 ###
 ### Setup ENV File
@@ -14,10 +14,12 @@ echo "CODE_SERVER_LOGS=${CODE_SERVER_LOGS}" >> ${CODE_SERVER_CWD}/.env
 echo "CODE_SERVER_TRAEFIK=${CODE_SERVER_TRAEFIK}" >> ${CODE_SERVER_CWD}/.env
 echo "CODE_SERVER_DNS=${CODE_SERVER_DNS}" >> ${CODE_SERVER_CWD}/.env
 echo "CODE_SERVER_EMAIL=${CODE_SERVER_EMAIL}" >> ${CODE_SERVER_CWD}/.env
-echo "" >> ${CODE_SERVER_CWD}/.env
-echo "# Cloudflare Configuration" >> ${CODE_SERVER_CWD}/.env
+
+# CloudFlare Config
 if [ -n "$CLOUDFLARE_ZONE_ID" ]
 then
+  echo "" >> ${CODE_SERVER_CWD}/.env
+  echo "# Cloudflare Configuration" >> ${CODE_SERVER_CWD}/.env
   echo "CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}" >> ${CODE_SERVER_CWD}/.env
 fi
 if [ -n "$CLOUDFLARE_API_KEY" ]
@@ -39,6 +41,14 @@ fi
 if [ -n "$CLOUDFLARE_DNS_PRIORITY" ]
 then
   echo "CLOUDFLARE_DNS_PRIORITY=${CLOUDFLARE_DNS_PRIORITY}" >> ${CODE_SERVER_CWD}/.env
+fi
+
+# SendGrid Config
+if [ -n "$SENDGRID_API_KEY" ]
+then
+  echo "" >> ${CODE_SERVER_CWD}/.env
+  echo "# SendGrid Configuration" >> ${CODE_SERVER_CWD}/.env
+  echo "SENDGRID_API_KEY=${SENDGRID_API_KEY}" >> ${CODE_SERVER_CWD}/.env
 fi
 
 echo $'[OK]\n' >> ${CODE_SERVER_LOG}
