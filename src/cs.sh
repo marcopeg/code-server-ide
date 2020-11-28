@@ -19,7 +19,7 @@ then
     CMD=${1}
 else
     PS3='Please enter your choice: '
-    options=("Start IDE" "Stop IDE" "IDE Status" "IDE Logs" "Change password" "Update DNS entries on CloudFlare" "Update Code Server IDE" "Cancel")
+    options=("Start IDE" "Stop IDE" "Get CodeServer Status" "Read logs" "Change password" "Update DNS entries on CloudFlare" "Update Code Server IDE" "Cancel")
     select opt in "${options[@]}"
     do
         case $opt in
@@ -31,11 +31,11 @@ else
                 CMD=stop
                 break
                 ;;
-            "IDE Status")
+            "Get CodeServer Status")
                 CMD=status
                 break
                 ;;
-            "IDE Logs")
+            "Read logs")
                 CMD=logs
                 break
                 ;;
@@ -78,7 +78,7 @@ case ${CMD} in
         sudo systemctl status code-server-ide
         ;;
     "logs")
-        (cd ${CODE_SERVER_CWD} && humble logs -f ${@:2})
+        ${CODE_SERVER_CWD}/src/cs-logs.sh ${@:2}
         ;;
     "dns")
         ${CODE_SERVER_CWD}/src/cs-dns.sh ${@:2}
