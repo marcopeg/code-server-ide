@@ -15,7 +15,7 @@ touch ${CODE_SERVER_LOGS}/boot.log
 echo "[$(date -u)] Booting up..." >> ${CODE_SERVER_LOGS}/boot.log
 
 # Update DNS entry
-${CODE_SERVER_CWD}/src/ec2-ubuntu-dns-cloudflare.sh
+${CODE_SERVER_CWD}/src/ec2-ubuntu-dns-cloudflare-upsert.sh
 
 # Start the processes
 sudo systemctl start code-server-ide

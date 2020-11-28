@@ -48,6 +48,7 @@ else
                 CMD=cs
                 break
                 ;;
+            *) echo "invalid option";;
         esac
     done
 fi
