@@ -9,15 +9,15 @@ set -o allexport
 source "${CWD}/.env"
 set +o allexport
 
-echo $CODE_SERVER_CWD
+# Prepare the logs file
+touch ${CODE_SERVER_LOGS}/boot.log
 
 # Takes action only if the API KEY is set:
 if [ -z "$CLOUDFLARE_API_KEY" ]
 then
-  echo "Cloudflare API KEY is missing, abort."
-  exit 0
+  echo "[$(date -u)] Cloudflare API KEY is missing, abort." >> ${CODE_SERVER_LOGS}/boot.log
 else
-  echo "Setting up Cloudflare..."
+  echo "[$(date -u)] Setting up Cloudflare..." >> ${CODE_SERVER_LOGS}/boot.log
 
   # Collecting settings:
   CLOUDFLARE_DNS_NAME=${CLOUDFLARE_DNS_NAME:-"${CODE_SERVER_DNS}"}
@@ -29,7 +29,6 @@ else
   PUBLIC_IP=$(curl -s -m 0.1 http://169.254.169.254/latest/meta-data/public-ipv4)
   PUBLIC_IP=${PUBLIC_IP:-$(curl -s icanhazip.com)}
   CLOUDFLARE_DNS_TARGET=${CLOUDFLARE_DNS_TARGET:-${PUBLIC_IP}}
-  #echo "PublicIP: ${PUBLIC_IP}"
 
   #
   # STRAIGHT NAME
@@ -44,23 +43,23 @@ else
   if [ "$(echo $DNS_QUERY | jq '.result_info.total_count')" -gt 0 ]
   then
     DNS_ID=$(echo $DNS_QUERY | jq -r '.result[0].id')
-    echo "Updating entry ${DNS_ID}: ${CLOUDFLARE_DNS_NAME} -> ${CLOUDFLARE_DNS_TARGET}..."
+    echo "[$(date -u)] Updating entry ${DNS_ID}: ${CLOUDFLARE_DNS_NAME} -> ${CLOUDFLARE_DNS_TARGET}..." >> ${CODE_SERVER_LOGS}/boot.log
     UPDATE_QUERY=$(
       curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/dns_records/${DNS_ID}" \
         -H "Authorization: Bearer ${CLOUDFLARE_API_KEY}" \
         -H "Content-Type: application/json" \
         --data '{"type":"A","name":"'${CLOUDFLARE_DNS_NAME}'","content":"'${CLOUDFLARE_DNS_TARGET}'","ttl":'${CLOUDFLARE_DNS_TTL}',"proxied":false}'
       )
-    echo $(echo $UPDATE_QUERY | jq '.success')
+    echo "[$(date -u)] $(echo $UPDATE_QUERY | jq '.success')" >> ${CODE_SERVER_LOGS}/boot.log
   else
-    echo "Creating entry: ${CLOUDFLARE_DNS_NAME} -> ${CLOUDFLARE_DNS_TARGET}..."
+    echo "[$(date -u)] Creating entry: ${CLOUDFLARE_DNS_NAME} -> ${CLOUDFLARE_DNS_TARGET}..." >> ${CODE_SERVER_LOGS}/boot.log
     CREATE_QUERY=$(
     curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/dns_records" \
       -H "Authorization: Bearer ${CLOUDFLARE_API_KEY}" \
       -H "Content-Type: application/json" \
       --data '{"type":"A","name":"'${CLOUDFLARE_DNS_NAME}'","content":"'${CLOUDFLARE_DNS_TARGET}'","ttl":'${CLOUDFLARE_DNS_TTL}',"priority":'${CLOUDFLARE_DNS_PRIORITY}',"proxied":false}'
     )
-    echo $(echo $CREATE_QUERY | jq '.success')
+    echo "[$(date -u)] $(echo $CREATE_QUERY | jq '.success')" >> ${CODE_SERVER_LOGS}/boot.log
   fi
 
   #
@@ -76,23 +75,23 @@ else
   if [ "$(echo $DNS_QUERY | jq '.result_info.total_count')" -gt 0 ]
   then
     DNS_ID=$(echo $DNS_QUERY | jq -r '.result[0].id')
-    echo "Updating entry ${DNS_ID}: ${CLOUDFLARE_DNS_NAME} -> ${CLOUDFLARE_DNS_TARGET}..."
+    echo "[$(date -u)] Updating entry ${DNS_ID}: ${CLOUDFLARE_DNS_NAME} -> ${CLOUDFLARE_DNS_TARGET}..." >> ${CODE_SERVER_LOGS}/boot.log
     UPDATE_QUERY=$(
       curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/dns_records/${DNS_ID}" \
         -H "Authorization: Bearer ${CLOUDFLARE_API_KEY}" \
         -H "Content-Type: application/json" \
         --data '{"type":"A","name":"'${CLOUDFLARE_DNS_NAME_WILD}'","content":"'${CLOUDFLARE_DNS_TARGET}'","ttl":'${CLOUDFLARE_DNS_TTL}',"proxied":false}'
       )
-    echo $(echo $UPDATE_QUERY | jq '.success')
+    echo "[$(date -u)] $(echo $UPDATE_QUERY | jq '.success')" >> ${CODE_SERVER_LOGS}/boot.log
   else
-    echo "Creating entry: ${CLOUDFLARE_DNS_NAME_WILD} -> ${CLOUDFLARE_DNS_TARGET}..."
+    echo "[$(date -u)] Creating entry: ${CLOUDFLARE_DNS_NAME_WILD} -> ${CLOUDFLARE_DNS_TARGET}..." >> ${CODE_SERVER_LOGS}/boot.log
     CREATE_QUERY=$(
     curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/dns_records" \
       -H "Authorization: Bearer ${CLOUDFLARE_API_KEY}" \
       -H "Content-Type: application/json" \
       --data '{"type":"A","name":"'${CLOUDFLARE_DNS_NAME_WILD}'","content":"'${CLOUDFLARE_DNS_TARGET}'","ttl":'${CLOUDFLARE_DNS_TTL}',"priority":'${CLOUDFLARE_DNS_PRIORITY}',"proxied":false}'
     )
-    echo $(echo $CREATE_QUERY | jq '.success')
+    echo "[$(date -u)] $(echo $CREATE_QUERY | jq '.success')" >> ${CODE_SERVER_LOGS}/boot.log
   fi
 
 fi

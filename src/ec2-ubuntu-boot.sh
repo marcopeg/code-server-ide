@@ -9,8 +9,13 @@ set -o allexport
 source "${CWD}/.env"
 set +o allexport
 
+# Prepare the logs file
+touch ${CODE_SERVER_LOGS}/boot.log
+
+echo "[$(date -u)] Booting up..." >> ${CODE_SERVER_LOGS}/boot.log
+
 # Update DNS entry
-${CWD}/ec2-ubuntu-dns-cloudflare.sh
+${CODE_SERVER_CWD}/src/ec2-ubuntu-dns-cloudflare.sh
 
 # Start the processes
 sudo systemctl start code-server-ide
