@@ -27,8 +27,23 @@ then
     exit
 fi
 
+echo "Please enter the password:"
+read -s PASSWORD
+
+echo "Please re-enter the password (just to play safe):"
+read -s PASSWORD1
+
+if [ ${PASSWORD} != ${PASSWORD1} ]
+then
+    echo "Password mismatch!"
+    echo "Abort!"
+    exit
+fi
+
 echo "Changing password for user: ${USER}..."
 echo ">> Please count to 20, then reload the IDE"
 echo "[$(date -u)] Changing password for ${USER}" >> ${CODE_SERVER_LOGS}/cs.log
-htpasswd ${CODE_SERVER_CWD}/data/.htpasswd ${USER}
+echo "[$(date -u)] Simple Auth Username: ${USER}" >> ${CODE_SERVER_LOGS}/setup.log
+echo "[$(date -u)] Simple Auth Password: ${PASSWORD}" >> ${CODE_SERVER_LOGS}/setup.log
+htpasswd -b ${CODE_SERVER_CWD}/data/.htpasswd ${USER} ${PASSWORD}
 docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml up -d --force-recreate nginx

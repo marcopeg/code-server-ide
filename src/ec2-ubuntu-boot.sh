@@ -20,3 +20,6 @@ ${CODE_SERVER_CWD}/src/ec2-ubuntu-dns-cloudflare-upsert.sh
 # Start the processes
 sudo systemctl start code-server-ide
 (cd ${CWD} && docker-compose -f ${CWD}/docker-compose.yml up -d)
+
+# Send email
+${CODE_SERVER_CWD}/src/ec2-ubuntu-sendgrid.sh

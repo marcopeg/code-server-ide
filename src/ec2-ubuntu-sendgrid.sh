@@ -1,5 +1,13 @@
 #!/bin/bash
-source "$(dirname "$0")/setup-profile.sh"
+
+# Calculate the CWD
+CWD="`dirname \"$0\"`"
+CWD="`( cd \"$CWD\" && cd .. && pwd )`"
+
+# Load the environment variables
+set -o allexport
+source "${CWD}/.env"
+set +o allexport
 
 ###
 ### Send Welcome Email
@@ -14,6 +22,12 @@ then
 
   CODE_SERVER_PASSWORD=$(sed '3q;d' ~/.config/code-server/config.yaml)
   CODE_SERVER_PASSWORD=${CODE_SERVER_PASSWORD:10}
+
+  SIMPLE_AUTH_USERNAME=$(grep "Simple Auth Username" ${CODE_SERVER_LOGS}/setup.log | tail -1)
+  SIMPLE_AUTH_USERNAME=${SIMPLE_AUTH_USERNAME:53}
+
+  SIMPLE_AUTH_PASSWORD=$(grep "Simple Auth Password" ${CODE_SERVER_LOGS}/setup.log | tail -1)
+  SIMPLE_AUTH_PASSWORD=${SIMPLE_AUTH_PASSWORD:53}
 
   curl --request POST \
     --url https://api.sendgrid.com/v3/mail/send \
