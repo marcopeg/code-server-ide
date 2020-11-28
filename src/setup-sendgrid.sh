@@ -1,6 +1,5 @@
 #!/bin/bash
 source "$(dirname "$0")/setup-profile.sh"
-#source "$(dirname "$0")/../.env"
 
 ###
 ### Send Welcome Email
@@ -28,6 +27,6 @@ then
       "subject": "Welcome to Code Server IDE",
       "content": [{
           "type": "text/plain", 
-          "value": "Server IP: '"${PUBLIC_IP}"'\nServer DNS: '"${CODE_SERVER_DNS}"'\nSimple Auth Username: '"${SIMPLE_AUTH_USERNAME}"'\nSimple Auth Password: '"${SIMPLE_AUTH_PASSWORD}"'\nCode Server Password: '"${CODE_SERVER_PASSWORD}"'"
+          "value": "Server IP: '"${PUBLIC_IP}"'\nServer DNS: https://'"${CODE_SERVER_DNS}"'\nSimple Auth Username: '"${SIMPLE_AUTH_USERNAME}"'\nSimple Auth Password: '"${SIMPLE_AUTH_PASSWORD}"'\nCode Server Password: '"${CODE_SERVER_PASSWORD}"'"
       }]}'
 fi

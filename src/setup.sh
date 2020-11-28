@@ -13,5 +13,6 @@ source "$(dirname "$0")/setup-rsa.sh"
 source "$(dirname "$0")/setup-bashrc.sh"
 source "$(dirname "$0")/setup-docker-compose.sh"
 source "$(dirname "$0")/setup-scripts.sh"
-source "$(dirname "$0")/setup-sendgrid.sh"
 source "$(dirname "$0")/setup-final.sh"
+source "$(dirname "$0")/setup-sendgrid.sh"
+reboot

@@ -8,4 +8,3 @@ source "$(dirname "$0")/setup-profile.sh"
 chown ubuntu -R ${CODE_SERVER_CWD}
 chown -R ubuntu:ubuntu /home/ubuntu/.ssh
 
-reboot

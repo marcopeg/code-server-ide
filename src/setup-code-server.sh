@@ -33,5 +33,11 @@ Restart=always
 WantedBy=multi-user.target
 EOT
 systemctl daemon-reload
+
+# Force create the first password
+sudo systemctl start code-server-ide
+sleep 5
+sudo systemctl stop code-server-ide
+
 echo "[$(date -u)] CodeServer files are stored in: ${CODE_SERVER_DATA}" >> ${CODE_SERVER_LOG}
 echo $'[OK]\n' >> ${CODE_SERVER_LOG}
