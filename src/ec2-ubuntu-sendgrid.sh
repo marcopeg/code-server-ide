@@ -20,7 +20,7 @@ then
   PUBLIC_IP=$(curl -s -m 0.1 http://169.254.169.254/latest/meta-data/public-ipv4)
   PUBLIC_IP=${PUBLIC_IP:-$(curl -s icanhazip.com)}
 
-  CODE_SERVER_PASSWORD=$(sed '3q;d' ~/.config/code-server/config.yaml)
+  CODE_SERVER_PASSWORD=$(grep "password:" /home/ubuntu/.config/code-server/config.yaml | tail -1)
   CODE_SERVER_PASSWORD=${CODE_SERVER_PASSWORD:10}
 
   SIMPLE_AUTH_USERNAME=$(grep "Simple Auth Username" ${CODE_SERVER_LOGS}/setup.log | tail -1)
