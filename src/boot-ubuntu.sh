@@ -13,6 +13,13 @@ export CODE_SERVER_CWD="/home/ubuntu/code-server-ide"
 export CODE_SERVER_DNS="xx2.marcopeg.com"
 export CODE_SERVER_EMAIL="marco.pegoraro+letsencrypt@gmail.com"
 
+## Configure Cloudflare:
+#export CLOUDFLARE_ZONE_ID="xxx"
+#export CLOUDFLARE_API_KEY="yyy"
+#export CLOUDFLARE_DNS_NAME="xx2.marcopeg.com"
+#export CLOUDFLARE_DNS_TARGET="xx.foobar.com"
+#export CLOUDFLARE_DNS_TTL=120
+#export CLOUDFLARE_DNS_PRIORITY=10
 
 
 #############################################
