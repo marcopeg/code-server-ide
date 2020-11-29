@@ -69,7 +69,7 @@ Be careful during the step **Step 3: Configure Instance Details** as you need to
 export CODE_SERVER_EMAIL="welcome@yourname.com"
 export SENDGRID_API_KEY="xxx"
 
-git clone git@github.com:marcopeg/code-server-ide.git ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}
+git clone https://github.com/marcopeg/code-server-ide.git ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}
 ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}/src/setup.sh
 ```
 
@@ -87,7 +87,7 @@ export CLOUDFLARE_ZONE_ID="xxx"
 export CLOUDFLARE_API_KEY="yyy"
 export SENDGRID_API_KEY="zzz"
 
-git clone git@github.com:marcopeg/code-server-ide.git ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}
+git clone https://github.com/marcopeg/code-server-ide.git ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}
 ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}/src/setup.sh
 ```
 
@@ -103,7 +103,7 @@ export CODE_SERVER_DNS="dev.yourname.com"
 export CODE_SERVER_EMAIL="welcome@yourname.com"
 export SENDGRID_API_KEY="xxx"
 
-git clone git@github.com:marcopeg/code-server-ide.git ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}
+git clone https://github.com/marcopeg/code-server-ide.git ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}
 ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}/src/setup.sh
 ```
 
@@ -143,6 +143,7 @@ In a few minutes your system should be up and running, and a new _SSL_ certifica
 > **👉 RE-ENABLE AUTO START:**  
 > When everything works, you should change the value of `CODE_SERVER_AUTO_START` to `yes` (or simply remove the variable) from `~/code-server-ide/.env` so that your IDE will start automatically in case you restart the EC2 machine.
 
+## Run a simple website
 
 
 

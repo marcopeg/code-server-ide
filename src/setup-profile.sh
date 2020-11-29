@@ -5,8 +5,8 @@
 ###
 
 # Calculate the CWD:
-CWD="`dirname \"$0\"`"
-CWD="`( cd \"$CWD\" && cd .. && pwd )`"
+CWD=$(cd $(dirname "$0") && cd .. && pwd)
+echo "CWD=${CWD}"
 
 # Get OS major version
 # (Docker depends on this)
@@ -14,7 +14,8 @@ CODE_SERVER_OSV=$(cut -f2 <<< $(lsb_release -r))
 export CODE_SERVER_OSV=${CODE_SERVER_OSV%.*}
 
 # CWD with default based on Ubuntu home folder
-export CODE_SERVER_CWD=${CODE_SERVER_CWD:-${CWD}}
+export CODE_SERVER_CWD=${CODE_SERVER_CWD:-"${CWD}"}
+echo "CODE_SERVER_CWD=${CODE_SERVER_CWD}"
 export CODE_SERVER_DATA=${CODE_SERVER_CWD}/data/code-server
 export CODE_SERVER_LOGS=${CODE_SERVER_CWD}/data/logs
 export CODE_SERVER_TRAEFIK=${CODE_SERVER_CWD}/data/traefik

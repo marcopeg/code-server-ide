@@ -9,18 +9,25 @@ services:
       - "traefik.http.routers.traefik_http.rule=Host(`127.0.0.11`)"
       - "traefik.http.routers.api.rule=Host(`traefik.${CODE_SERVER_DNS}`)"
       - "traefik.http.routers.api.service=api@internal"
-      - "traefik.http.routers.api.middlewares=auth"
-      - "traefik.http.middlewares.auth.basicauth.usersfile=/basic-auth/.htpasswd"
       - "traefik.http.routers.api.tls=true"
       - "traefik.http.routers.api.tls.certresolver=myresolver"
+      - "traefik.http.routers.api.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.usersfile=/basic-auth/.htpasswd"
     command:
+      # Exposes Traefik dashboard
+      # (comment this to avoid useless security risks)
       - "--api.dashboard=true"
+
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.docker.network=web"
       - "--entrypoints.web.address=:80"
+
+      # Force redirect http->https for every service
+      # (comment to let each service definition the responsability over this detail)
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
       - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
@@ -42,18 +49,22 @@ services:
   nginx:
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.vscode-nginx_redirect.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.vscode-nginx_redirect.redirectscheme.permanent=true"
 
-      - "traefik.http.routers.vscode-nginx-http.rule=Host(`${CODE_SERVER_DNS}`)"
-      - "traefik.http.routers.vscode-nginx-http.entrypoints=web"
-      - "traefik.http.routers.vscode-nginx-http.middlewares=vscode-nginx_redirect"
-      - "traefik.http.services.vscode-nginx-http.loadbalancer.server.port=8082"
+      # Configure basic HTTP mapping
+      - "traefik.http.routers.code-server-ide-nginx-http.entrypoints=web"
+      - "traefik.http.services.code-server-ide-nginx-http.loadbalancer.server.port=8082"
+      - "traefik.http.routers.code-server-ide-nginx-http.rule=Host(`${CODE_SERVER_DNS}`)"
 
-      - "traefik.http.routers.vscode-nginx-https.rule=Host(`${CODE_SERVER_DNS}`)"
-      - "traefik.http.routers.vscode-nginx-https.entrypoints=websecure"
-      - "traefik.http.routers.vscode-nginx-https.tls=true"
-      - "traefik.http.routers.vscode-nginx-https.tls.certresolver=myresolver"
+      # Configure HTTPS mapping with automatic Letsencrypt certificate management
+      - "traefik.http.routers.code-server-ide-nginx-https.tls=true"
+      - "traefik.http.routers.code-server-ide-nginx-https.tls.certresolver=myresolver"
+      - "traefik.http.routers.code-server-ide-nginx-https.entrypoints=websecure"
+      - "traefik.http.routers.code-server-ide-nginx-https.rule=Host(`${CODE_SERVER_DNS}`)"
+
+      # Configure automatic redirect HTTP->HTTPS
+      - "traefik.http.routers.code-server-ide-nginx-http.middlewares=code-server-ide-nginx_redirect"
+      - "traefik.http.middlewares.code-server-ide-nginx_redirect.redirectscheme.permanent=true"
+      - "traefik.http.middlewares.code-server-ide-nginx_redirect.redirectscheme.scheme=https"
       
       # Simple Auth
       # (this screws up Code Server on iPad)
