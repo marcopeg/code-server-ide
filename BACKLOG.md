@@ -11,6 +11,9 @@
 - [ ] Provide `cs get id` to get the EC2 ID
 - [ ] Install NodeJS via NVM
 - [ ] Install AWS CLI
+- [ ] Use automatic hostname from EC2
+- [ ] Apply custom hostname to the machine
+      https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/set-hostname.html
 
 # Known Issues
 

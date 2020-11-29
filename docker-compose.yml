@@ -55,6 +55,8 @@ services:
       - "traefik.http.routers.vscode-nginx-https.tls=true"
       - "traefik.http.routers.vscode-nginx-https.tls.certresolver=myresolver"
       
+      # Simple Auth
+      # (this screws up Code Server on iPad)
       # - "traefik.http.middlewares.vscode-nginx-auth.basicauth.usersfile=/basic-auth/.htpasswd"
       # - "traefik.http.routers.vscode-nginx-https.middlewares=vscode-nginx-auth"
     volumes:
