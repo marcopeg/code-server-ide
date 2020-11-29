@@ -13,4 +13,7 @@ docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml pull >> ${CODE_SERVER_LO
 chown -R ubuntu:ubuntu ${CODE_SERVER_CWD} >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 chown -R ubuntu:ubuntu /home/ubuntu/.ssh >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 
+# Set custom host name
+hostnamectl set-hostname ${CODE_SERVER_DNS}
+
 echo "[$(date -u)] Setup completed" >> ${CODE_SERVER_LOGS}/setup.log
