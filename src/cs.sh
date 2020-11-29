@@ -19,7 +19,7 @@ then
     CMD=${1}
 else
     PS3='Please enter your choice: '
-    options=("Start IDE" "Stop IDE" "Restart IDE" "Get CodeServer Status" "Read logs" "Change password" "Update DNS entries on CloudFlare" "Update Code Server IDE" "Cancel")
+    options=("Start IDE" "Stop IDE" "Restart IDE" "Get CodeServer Status" "Read logs" "Get info about this machine" "Change password" "Update DNS entries on CloudFlare" "Update Code Server IDE" "Cancel")
     select opt in "${options[@]}"
     do
         case $opt in
@@ -41,6 +41,10 @@ else
                 ;;
             "Read logs")
                 CMD=logs
+                break
+                ;;
+            "Get info about this machine")
+                CMD=get
                 break
                 ;;
             "Change password")
@@ -96,6 +100,9 @@ case ${CMD} in
         ;;
     "dns")
         ${CODE_SERVER_CWD}/src/cs-dns.sh ${@:2}
+        ;;
+    "get")
+        ${CODE_SERVER_CWD}/src/cs-get.sh ${@:2}
         ;;
     "update")
         echo "[$(date -u)] Updating IDE" >> ${CODE_SERVER_LOGS}/cs.log

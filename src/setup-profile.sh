@@ -17,7 +17,7 @@ export CODE_SERVER_TRAEFIK=${CODE_SERVER_CWD}/data/traefik
 export CODE_SERVER_SSH="/home/ubuntu/.ssh"
 
 # Default Environment Variables
-export CODE_SERVER_DNS=${CODE_SERVER_DNS:-"code-server-ide.foobar.com"}
+export CODE_SERVER_DNS=${CODE_SERVER_DNS:-$(curl -s -m 0.1 http://169.254.169.254/latest/meta-data/public-hostname)}
 export CODE_SERVER_EMAIL=${CODE_SERVER_EMAIL:-"code-server-ide@foobar.com"}
 
 # Generate random access credentials for Simple Auth

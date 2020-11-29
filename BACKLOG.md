@@ -1,12 +1,19 @@
 # Backlog
 
 - [x] Create DNS Entry at boot time
-- [ ] Send welcome email via Sendgrid API
+- [x] Send welcome email via Sendgrid API
 - [x] Add reset password CLI script
 - [ ] Add up/down/reboot script CLI script
-- [ ] Add script to change machine layer
-- [ ] Collect the machine IP in the .env
-- [ ] Collect the machine EC2 ID in the .env
+- [ ] Add script to change machine layer (is it even feasible?)
+- [ ] Collect the machine IP in the running environment at boot time
+- [ ] Collect the machine EC2 in the running environment at boot time
+- [ ] Provide `cs get ip` to get the public IP
+- [ ] Provide `cs get id` to get the EC2 ID
+- [ ] Install NodeJS via NVM
+- [ ] Install AWS CLI
+
+# Known Issues
+
 - [ ] Basic auth prevents the IDE from running on iPad
       (to make it run it's just a matter of disabling the Simple Auth and enable the Code Server auth)
 
