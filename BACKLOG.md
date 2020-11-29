@@ -3,15 +3,15 @@
 - [x] Create DNS Entry at boot time
 - [x] Send welcome email via Sendgrid API
 - [x] Add reset password CLI script
-- [ ] Add up/down/reboot script CLI script
+- [x] Add up/down/reboot script CLI script
 - [ ] Add script to change machine layer (is it even feasible?)
 - [ ] Collect the machine IP in the running environment at boot time
 - [ ] Collect the machine EC2 in the running environment at boot time
-- [ ] Provide `cs get ip` to get the public IP
-- [ ] Provide `cs get id` to get the EC2 ID
+- [x] Provide `cs get ip` to get the public IP
+- [x] Provide `cs get id` to get the EC2 ID
 - [ ] Install NodeJS via NVM
 - [ ] Install AWS CLI
-- [ ] Use automatic hostname from EC2
+- [x] Use automatic hostname from EC2
 - [ ] Apply custom hostname to the machine
       https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/set-hostname.html
 

@@ -10,6 +10,7 @@ source "${CWD}/setup-docker.sh"
 source "${CWD}/setup-env.sh"
 source "${CWD}/setup-bashrc.sh"
 source "${CWD}/setup-docker-compose.sh"
+source "${CWD}/setup-software.sh"
 source "${CWD}/setup-final.sh"
 
 # First boot:
