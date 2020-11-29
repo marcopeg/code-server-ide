@@ -36,6 +36,7 @@ You will be able to:
 - Edit files using [Code Server][code-server] on a browser
 - Run [Docker][docker] containers
 - Run [Docker Compose][docker-compose] projects
+- Use [CTOP][ctop] to monitor and control your running containers
 - Install and switch between different versions of Nodejs using [NVM][nvm]
 - Code in [NodeJS][nodejs]
 - Interact with AWS using [AWS CLI v2][aws-cli]
@@ -143,7 +144,18 @@ In a few minutes your system should be up and running, and a new _SSL_ certifica
 > **👉 RE-ENABLE AUTO START:**  
 > When everything works, you should change the value of `CODE_SERVER_AUTO_START` to `yes` (or simply remove the variable) from `~/code-server-ide/.env` so that your IDE will start automatically in case you restart the EC2 machine.
 
-## Run a simple website
+## Run a simple website with NGiNX on Docker
+
+[[ TO BE COMPLETED ]]
+
+## Protect your services with Simple Auth
+
+[[ TO BE COMPLETED ]]
+
+## Add Letsencrypt SSL to your Services
+
+[[ TO BE COMPLETED ]]
+
 
 
 
@@ -159,3 +171,4 @@ In a few minutes your system should be up and running, and a new _SSL_ certifica
 [aws-cli]: https://aws.amazon.com/cli/ "AWS Command Line Interface"
 [sendgrid]: https://sendgrid.com/
 [letsencrypt]: https://letsencrypt.org/
+[ctop]: https://github.com/bcicen/ctop
