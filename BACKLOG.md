@@ -12,7 +12,7 @@
 - [x] Install NodeJS via NVM
 - [x] Install AWS CLI
 - [x] Use automatic hostname from EC2
-- [ ] Apply custom hostname to the machine
+- [x] Apply custom hostname to the machine
       https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/set-hostname.html
 - [x] Block auto start in case of manual DNS handling
 - [x] Install CTOP
