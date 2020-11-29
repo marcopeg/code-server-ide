@@ -17,17 +17,17 @@ export NVM_DIR=/home/ubuntu/.nvm
 # Running installation script
 echo "[$(date -u)] Version: ${NVM_VERSION}" >> ${CODE_SERVER_LOGS}/setup.log
 mkdir -p ${NVM_DIR} >> ${CODE_SERVER_LOGS}/setup.log 2>&1
-touch /home/ubuntu/.profile >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 chown -R ubuntu:ubuntu ${NVM_DIR} >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 
 # Add the NVM bin stuff to the bash loading profile
-# echo $'\n\n# NVM' >> /etc/bash.bashrc
-# echo $'export NVM_DIR="/home/ubuntu/.nvm"' >> /etc/bash.bashrc
-# echo $'[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> /etc/bash.bashrc
-# echo $'[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> /etc/bash.bashrc
+echo $'\n\n# NVM' >> /etc/bash.bashrc
+echo $'export NVM_DIR="/home/ubuntu/.nvm"' >> /etc/bash.bashrc
+echo $'[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> /etc/bash.bashrc
+echo $'[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> /etc/bash.bashrc
+
 # Reload bash and test NVM
-source source ${NVM_DIR}/nvm.sh >> ${CODE_SERVER_LOGS}/setup.log 2>&1
+source ${NVM_DIR}/nvm.sh >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 nvm -v  >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 # Install latest Node LTS
 echo "[$(date -u)] Installing lastest NodeJS (LTS)..." >> ${CODE_SERVER_LOGS}/setup.log
