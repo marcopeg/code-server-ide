@@ -9,6 +9,7 @@ set -o allexport
 source "${CWD}/.env"
 set +o allexport
 
+
 # Prepare the logs file
 touch ${CODE_SERVER_LOGS}/cs.log
 

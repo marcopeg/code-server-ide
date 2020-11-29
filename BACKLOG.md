@@ -9,11 +9,12 @@
 - [ ] Collect the machine EC2 in the running environment at boot time
 - [x] Provide `cs get ip` to get the public IP
 - [x] Provide `cs get id` to get the EC2 ID
-- [ ] Install NodeJS via NVM
-- [ ] Install AWS CLI
+- [x] Install NodeJS via NVM
+- [x] Install AWS CLI
 - [x] Use automatic hostname from EC2
 - [ ] Apply custom hostname to the machine
       https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/set-hostname.html
+- [ ] Block auto start in case of manual DNS handling
 
 # Known Issues
 
