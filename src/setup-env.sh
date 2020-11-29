@@ -15,13 +15,7 @@ then
   echo "CODE_SERVER_LOGS=${CODE_SERVER_LOGS}" >> ${CODE_SERVER_CWD}/.env
   echo "CODE_SERVER_TRAEFIK=${CODE_SERVER_TRAEFIK}" >> ${CODE_SERVER_CWD}/.env
   echo "CODE_SERVER_EMAIL=${CODE_SERVER_EMAIL}" >> ${CODE_SERVER_CWD}/.env
-  # Use the explicit DNS or try to load it automatically from the EC2 machine
-  if [ -z ${CODE_SERVER_DNS} ]
-  then
-    echo "CODE_SERVER_DNS=${CODE_SERVER_DNS}" >> ${CODE_SERVER_CWD}/.env
-  else
-    echo 'CODE_SERVER_DNS=$(curl -s -m 0.1 http://169.254.169.254/latest/meta-data/public-hostname)' >> ${CODE_SERVER_CWD}/.env
-  fi
+  echo "CODE_SERVER_DNS=${CODE_SERVER_DNS:-'$(curl -s -m 0.1 http://169.254.169.254/latest/meta-data/public-hostname)'}" >> ${CODE_SERVER_CWD}/.env
 
   # CloudFlare Config
   if [ -n "$CLOUDFLARE_ZONE_ID" ]
