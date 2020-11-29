@@ -9,8 +9,10 @@ source "$(dirname "$0")/setup-profile.sh"
 ### yet available for the user.
 ###
 
+echo "[$(date -u)] Installing NVM..." >> ${CODE_SERVER_LOGS}/setup.log
 export NVM_VERSION=$(curl --silent https://api.github.com/repos/nvm-sh/nvm/releases/latest | jq .name -r)
 export NVM_DIR=/home/ubuntu/.nvm
+echo "[$(date -u)] Version: ${NVM_VERSION}" >> ${CODE_SERVER_LOGS}/setup.log
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 echo $'\n\n# NVM' >> /etc/bash.bashrc
 echo $'export NVM_DIR="/home/ubuntu/.nvm"' >> /etc/bash.bashrc
