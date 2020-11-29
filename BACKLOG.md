@@ -14,8 +14,9 @@
 - [x] Use automatic hostname from EC2
 - [ ] Apply custom hostname to the machine
       https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/set-hostname.html
-- [ ] Block auto start in case of manual DNS handling
+- [x] Block auto start in case of manual DNS handling
 - [ ] Install CTOP
+      https://github.com/bcicen/ctop
 
 # Known Issues
 
