@@ -4,14 +4,16 @@ services:
   traefik:
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.entrypoints=websecure"
-      - "traefik.http.services.dummyService.loadbalancer.server.port=1337"
-      - "traefik.http.routers.traefik_http.rule=Host(`127.0.0.11`)"
-      - "traefik.http.routers.api.rule=Host(`traefik.${CODE_SERVER_DNS}`)"
-      - "traefik.http.routers.api.service=api@internal"
-      - "traefik.http.routers.api.tls=true"
-      - "traefik.http.routers.api.tls.certresolver=myresolver"
-      - "traefik.http.routers.api.middlewares=auth"
+      - "traefik.http.services.csi.loadbalancer.server.port=1337"
+      - "traefik.http.routers.csi-traefik-http.rule=Host(`127.0.0.11`)"
+      
+      - "traefik.http.routers.csi-traefik-https.tls=true"
+      - "traefik.http.routers.csi-traefik-https.service=api@internal"
+      - "traefik.http.routers.csi-traefik-https.tls.certresolver=myresolver"
+      - "traefik.http.routers.csi-traefik-https.entrypoints=websecure"
+      - "traefik.http.routers.csi-traefik-https.rule=Host(`traefik.${CODE_SERVER_DNS}`)"
+
+      - "traefik.http.routers.csi-traefik-https.middlewares=auth"
       - "traefik.http.middlewares.auth.basicauth.usersfile=/basic-auth/.htpasswd"
     command:
       # Exposes Traefik dashboard
@@ -49,22 +51,22 @@ services:
   nginx:
     labels:
       - "traefik.enable=true"
+      - "traefik.http.services.csi-nginx.loadbalancer.server.port=8082"
 
       # Configure basic HTTP mapping
-      - "traefik.http.routers.code-server-ide-nginx-http.entrypoints=web"
-      - "traefik.http.services.code-server-ide-nginx-http.loadbalancer.server.port=8082"
-      - "traefik.http.routers.code-server-ide-nginx-http.rule=Host(`${CODE_SERVER_DNS}`)"
+      # - "traefik.http.routers.csi-nginx-http.entrypoints=web"
+      # - "traefik.http.routers.csi-nginx-http.rule=Host(`${CODE_SERVER_DNS}`)"
 
       # Configure HTTPS mapping with automatic Letsencrypt certificate management
-      - "traefik.http.routers.code-server-ide-nginx-https.tls=true"
-      - "traefik.http.routers.code-server-ide-nginx-https.tls.certresolver=myresolver"
-      - "traefik.http.routers.code-server-ide-nginx-https.entrypoints=websecure"
-      - "traefik.http.routers.code-server-ide-nginx-https.rule=Host(`${CODE_SERVER_DNS}`)"
+      - "traefik.http.routers.csi-nginx-https.tls=true"
+      - "traefik.http.routers.csi-nginx-https.tls.certresolver=myresolver"
+      - "traefik.http.routers.csi-nginx-https.entrypoints=websecure"
+      - "traefik.http.routers.csi-nginx-https.rule=Host(`${CODE_SERVER_DNS}`)"
 
       # Configure automatic redirect HTTP->HTTPS
-      - "traefik.http.routers.code-server-ide-nginx-http.middlewares=code-server-ide-nginx_redirect"
-      - "traefik.http.middlewares.code-server-ide-nginx_redirect.redirectscheme.permanent=true"
-      - "traefik.http.middlewares.code-server-ide-nginx_redirect.redirectscheme.scheme=https"
+      # - "traefik.http.routers.csi-nginx-http.middlewares=csi-nginx-redirect"
+      # - "traefik.http.middlewares.csi-nginx-redirect.redirectscheme.permanent=true"
+      # - "traefik.http.middlewares.csi-nginx-redirect.redirectscheme.scheme=https"
       
       # Simple Auth
       # (this screws up Code Server on iPad)
