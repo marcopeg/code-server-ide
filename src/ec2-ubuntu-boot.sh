@@ -9,10 +9,7 @@ set -o allexport
 source "${CWD}/.env"
 set +o allexport
 
-# Prepare the logs file
-touch ${CODE_SERVER_LOGS}/boot.log
-
-echo "[$(date -u)] Booting up..." >> ${CODE_SERVER_LOGS}/boot.log
+echo "[$(date -u)] Booting up..." >> ${CODE_SERVER_LOGS}/setup.log
 
 # Start CodeServer:
 # If this is first run, it will generate the default password

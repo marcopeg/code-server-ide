@@ -9,9 +9,6 @@ set -o allexport
 source "${CWD}/.env"
 set +o allexport
 
-# Prepare the logs file
-touch ${CODE_SERVER_LOGS}/cloudflare.log
-
 # Takes action only if the API KEY is set:
 if [ -n "$CLOUDFLARE_API_KEY" ]
 then
@@ -26,7 +23,7 @@ then
   PUBLIC_IP=${PUBLIC_IP:-$(curl -s icanhazip.com)}
   CLOUDFLARE_DNS_TARGET=${CLOUDFLARE_DNS_TARGET:-${PUBLIC_IP}}
 
-  echo "[$(date -u)] Cloudflare: setup DNS for ${CLOUDFLARE_DNS_NAME} -> ${CLOUDFLARE_DNS_TARGET}" >> ${CODE_SERVER_LOGS}/cloudflare.log
+  echo "[$(date -u)] Cloudflare: setup DNS for ${CLOUDFLARE_DNS_NAME} -> ${CLOUDFLARE_DNS_TARGET}" >> ${CODE_SERVER_LOGS}/setup.log
 
   #
   # STRAIGHT NAME
@@ -41,13 +38,13 @@ then
   if [ "$(echo $DNS_QUERY | jq '.result_info.total_count')" -gt 0 ]
   then
     DNS_ID=$(echo $DNS_QUERY | jq -r '.result[0].id')
-    echo "[$(date -u)] Removing entry ${DNS_ID}: ${CLOUDFLARE_DNS_NAME} -> ${CLOUDFLARE_DNS_TARGET}..." >> ${CODE_SERVER_LOGS}/cloudflare.log
+    echo "[$(date -u)] Removing entry ${DNS_ID}: ${CLOUDFLARE_DNS_NAME} -> ${CLOUDFLARE_DNS_TARGET}..." >> ${CODE_SERVER_LOGS}/setup.log
     REMOVE_QUERY=$(
       curl -s -X DELETE "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/dns_records/${DNS_ID}" \
         -H "Authorization: Bearer ${CLOUDFLARE_API_KEY}" \
         -H "Content-Type: application/json"
       )
-    echo "[$(date -u)] $(echo $REMOVE_QUERY | jq '.success')" >> ${CODE_SERVER_LOGS}/cloudflare.log
+    echo "[$(date -u)] $(echo $REMOVE_QUERY | jq '.success')" >> ${CODE_SERVER_LOGS}/setup.log
   fi
 
   #
@@ -63,13 +60,13 @@ then
   if [ "$(echo $DNS_QUERY | jq '.result_info.total_count')" -gt 0 ]
   then
     DNS_ID=$(echo $DNS_QUERY | jq -r '.result[0].id')
-    echo "[$(date -u)] Removing entry ${DNS_ID}: ${CLOUDFLARE_DNS_NAME_WILD} -> ${CLOUDFLARE_DNS_TARGET}..." >> ${CODE_SERVER_LOGS}/cloudflare.log
+    echo "[$(date -u)] Removing entry ${DNS_ID}: ${CLOUDFLARE_DNS_NAME_WILD} -> ${CLOUDFLARE_DNS_TARGET}..." >> ${CODE_SERVER_LOGS}/setup.log
     REMOVE_QUERY=$(
       curl -s -X DELETE "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/dns_records/${DNS_ID}" \
         -H "Authorization: Bearer ${CLOUDFLARE_API_KEY}" \
         -H "Content-Type: application/json"
       )
-    echo "[$(date -u)] $(echo $REMOVE_QUERY | jq '.success')" >> ${CODE_SERVER_LOGS}/cloudflare.log
+    echo "[$(date -u)] $(echo $REMOVE_QUERY | jq '.success')" >> ${CODE_SERVER_LOGS}/setup.log
   fi
 
 fi

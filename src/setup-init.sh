@@ -5,13 +5,15 @@ mkdir -p $CODE_SERVER_DATA
 mkdir -p $CODE_SERVER_LOGS
 mkdir -p ${CODE_SERVER_TRAEFIK}
 
-touch ${CODE_SERVER_LOGS}/setup.log
+touch ${CODE_SERVER_LOGS}/setup.log # logs changes in the setup
+touch ${CODE_SERVER_LOGS}/cs.log.   # logs cli activities
 echo "[$(date -u)] Code Server IDE Setup: Welcome my dude!" >> ${CODE_SERVER_LOGS}/setup.log
 echo "[$(date -u)] Simple Auth Username: ${SIMPLE_AUTH_USERNAME}" >> ${CODE_SERVER_LOGS}/setup.log
 echo "[$(date -u)] Simple Auth Password: ${SIMPLE_AUTH_PASSWORD}" >> ${CODE_SERVER_LOGS}/setup.log
 
 # Generate the password into an .htpasswd file for the ide:
 echo "[$(date -u)] Writing Simple Auth .htpasswd..." >> ${CODE_SERVER_LOGS}/setup.log
+touch ${CODE_SERVER_CWD}/data/.htpasswd
 htpasswd -b -c ${CODE_SERVER_CWD}/data/.htpasswd ${SIMPLE_AUTH_USERNAME} ${SIMPLE_AUTH_PASSWORD} >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 
 # Generate the RSA key:

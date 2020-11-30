@@ -17,6 +17,8 @@
 - [x] Block auto start in case of manual DNS handling
 - [x] Install CTOP
       https://github.com/bcicen/ctop
+- [ ] .htaccess becomes a folder and screws the traefik service
+- [ ] cloudflare and boot logs get owned by root
 
 # Known Issues
 
