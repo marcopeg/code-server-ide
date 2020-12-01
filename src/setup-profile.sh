@@ -11,7 +11,6 @@ export CODE_SERVER_OSV=${CODE_SERVER_OSV%.*}
 
 # CWD with default based on Ubuntu home folder
 export CODE_SERVER_CWD=${CODE_SERVER_CWD:-"$(cd $(dirname "$0") && cd .. && pwd)"}
-echo "CODE_SERVER_CWD=${CODE_SERVER_CWD}"
 export CODE_SERVER_DATA=${CODE_SERVER_CWD}/data/code-server
 export CODE_SERVER_LOGS=${CODE_SERVER_CWD}/data/logs
 export CODE_SERVER_TRAEFIK=${CODE_SERVER_CWD}/data/traefik
