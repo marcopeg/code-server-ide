@@ -78,6 +78,10 @@ ssh -i ~/Downloads/code-server-ide.pem ubuntu@xx.xx.xx.xx
   
 ![EC2 SSH Prompt](./ec2-ssh-prompt.png)
 
+## Point a DNS to the Machine
+
+[[ TO BE COMPLETED ]]
+
 ## Install CodeServer
 
 To install CodeServer we follow the steps from their [official documentation](https://github.com/cdr/code-server/blob/v3.7.3/doc/install.md):
@@ -347,7 +351,7 @@ sudo systemctl stop code-server@$USER
 docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)
 
 # Run the new project:
-docker-compose up -d
+docker-compose up
 ```
 
 Now you can open your machine's DNS to port 8080:
@@ -364,7 +368,7 @@ The next step is to work on this [Docker Compose][docker-compose] project and ad
 
 ```bash
 # Generate the basic Docker Compose project
-cat <<EOT > ~/docker-compose.yml
+cat <<"EOT" > ~/docker-compose.yml
 version: "3.7"
 services:
 
@@ -397,6 +401,11 @@ EOT
 > Traefik direct access to the Docker's socker file
 > in _read-only_ mode.
 
+```bash
+docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)
+docker-compose up
+```
+
 With this project running, you should be still able to access the Traefik's console at port `8080`, and an _NGiNX welcome page_ at port `80`.
 
 ![NGiNX Welcome Page](./nginx-welcome-page.png)
@@ -416,7 +425,7 @@ With the following [Docker Compose][docker-compose] project we are going to:
 4. route an Apache app as `/app2`
 
 ```bash
-cat <<EOT > ~/docker-compose.yml
+cat <<"EOT" > ~/docker-compose.yml
 version: "3.7"
 services:
 
@@ -502,7 +511,7 @@ http://your-dns/traefik  -> Traefik Dashboard
 Here is the new [Docker Compose][docker-compose] project:
 
 ```bash
-cat <<EOT > ~/docker-compose.yml
+cat <<"EOT" > ~/docker-compose.yml
 version: "3.7"
 services:
 
@@ -636,7 +645,7 @@ echo "${CODE_SERVER_EMAIL} - ${CODE_SERVER_DNS}"
 Finally, with all this preparation steps behind our back, it is time to update the [Docker-Compose] project so to integrate [Traefik] with [Letsencrypt] and enjoy the benefits of SSL 😎.
 
 ```bash
-cat <<EOT > ~/docker-compose.yml
+cat <<"EOT" > ~/docker-compose.yml
 version: "3.7"
 services:
 
