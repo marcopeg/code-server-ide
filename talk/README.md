@@ -499,6 +499,70 @@ http://your-dns/         -> CodeServer IDE
 http://your-dns/traefik  -> Traefik Dashboard
 ```
 
+Here is the new [Docker Compose][docker-compose] project:
+
+```bash
+cat <<EOT > ~/docker-compose.yml
+version: "3.7"
+services:
+
+  # Traefik Proxy Service
+  traefik:
+    image: traefik:v2.3
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=web"
+      - "--entrypoints.web.address=:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - 80:80
+    network_mode: host
+    restart: on-failure
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.traefik.loadbalancer.server.port=1337"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.rule=PathPrefix(`/traefik`) || PathPrefix(`/api`)"
+      - "traefik.http.routers.traefik.middlewares=traefik-stripprefix"
+      - "traefik.http.middlewares.traefik-stripprefix.stripprefix.prefixes=/traefik"
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    network_mode: host
+    restart: on-failure
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.nginx.loadbalancer.server.port=8082"
+      - "traefik.http.routers.nginx-http.entrypoints=web"
+      - "traefik.http.routers.nginx-http.rule=PathPrefix(`/`)"
+EOT
+```
+
+Before you run it, remember to restart the Code Server's background process:
+
+```bash
+# Stop and remove any running container:
+docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)
+
+# Restart Code Server
+sudo systemctl restart code-server@$USER
+
+# Run the Docker Compose project
+docker-compose up -d
+```
+
+When everything works fine, you should be able to:
+
+- run VSCode IDE from your machine's default DNS
+- run the Terminal as you were running an SSH session
+- add new containers to Docker and route them via labels
+
+Cool, isn't it?
 
 
 ## Notes
