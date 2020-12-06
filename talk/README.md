@@ -5,8 +5,8 @@
 - [x] Run CodeServer as a Service
       (needed to offer direct ssh access to the machine)
 - [x] Install Docker, DockerCompose, HumbleCLI
-- [ ] Run a simple Traefik instance on port 80 (via DockerCompose)
-- [ ] Proxy an NGiNX instance through Traefik (via DockerCompose)
+- [x] Run a simple Traefik instance on port 80 (via DockerCompose)
+- [x] Proxy an NGiNX instance through Traefik (via DockerCompose)
 - [ ] Proxy CodeServer via NGiNX and Traefik (via DockerCompose)
 - [ ] Aim a DNS towards the machine using CloudFlare
       (let’s just do it via REST call using Postmand and cURL)
@@ -101,7 +101,7 @@ code-server --host 0.0.0.0
 
 Then copy your EC2 Instance's _Public IPv4 DNS_ (see the step "check the machine statu") and paste it in your browser aiming to port `8080`:
 
-```
+```bash
 # Run this in your machine's terminal:
 echo "http://$(curl -s -m 0.1 http://169.254.169.254/latest/meta-data/public-hostname):8080"
 
@@ -305,38 +305,201 @@ sudo systemctl restart code-server@$USER
 > automatically generate a [Letsencrypt][letsencrypt] SSL certificate
 > for our **Cloud Development Environment**.
 
-## Add Traefik and Letsencrypt
+## Handle Multiple Services With Traefik
+
+[Traefik][traefik] is a **zero config reverse proxy** that goes extremely well with
+[Docker][docker] as it can listen to running containers and automagically adapt so to
+route traffic to them.
+
+The following [Docker Compose][docker-compose] file is the bare miminum that is needed
+to run [Traefik][traefik]:
+
+```bash
+# Generate the basic Docker Compose project
+cat <<EOT > ~/docker-compose.yml
+version: "3.7"
+services:
+  traefik:
+    image: traefik:v2.3
+    command:
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=web"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - 80:80
+      - 8080:8080
+EOT
+```
+
+It spins up [Traefik][traefik] and configures it so to listen to the [Docker][docker] daemon
+for new containers coming up, or existing one going away. When Docker changes, Traefik will adapt to it.
+
+> 👉 In order to try this configuration, you first need to stop your [CodeServer][code-server] service that
+> is running in background, as Traefik also needs to serve contents to port `8080`.
+
+```bash
+# Stop Code Server:
+sudo systemctl stop code-server@$USER
+
+# Stop and remove any running container:
+docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)
+
+# Run the new project:
+docker-compose up -d
+```
+
+Now you can open your machine's DNS to port 8080:
+
+```bash
+echo "http://$(curl -s -m 0.1 http://169.254.169.254/latest/meta-data/public-hostname):8080"
+```
+
+and get a result similar to the one in this picture:
+
+![Traefik Dashboard](./traefik-dashboard.png)
+
+The next step is to work on this [Docker Compose][docker-compose] project and add more services to it, and to learn how to route them using labels:
+
+```bash
+# Generate the basic Docker Compose project
+cat <<EOT > ~/docker-compose.yml
+version: "3.7"
+services:
+
+  # Traefik Proxy Service
+  traefik:
+    image: traefik:v2.3
+    command:
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=web"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  # A Web Application
+  app1:
+    image: nginx:1.19-alpine
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app1.entrypoints=web"
+      - "traefik.http.routers.app1.rule=PathPrefix(`/`)"
+EOT
+```
+
+> 👉 Please note that for this to work we had to give
+> Traefik direct access to the Docker's socker file
+> in _read-only_ mode.
+
+With this project running, you should be still able to access the Traefik's console at port `8080`, and an _NGiNX welcome page_ at port `80`.
+
+![NGiNX Welcome Page](./nginx-welcome-page.png)
+
+If you click on the `Explore ->` link in the _Routers_ panel, you will end up in a page that lists all the routing rules that Traefik was able to pick up from Docker:
+
+![Traefik HTTP Routers](./traefik-http-routers-first-rule.png)
+
+So far, we we simply managed to route a new container through Traefik (just another container) using only [container's labels](https://adilsoncarvalho.com/use-labels-on-your-docker-images-3abe4477e9f5). It is now time to explore some more interesting possibilities.
+
+With the following [Docker Compose][docker-compose] project we are going to:
+
+1. remove the need for port `8080`  
+   <small>(we want to youse it for [Code Server][code-server], and we don't really want to expose it directly!)</small>
+2. route Traefik's dashboard with Traefik itself
+3. route an NGiNX app as `/app1`
+4. route an Apache app as `/app2`
 
 ```bash
 cat <<EOT > ~/docker-compose.yml
-version: "3.8"
+version: "3.7"
 services:
-#  nginx:
-#    image: nginx:1.19.5-alpine
-#    network_mode: host
-#    volumes:
-#      - "~/nginx.conf:/etc/nginx/conf.d/default.conf"
 
+  # Traefik Proxy Service
   traefik:
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.csi.loadbalancer.server.port=1337"
-#      - "traefik.http.routers.csi-traefik-http.rule=Host(`127.0.0.11`)"
+    image: traefik:v2.3
     command:
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=true"
+      - "--api.dashboard=true"
+      - "--providers.docker.exposedbydefault=false"
       - "--providers.docker.network=web"
       - "--entrypoints.web.address=:80"
-      - "--api.dashboard=true"
     ports:
-      - "80:80"
-      - "8080:8080"
+      - 80:80
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    image: traefik:v2.2
-    network_mode: host
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.traefik.loadbalancer.server.port=1337"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.rule=PathPrefix(`/`)"
+
+  # A Web Application
+  app1:
+    image: nginx:1.19-alpine
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app1.entrypoints=web"
+      - "traefik.http.routers.app1.rule=PathPrefix(`/app1`)"
+      - "traefik.http.routers.app1.middlewares=app1-stripprefix"
+      - "traefik.http.middlewares.app1-stripprefix.stripprefix.prefixes=/app1"
+
+  # Another Web Application
+  app2:
+    image: httpd:2.4.41-alpine
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app2.entrypoints=web"
+      - "traefik.http.routers.app2.rule=PathPrefix(`/app2`)"
+      - "traefik.http.routers.app2.middlewares=app2-stripprefix"
+      - "traefik.http.middlewares.app2-stripprefix.stripprefix.prefixes=/app2"
 EOT
 ```
+
+> 👉 Remember to kill all running containers when you switch to a new project (while following this tutorial)
+
+```bash
+# Stop and remove any running container:
+docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)
+```
+
+Once this is running, you should try to access the following urls:
+
+```bash
+http://your-dns/      -> Traefik console
+http://your-dns/app1  -> NGiNX Welcome Page
+http://your-dns/app2  -> Apache2 welcome page
+```
+
+If you explore again the Router's page you will notice that we have now a few more rules:
+
+![Multiple Routers with Traefik](./traefik-multiple-routers.png)
+
+There are a few points worth of notice here:
+
+1. Traefik is just a containers like others, so we can route it using Traefik's labels
+2. Each containers must define a **unique router name**
+3. We used a `PathPrefix` rule to explain how to rotue requests, but Traefik offers much more than this one
+4. We configured middlewares that stripe away the subpath
+rule that we use to identify a service. This is how we can extend Traefik's capabilities
+
+Long story short, [Traefik][traefik] is really cool and I feel I just started to scratch the surface of it 😎🤟.
+
+## Proxy CodeServer with Traefik
+
+Now that we have the basics for running a reverse proxy and dynamically route traffik through it, it is about time that we setup our project to route CodeServer and the Traefik dashboard so that:
+
+```bash
+http://your-dns/         -> CodeServer IDE
+http://your-dns/traefik  -> Traefik Dashboard
+```
+
+
 
 ## Notes
 
