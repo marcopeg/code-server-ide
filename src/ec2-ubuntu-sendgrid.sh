@@ -42,5 +42,5 @@ then
       "content": [{
           "type": "text/plain", 
           "value": "Server IP: '"${PUBLIC_IP}"'\nServer DNS: https://'"${CODE_SERVER_DNS}"'\nSimple Auth Username: '"${SIMPLE_AUTH_USERNAME}"'\nSimple Auth Password: '"${SIMPLE_AUTH_PASSWORD}"'\nCode Server Password: '"${CODE_SERVER_PASSWORD}"'"
-      }]}'
+      }]}' >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 fi

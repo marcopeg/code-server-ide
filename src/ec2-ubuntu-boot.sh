@@ -16,6 +16,7 @@ echo "[$(date -u)] Booting up..." >> ${CODE_SERVER_LOGS}/setup.log
 sudo systemctl start code-server-ide
 
 # Update DNS entry
+echo "[$(date -u)] Attempt to set up the DNS entries ..." >> ${CODE_SERVER_LOGS}/setup.log
 ${CODE_SERVER_CWD}/src/ec2-ubuntu-dns-cloudflare-upsert.sh
 
 # Start the Docker project:
@@ -27,8 +28,10 @@ fi
 
 # Send welcome email:
 # Awaits for Code Server to generate the password
+echo "[$(date -u)] Attempt to send the Welcome email ..." >> ${CODE_SERVER_LOGS}/setup.log
 until [ -f /home/ubuntu/.config/code-server/config.yaml ]
 do
+  echo "[$(date -u)] Awaiting for code-server/config.yaml ..." >> ${CODE_SERVER_LOGS}/setup.log
   sleep 1
 done
 ${CODE_SERVER_CWD}/src/ec2-ubuntu-sendgrid.sh

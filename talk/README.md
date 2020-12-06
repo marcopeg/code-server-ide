@@ -220,7 +220,123 @@ sudo ln -s /home/ubuntu/.humble-cli/bin/humble.sh /usr/local/bin/humble
 > 👉 The next step would be to leverage Docker so to proxy CodeServer
 > to the standard port `80`...
 
+## Proxy CodeServer with Docker and NGiNX
 
+_Why can't I leave my CodeServer exposed to 8080?_  
+I'm glad you asked. Here are a few reasons:
+
+1. It's simply easier to access it on standard port `80`
+2. With a proxy like [NGiNX][nginx], we could add _SSL protection_ to it
+3. With [NGiNX][nginx] (and some work) we can proxy multiple services
+
+> 👉 In this step we will try to proxy the CodeServer process through
+> [NGiNX][nginx], but later on we will also add [Traefik][traefik] that
+> will make all the configuration a simple docker-based automation.
+
+The beauty of running services via [Docker Compose][docker-compose] is that you can experience the real
+**SaaS - Software as a Software** experience where you
+describe what you want to run and how you want to run it in the form of source files.
+
+```bash
+# Generate the basic configuration for NGiNX
+cat <<EOT > ~/nginx.conf
+server {
+  listen 80;
+  server_name _;
+
+  location / {
+      proxy_pass http://127.0.0.1:8080/;
+      proxy_set_header X-Real-IP \$remote_addr;
+      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+      proxy_set_header Host \$http_host;
+      proxy_set_header X-NginX-Proxy true;
+
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade \$http_upgrade;
+      proxy_set_header Connection "upgrade";
+      proxy_redirect off;
+  }
+}
+EOT
+```
+
+```bash
+# Generate the basic Docker Compose project
+cat <<EOT > ~/docker-compose.yml
+version: "3.7"
+services:
+  nginx:
+    image: nginx:1.19.5-alpine
+    network_mode: host
+    ports:
+      - "80:80"
+    volumes:
+      - "~/nginx.conf:/etc/nginx/conf.d/default.conf"
+EOT
+```
+
+Now you can copy your host's default _DNS_ to your browser:
+
+```bash
+echo "http://$(curl -s -m 0.1 http://169.254.169.254/latest/meta-data/public-hostname)"
+```
+
+And start the [Docker Compose][docker-compose] project:
+
+```bash
+docker-compose up
+```
+
+If everything works fine you should be able to see a screen like the following one:
+
+![CodeServer Login with NGiNX Proxy](./cs-login-proxy-nginx.png)
+
+> 👉 Now that we learned how to proxy [CodeServer][code-server] via
+> [NGiNX][nginx], we can revert the change we made to its configuration
+> and avoid exposing it directly:
+
+```bash
+sed -i 's/0.0.0.0:8080/127.0.0.1:8080/g' ~/.config/code-server/config.yaml
+sudo systemctl restart code-server@$USER
+```
+
+> 👉 In the next step, we'll add [Traefik][traefik] to the 
+> [Docker Compose][docker-compose] project and set it up so to
+> automatically generate a [Letsencrypt][letsencrypt] SSL certificate
+> for our **Cloud Development Environment**.
+
+## Add Traefik and Letsencrypt
+
+```bash
+cat <<EOT > ~/docker-compose.yml
+version: "3.8"
+services:
+#  nginx:
+#    image: nginx:1.19.5-alpine
+#    network_mode: host
+#    volumes:
+#      - "~/nginx.conf:/etc/nginx/conf.d/default.conf"
+
+  traefik:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.csi.loadbalancer.server.port=1337"
+#      - "traefik.http.routers.csi-traefik-http.rule=Host(`127.0.0.11`)"
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=true"
+      - "--providers.docker.network=web"
+      - "--entrypoints.web.address=:80"
+      - "--api.dashboard=true"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    image: traefik:v2.2
+    network_mode: host
+EOT
+```
 
 ## Notes
 
@@ -233,8 +349,11 @@ systemctl list-units --type=service
 lsof -i :8080
 ```
 
+[code-server]: https://github.com/cdr/code-server
 [docker]: https://www.docker.com/
 [traefik]: https://traefik.io/
+[nginx]: https://www.nginx.com/
 [digitalocean]: https://m.do.co/c/0a72735ae62e
 [docker-compose]: https://docs.docker.com/compose/
 [humble]: https://github.com/marcopeg/humble-cli
+[letsencrypt]: https://letsencrypt.org/
