@@ -7,7 +7,7 @@
 - [x] Install Docker, DockerCompose, HumbleCLI
 - [x] Run a simple Traefik instance on port 80 (via DockerCompose)
 - [x] Proxy an NGiNX instance through Traefik (via DockerCompose)
-- [ ] Proxy CodeServer via NGiNX and Traefik (via DockerCompose)
+- [x] Proxy CodeServer via NGiNX and Traefik (via DockerCompose)
 - [ ] Aim a DNS towards the machine using CloudFlare
       (let’s just do it via REST call using Postmand and cURL)
 - [ ] Configure Traefik to generate Letsencrypt certificates (via DockerCompose)
@@ -564,6 +564,150 @@ When everything works fine, you should be able to:
 
 Cool, isn't it?
 
+## Secure your IDE with Letsencrypt 
+
+[Letsencrypt][letsencrypt] is a **non-profit Certificate Authority** that you can easily use in combination with [Traefik][traefik] so [make your web services secure](https://domain.me/what-is-an-ssl-certificate-and-why-is-it-important/).
+
+> It is also a tremendous development benefit as you will be able to test any kind of API or third party that requires `https`.
+
+👉 The thing is, from this momen on **you will need to use a custom _DNS_**. **Letsencrypt [doesn't support EC2 ](https://community.letsencrypt.org/t/policy-forbids-issuing-name-for-aws/95246)**. Luckyly
+
+### Get your machine's Public IP
+
+The first step in the process of setting up a custom domain name is to figure out the machines' Public IP. You can get this information from the EC2's details in AWD Console, otherwise, you can simply run the following command: 
+
+```bash
+echo $(curl -s icanhazip.com)
+```
+
+We are going to use this information in the next step.
+
+### Setup an A Record in your DNS Panel
+
+In case you own a domai name, please use your DNS provider's instruction to setup an `A Record` that points to your machine's IP.
+
+If your provider offers the possibility to add SSL automatically ([CloudFlare][cloudflare] does) please void that option as we are going to protect the machine with Letsencrypt certificates.
+
+### Setup a free 3rd level domain name
+
+In case you **want to use a free domain name**, please:
+
+1. create an account at [Afraid.org][afraid]
+2. navigate to [Subdomains](https://freedns.afraid.org/subdomain/)
+3. create an entry with one of the public domains and aim it to your machine's Public IP
+
+> 👉 It took up to 15 minutes for me to see the DNS propagated with this free service. I suggest you also try to edit and re-save the entry. It worked for me to speed it up.
+
+### Verify your DNS
+
+Once you have configured your DNS, you can test it using [this tool](https://mxtoolbox.com/DNSLookup.aspx). You should get a result like this:
+
+![Check your dns with MX Toolbox](./mxtoolbox-dns-check.png)
+
+### Clear your DNS Cache
+
+If you are running in any headache with local DNS pointing to weird provider's fallback pages, and you are using Chrome, [open the DNS panel](chrome://net-internals/#dns) and click on "Clear host cache".
+
+### Setup Environment Variable
+
+This step will enable us to use environmental variables inside our `docker-compose.yml`, making it a reusable piece of code that is easy to move from project to project.
+
+In order to make the [Letsencrypt][letsencrypt] integration to work properly, we need to setup 2 pieces of information:
+
+1. A valid email to use with the CA
+2. A custom domain that point to the EC2 Instance
+
+Here is an easy way to do it:
+
+```bash
+echo "export CODE_SERVER_EMAIL=foo@bar.com" >> ~/.profile
+echo "export CODE_SERVER_DNS=foo.bar.com" >> ~/.profile
+source ~/.profile
+```
+
+In order to test this, you can simply:
+
+```bash
+echo "${CODE_SERVER_EMAIL} - ${CODE_SERVER_DNS}"
+```
+
+### Run the Docker Compose Project
+
+Finally, with all this preparation steps behind our back, it is time to update the [Docker-Compose] project so to integrate [Traefik] with [Letsencrypt] and enjoy the benefits of SSL 😎.
+
+```bash
+cat <<EOT > ~/docker-compose.yml
+version: "3.7"
+services:
+
+  traefik:
+    image: traefik:v2.3
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=web"
+      - "--entrypoints.http.address=:80"
+      # SSL - Letsencrypt integration
+      - "--entrypoints.https.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.email=${CODE_SERVER_EMAIL}"
+      # Force redirect http->https for every service
+      # (comment to let each service definition the responsability over this detail)
+      - "--entrypoints.http.http.redirections.entrypoint.to=https"
+      - "--entrypoints.http.http.redirections.entrypoint.scheme=https"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt
+    ports:
+      - 80:80
+      - 443:443
+    network_mode: host
+    restart: on-failure
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.traefik-stripprefix.stripprefix.prefixes=/traefik"
+      # HTTP
+      - "traefik.http.services.traefik-http.loadbalancer.server.port=1337"
+      - "traefik.http.routers.traefik-http.entrypoints=http"
+      - "traefik.http.routers.traefik-http.service=api@internal"
+      - "traefik.http.routers.traefik-http.rule=Host(`${CODE_SERVER_DNS}`) && (PathPrefix(`/traefik`) || PathPrefix(`/api`))"
+      - "traefik.http.routers.traefik-http.middlewares=traefik-stripprefix"
+      # HTTPS
+      - "traefik.http.routers.traefik-https.tls=true"
+      - "traefik.http.routers.traefik-https.service=api@internal"
+      - "traefik.http.routers.traefik-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.traefik-https.entrypoints=https"
+      - "traefik.http.routers.traefik-https.rule=Host(`${CODE_SERVER_DNS}`) && (PathPrefix(`/traefik`) || PathPrefix(`/api`))"
+      - "traefik.http.routers.traefik-https.middlewares=traefik-stripprefix"
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    network_mode: host
+    restart: on-failure
+    labels:
+      - "traefik.enable=true"
+      # HTTP
+      - "traefik.http.services.nginx-http.loadbalancer.server.port=8082"
+      - "traefik.http.routers.nginx-http.entrypoints=http"
+      - "traefik.http.routers.nginx-http.rule=PathPrefix(`/`)"
+      # HTTPS
+      - "traefik.http.routers.nginx-https.tls=true"
+      - "traefik.http.routers.nginx-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.nginx-https.entrypoints=https"
+      - "traefik.http.routers.nginx-https.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/`)"
+EOT
+```
+
+The main changes from the previous step are:
+
+- We use _environmental variables_ to pass informations to our [Docker-Compose] project
+- With [Letsencrypt] we must declare a `Host()` rule for which we want to generate a certificate
+- We can use [Traefik]'s flags to set an automatic `http->https` redirect
+- All our containers must declare both `http` and `https` definitions
 
 ## Notes
 
@@ -574,6 +718,7 @@ sudo systemctl restart code-server@$USER
 sudo systemctl disable code-server@$USER
 systemctl list-units --type=service
 lsof -i :8080
+export CODE_IDE_DNS=$(curl -s -m 0.1 http://169.254.169.254/latest/meta-data/public-hostname)
 ```
 
 [code-server]: https://github.com/cdr/code-server
@@ -584,3 +729,5 @@ lsof -i :8080
 [docker-compose]: https://docs.docker.com/compose/
 [humble]: https://github.com/marcopeg/humble-cli
 [letsencrypt]: https://letsencrypt.org/
+[cloudflare]: https://www.cloudflare.com/
+[afraid]: https://freedns.afraid.org/
