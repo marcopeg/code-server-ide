@@ -709,6 +709,93 @@ The main changes from the previous step are:
 - We can use [Traefik]'s flags to set an automatic `http->https` redirect
 - All our containers must declare both `http` and `https` definitions
 
+## Run Wordpress on your Cloud IDE!
+
+The last step would be to use our machine in order to run a completely new service!
+
+> What do you think about running a Wordpress blog?  
+> Well, with Docker of course!
+> 😎
+
+If you search ["docker wordpress" on Google](https://www.google.com/search?q=docker+wordpress), the first result will likely be the [Wordpress' Docker HUB page](https://hub.docker.com/_/wordpress). Running through it you will find a `docker-compose.yml` source that you can use to run the whole system in your development machine:
+
+```yaml
+version: '3.1'
+services:
+  wordpress:
+    image: wordpress
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: exampleuser
+      WORDPRESS_DB_PASSWORD: examplepass
+      WORDPRESS_DB_NAME: exampledb
+    volumes:
+      - wordpress:/var/www/html
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db:/var/lib/mysql
+volumes:
+  wordpress:
+  db:
+```
+
+This is _almost_ ready for working on our machine. So, what do we need to fill it up?
+
+1. A DNS record for our blog, that aims to the machine's Public IP
+2. We can remove the ports, as it will be proxied through [Traefik]
+3. A `labels` section for the service `wordpress` that explains [Traefik] what to do with this service
+
+You can create a free temporary DNS usign the [Afraid].org service, or you can setup your own. Once you are done, here is the [Docker-Compose] project to run and expose a Wordpress service:
+
+```bash
+cat <<EOT > ~/wordpress.yml
+version: "3.7"
+services:
+  wordpress:
+    image: wordpress
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: exampleuser
+      WORDPRESS_DB_PASSWORD: examplepass
+      WORDPRESS_DB_NAME: exampledb
+    labels:
+      - "traefik.enable=true"
+      # HTTP
+      - "traefik.http.routers.wordpress.entrypoints=http"
+      - "traefik.http.routers.wordpress.rule=Host(`${WORDPRESS_DNS}`)"
+      # HTTPS
+      - "traefik.http.routers.wordpresss.tls=true"
+      - "traefik.http.routers.wordpresss.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.wordpresss.entrypoints=https"
+      - "traefik.http.routers.wordpresss.rule=Host(`${WORDPRESS_DNS}`)"
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+EOT
+```
+
+And you run it by passing the DNS you set up:
+
+```bash
+WORDPRESS_DNS=your.dns.mooo.com docker-compose -f wordpress.yml up
+```
+
 ## Notes
 
 ```bash
