@@ -2,39 +2,31 @@ version: "3.7"
 
 services:
   traefik:
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.csi.loadbalancer.server.port=1337"
-      - "traefik.http.routers.csi-traefik-http.rule=Host(`127.0.0.11`)"
-      
-      - "traefik.http.routers.csi-traefik-https.tls=true"
-      - "traefik.http.routers.csi-traefik-https.service=api@internal"
-      - "traefik.http.routers.csi-traefik-https.tls.certresolver=myresolver"
-      - "traefik.http.routers.csi-traefik-https.entrypoints=websecure"
-      - "traefik.http.routers.csi-traefik-https.rule=Host(`traefik.${CODE_SERVER_DNS}`)"
-
-      - "traefik.http.routers.csi-traefik-https.middlewares=auth"
-      - "traefik.http.middlewares.auth.basicauth.usersfile=/basic-auth/.htpasswd"
     command:
       # Exposes Traefik dashboard
       # (comment this to avoid useless security risks)
       - "--api.dashboard=true"
 
+      # Docker Integration
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.docker.network=web"
-      - "--entrypoints.web.address=:80"
+
+      # Entry Points
+      - "--entrypoints.http80.address=:80"
+      - "--entrypoints.http443.address=:443"
+      
+      # SSL - Letsencrypt integration
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=http80"
+      - "--certificatesresolvers.myresolver.acme.email=${CODE_SERVER_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
 
       # Force redirect http->https for every service
       # (comment to let each service definition the responsability over this detail)
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-      
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.myresolver.acme.email=${CODE_SERVER_EMAIL}"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.http80.http.redirections.entrypoint.to=http443"
+      - "--entrypoints.http80.http.redirections.entrypoint.scheme=https"
+
 #      - "--log.level=DEBUG"
 #      - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
     ports:
@@ -47,6 +39,19 @@ services:
     image: traefik:v2.2
     network_mode: host
     restart: on-failure
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.csi.loadbalancer.server.port=1337"
+      - "traefik.http.routers.csi-traefik-http.rule=Host(`127.0.0.11`)"
+      
+      - "traefik.http.routers.csi-traefik-https.tls=true"
+      - "traefik.http.routers.csi-traefik-https.service=api@internal"
+      - "traefik.http.routers.csi-traefik-https.tls.certresolver=myresolver"
+      - "traefik.http.routers.csi-traefik-https.entrypoints=http443"
+      - "traefik.http.routers.csi-traefik-https.rule=Host(`traefik.${CODE_SERVER_DNS}`)"
+
+      - "traefik.http.routers.csi-traefik-https.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.usersfile=/basic-auth/.htpasswd"
 
   nginx:
     labels:
@@ -54,13 +59,13 @@ services:
       - "traefik.http.services.csi-nginx.loadbalancer.server.port=8082"
 
       # Configure basic HTTP mapping
-      # - "traefik.http.routers.csi-nginx-http.entrypoints=web"
+      # - "traefik.http.routers.csi-nginx-http.entrypoints=http80"
       # - "traefik.http.routers.csi-nginx-http.rule=Host(`${CODE_SERVER_DNS}`)"
 
       # Configure HTTPS mapping with automatic Letsencrypt certificate management
       - "traefik.http.routers.csi-nginx-https.tls=true"
       - "traefik.http.routers.csi-nginx-https.tls.certresolver=myresolver"
-      - "traefik.http.routers.csi-nginx-https.entrypoints=websecure"
+      - "traefik.http.routers.csi-nginx-https.entrypoints=http443"
       - "traefik.http.routers.csi-nginx-https.rule=Host(`${CODE_SERVER_DNS}`)"
 
       # Configure automatic redirect HTTP->HTTPS
