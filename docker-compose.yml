@@ -43,16 +43,16 @@ services:
       - "traefik.enable=true"
       - "traefik.http.services.csi.loadbalancer.server.port=1337"
       - "traefik.http.routers.csi-traefik-http.rule=Host(`127.0.0.11`)"
+
+      - "traefik.http.middlewares.csi-traefik-stripprefix.stripprefix.prefixes=/traefik"
+      - "traefik.http.middlewares.csi-traefik-auth.basicauth.usersfile=/basic-auth/.htpasswd"
       
       - "traefik.http.routers.csi-traefik-https.tls=true"
       - "traefik.http.routers.csi-traefik-https.service=api@internal"
       - "traefik.http.routers.csi-traefik-https.tls.certresolver=myresolver"
       - "traefik.http.routers.csi-traefik-https.entrypoints=http443"
-      - "traefik.http.routers.csi-traefik-https.rule=Host(`traefik.${CODE_SERVER_DNS}`)"
-
-      - "traefik.http.routers.csi-traefik-https.middlewares=auth"
-      - "traefik.http.middlewares.auth.basicauth.usersfile=/basic-auth/.htpasswd"
-
+      - "traefik.http.routers.csi-traefik-https.rule=Host(`${CODE_SERVER_DNS}`) && (PathPrefix(`/traefik`) || PathPrefix(`/api`))"
+      - "traefik.http.routers.csi-traefik-https.middlewares=csi-traefik-auth,csi-traefik-stripprefix"
   nginx:
     labels:
       - "traefik.enable=true"
@@ -66,7 +66,8 @@ services:
       - "traefik.http.routers.csi-nginx-https.tls=true"
       - "traefik.http.routers.csi-nginx-https.tls.certresolver=myresolver"
       - "traefik.http.routers.csi-nginx-https.entrypoints=http443"
-      - "traefik.http.routers.csi-nginx-https.rule=Host(`${CODE_SERVER_DNS}`)"
+      # - "traefik.http.routers.csi-nginx-https.rule=Host(`${CODE_SERVER_DNS}`)"
+      - "traefik.http.routers.csi-nginx-https.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/`)"
 
       # Configure automatic redirect HTTP->HTTPS
       # - "traefik.http.routers.csi-nginx-http.middlewares=csi-nginx-redirect"
