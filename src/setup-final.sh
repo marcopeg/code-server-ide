@@ -16,4 +16,9 @@ chown -R ubuntu:ubuntu /home/ubuntu/.ssh >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 # Set custom host name
 hostnamectl set-hostname ${CODE_SERVER_DNS}
 
+# Generate the password into an .htpasswd file for the ide:
+echo "[$(date -u)] Writing Simple Auth .htpasswd..." >> ${CODE_SERVER_LOGS}/setup.log
+touch ${CODE_SERVER_CWD}/data/.htpasswd
+htpasswd -b -c ${CODE_SERVER_CWD}/data/.htpasswd ${SIMPLE_AUTH_USERNAME} ${SIMPLE_AUTH_PASSWORD} >> ${CODE_SERVER_LOGS}/setup.log 2>&1
+
 echo "[$(date -u)] Setup completed" >> ${CODE_SERVER_LOGS}/setup.log
