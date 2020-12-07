@@ -2,23 +2,27 @@ version: "3.7"
 
 services:
   nginx:
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.test-ide1-redirect.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.test-ide1-redirect.redirectscheme.permanent=true"
-      - "traefik.http.middlewares.test-ide1-auth.basicauth.users=test:$$apr1$$jQWtmVhn$$VmHa2pEcahjTSQ4Vyq6pK."
-
-      - "traefik.http.routers.test-ide1.rule=Host(`nginx.${VSCODE_DNS}`)"
-      - "traefik.http.routers.test-ide1.entrypoints=web"
-      - "traefik.http.routers.test-ide1.middlewares=test-ide1-redirect"
-
-      - "traefik.http.routers.test-ide1-secure.rule=Host(`nginx.${VSCODE_DNS}`)"
-      - "traefik.http.routers.test-ide1-secure.entrypoints=websecure"
-      - "traefik.http.routers.test-ide1-secure.tls=true"
-      - "traefik.http.routers.test-ide1-secure.tls.certresolver=myresolver"
-      - "traefik.http.routers.test-ide1-secure.middlewares=test-ide1-auth"
-
     image: nginx
     volumes:
       - ./index.html:/usr/share/nginx/html/index.html:ro
     restart: on-failure
+    labels:
+      - "traefik.enable=true"
+
+      # Configure middlewares:
+      - "traefik.http.middlewares.nginx-custom-auth--prefix.stripprefix.prefixes=/nginx-custom-auth"
+      - "traefik.http.middlewares.nginx-custom-auth--redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.nginx-custom-auth--redirect.redirectscheme.permanent=true"
+      - "traefik.http.middlewares.nginx-custom-auth--auth.basicauth.users=test:$$apr1$$jQWtmVhn$$VmHa2pEcahjTSQ4Vyq6pK."
+
+      # Configure basic HTTP mapping:
+      - "traefik.http.routers.nginx-custom-auth-80.entrypoints=http80"
+      - "traefik.http.routers.nginx-custom-auth-80.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/nginx-custom-auth`)"
+      - "traefik.http.routers.nginx-custom-auth-80.middlewares=nginx-custom-auth--redirect,nginx-custom-auth--prefix"
+
+      # Configure HTTPS mapping with automatic Letsencrypt certificate management
+      - "traefik.http.routers.nginx-custom-auth-443.tls=true"
+      - "traefik.http.routers.nginx-custom-auth-443.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.nginx-custom-auth-443.entrypoints=http443"
+      - "traefik.http.routers.nginx-custom-auth-443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/nginx-custom-auth`)"
+      - "traefik.http.routers.nginx-custom-auth-443.middlewares=nginx-custom-auth--auth,nginx-custom-auth--prefix"

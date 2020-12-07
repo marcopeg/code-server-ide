@@ -24,8 +24,8 @@ services:
 
       # Force redirect http->https for every service
       # (comment to let each service definition the responsability over this detail)
-      - "--entrypoints.http80.http.redirections.entrypoint.to=http443"
-      - "--entrypoints.http80.http.redirections.entrypoint.scheme=https"
+      # - "--entrypoints.http80.http.redirections.entrypoint.to=http443"
+      # - "--entrypoints.http80.http.redirections.entrypoint.scheme=https"
 
 #      - "--log.level=DEBUG"
 #      - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
@@ -45,38 +45,36 @@ services:
       - "traefik.http.routers.csi-traefik-http.rule=Host(`127.0.0.11`)"
 
       - "traefik.http.middlewares.csi-traefik-stripprefix.stripprefix.prefixes=/traefik"
-      - "traefik.http.middlewares.csi-traefik-auth.basicauth.usersfile=/basic-auth/.htpasswd"
+      - "traefik.http.middlewares.csi-basic-auth.basicauth.usersfile=/basic-auth/.htpasswd"
       
       - "traefik.http.routers.csi-traefik-https.tls=true"
       - "traefik.http.routers.csi-traefik-https.service=api@internal"
       - "traefik.http.routers.csi-traefik-https.tls.certresolver=letsencrypt"
       - "traefik.http.routers.csi-traefik-https.entrypoints=http443"
       - "traefik.http.routers.csi-traefik-https.rule=Host(`${CODE_SERVER_DNS}`) && (PathPrefix(`/traefik`) || PathPrefix(`/api`))"
-      - "traefik.http.routers.csi-traefik-https.middlewares=csi-traefik-auth,csi-traefik-stripprefix"
-  nginx:
+      - "traefik.http.routers.csi-traefik-https.middlewares=csi-basic-auth,csi-traefik-stripprefix"
+  
+  code-server:
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.csi-nginx.loadbalancer.server.port=8082"
+      - "traefik.http.services.csi-code-server.loadbalancer.server.port=8082"
+      - "traefik.http.middlewares.csi-code-server--redirect.redirectscheme.permanent=true"
+      - "traefik.http.middlewares.csi-code-server--redirect.redirectscheme.scheme=https"
 
       # Configure basic HTTP mapping
-      # - "traefik.http.routers.csi-nginx-http.entrypoints=http80"
-      # - "traefik.http.routers.csi-nginx-http.rule=Host(`${CODE_SERVER_DNS}`)"
+      - "traefik.http.routers.csi-code-server--80.entrypoints=http80"
+      - "traefik.http.routers.csi-code-server--80.rule=Host(`${CODE_SERVER_DNS}`)"
+      - "traefik.http.routers.csi-code-server--80.middlewares=csi-code-server--redirect"
 
       # Configure HTTPS mapping with automatic Letsencrypt certificate management
-      - "traefik.http.routers.csi-nginx-https.tls=true"
-      - "traefik.http.routers.csi-nginx-https.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.csi-nginx-https.entrypoints=http443"
-      - "traefik.http.routers.csi-nginx-https.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/`)"
-
-      # Configure automatic redirect HTTP->HTTPS
-      # - "traefik.http.routers.csi-nginx-http.middlewares=csi-nginx-redirect"
-      # - "traefik.http.middlewares.csi-nginx-redirect.redirectscheme.permanent=true"
-      # - "traefik.http.middlewares.csi-nginx-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.csi-code-server--443.tls=true"
+      - "traefik.http.routers.csi-code-server--443.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.csi-code-server--443.entrypoints=http443"
+      - "traefik.http.routers.csi-code-server--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/`)"
       
       # Simple Auth
       # (this screws up Code Server on iPad)
-      # - "traefik.http.middlewares.vscode-nginx-auth.basicauth.usersfile=/basic-auth/.htpasswd"
-      # - "traefik.http.routers.vscode-nginx-https.middlewares=vscode-nginx-auth"
+      # - "traefik.http.routers.csi-code-server--443.middlewares=csi-basic-auth"
     volumes:
       - ${CODE_SERVER_CWD}/nginx.conf:/etc/nginx/conf.d/default.conf
       - ${CODE_SERVER_CWD}/data/.htpasswd:/basic-auth/.htpasswd
