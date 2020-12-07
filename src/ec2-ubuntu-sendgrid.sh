@@ -29,6 +29,7 @@ then
   SIMPLE_AUTH_PASSWORD=$(grep "Simple Auth Password" ${CODE_SERVER_LOGS}/setup.log | tail -1)
   SIMPLE_AUTH_PASSWORD=${SIMPLE_AUTH_PASSWORD:53}
 
+
   curl --request POST \
     --url https://api.sendgrid.com/v3/mail/send \
     --header "Authorization: Bearer $SENDGRID_API_KEY" \
@@ -41,6 +42,6 @@ then
       "subject": "Welcome to Code Server IDE",
       "content": [{
           "type": "text/plain", 
-          "value": "Server IP: '"${PUBLIC_IP}"'\nServer DNS: https://'"${CODE_SERVER_DNS}"'\nSimple Auth Username: '"${SIMPLE_AUTH_USERNAME}"'\nSimple Auth Password: '"${SIMPLE_AUTH_PASSWORD}"'\nCode Server Password: '"${CODE_SERVER_PASSWORD}"'"
+          "value": "IPv4: '"${PUBLIC_IP}"'\nDNS: '"${CODE_SERVER_DNS}"'\n\nCODE SERVER PASSWORD:\n'"${CODE_SERVER_PASSWORD}"'\n\nSIMPLE AUTH:\nUsername: '"${SIMPLE_AUTH_USERNAME}"'\nPassword: '"${SIMPLE_AUTH_PASSWORD}"'\n\nOpen Code Server IDE:\nhttp://'"${CODE_SERVER_DNS}"'\n\nOpen Traefik Daskboard:\nhttps://'"${CODE_SERVER_DNS}"'/traefik"
       }]}' >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 fi
