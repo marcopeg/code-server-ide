@@ -46,6 +46,8 @@ services:
 
       - "traefik.http.middlewares.csi-traefik-stripprefix.stripprefix.prefixes=/traefik"
       - "traefik.http.middlewares.csi-basic-auth.basicauth.usersfile=/basic-auth/.htpasswd"
+      - "traefik.http.middlewares.csi-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.csi-redirect.redirectscheme.permanent=true"
       
       - "traefik.http.routers.csi-traefik-https.tls=true"
       - "traefik.http.routers.csi-traefik-https.service=api@internal"

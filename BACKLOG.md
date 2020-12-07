@@ -19,6 +19,10 @@
       https://github.com/bcicen/ctop
 - [ ] .htaccess becomes a folder and screws the traefik service
 - [ ] cloudflare and boot logs get owned by root
+- [ ] improve examples readme -- wordpress
+- [ ] improve examples readme -- nginx-no-auth
+- [ ] improve examples readme -- nginx-ide-auth
+- [ ] improve examples readme -- nginx-custom-auth
 
 # Known Issues
 

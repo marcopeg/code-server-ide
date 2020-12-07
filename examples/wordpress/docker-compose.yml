@@ -1,0 +1,30 @@
+version: "3.7"
+services:
+  wordpress:
+    image: wordpress
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: exampleuser
+      WORDPRESS_DB_PASSWORD: examplepass
+      WORDPRESS_DB_NAME: exampledb
+    labels:
+      - "traefik.enable=true"
+      # Configure HTTP mapping:
+      - "traefik.http.routers.wordpress-80.entrypoints=http80"
+      - "traefik.http.routers.wordpress-80.rule=Host(`wp.${CODE_SERVER_DNS}`)"
+      - "traefik.http.routers.wordpress-80.middlewares=csi-redirect"
+      # Configure HTTPS mapping with automatic Letsencrypt certificate management
+      - "traefik.http.routers.wordpress-443.tls=true"
+      - "traefik.http.routers.wordpress-443.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.wordpress-443.entrypoints=http443"
+      - "traefik.http.routers.wordpress-443.rule=Host(`wp.${CODE_SERVER_DNS}`)"
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
