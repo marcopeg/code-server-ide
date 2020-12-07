@@ -66,7 +66,6 @@ services:
       - "traefik.http.routers.csi-nginx-https.tls=true"
       - "traefik.http.routers.csi-nginx-https.tls.certresolver=myresolver"
       - "traefik.http.routers.csi-nginx-https.entrypoints=http443"
-      # - "traefik.http.routers.csi-nginx-https.rule=Host(`${CODE_SERVER_DNS}`)"
       - "traefik.http.routers.csi-nginx-https.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/`)"
 
       # Configure automatic redirect HTTP->HTTPS
