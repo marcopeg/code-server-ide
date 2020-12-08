@@ -1,0 +1,30 @@
+version: "2.1"
+services:
+  cra-container:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.cra-container--redirect.redirectscheme.permanent=true"
+      - "traefik.http.middlewares.cra-container--redirect.redirectscheme.scheme=https"
+
+      # Configure basic HTTP mapping
+      - "traefik.http.routers.cra-container--80.entrypoints=http80"
+      - "traefik.http.routers.cra-container--80.rule=Host(`cra.${CODE_SERVER_DNS}`)"
+      - "traefik.http.routers.cra-container--80.middlewares=cra-container--redirect"
+
+      # Configure HTTPS mapping with automatic Letsencrypt certificate management
+      - "traefik.http.routers.cra-container--443.tls=true"
+      - "traefik.http.routers.cra-container--443.entrypoints=http443"
+      - "traefik.http.routers.cra-container--443.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.cra-container--443.rule=Host(`cra.${CODE_SERVER_DNS}`)"
+    image: node:12.2
+    volumes:
+      - ./package.json:/usr/src/app/package.json:delegated
+      - ./package-lock.json:/usr/src/app/package-lock.json:delegated
+      - ./public:/usr/src/app/public:delegated
+      - ./src:/usr/src/app/src:delegated
+    working_dir: /usr/src/app
+    entrypoint: ["npm", "run", "start:compose"]
+    expose:
+      - 3000
+    # stdin_open: true
+    # tty: true
