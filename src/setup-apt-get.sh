@@ -8,4 +8,4 @@ source "$(dirname "$0")/setup-profile.sh"
 echo "[$(date -u)] Updating apt-get..." >> ${CODE_SERVER_LOGS}/setup.log
 apt-get update -y >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 echo "[$(date -u)] Installing basic utilities via apt-get..." >> ${CODE_SERVER_LOGS}/setup.log
-apt-get install jq apache2-utils unzip -y >> ${CODE_SERVER_LOGS}/setup.log 2>&1
+apt-get install jq apache2-utils unzip make -y >> ${CODE_SERVER_LOGS}/setup.log 2>&1
