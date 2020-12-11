@@ -187,17 +187,10 @@ When you want to remove the proxy, just type:
 cs proxy down -p 3000
 ```
 
-## Run a simple website with NGiNX on Docker
+## Run some examples to get acquainted
 
-[[ TO BE COMPLETED ]]
-
-## Protect your services with Simple Auth
-
-[[ TO BE COMPLETED ]]
-
-## Add Letsencrypt SSL to your Services
-
-[[ TO BE COMPLETED ]]
+Take a look at the `examples` folders, where you can find a few apps that
+run in Docker and get automatically proxied through Traefik.
 
 
 

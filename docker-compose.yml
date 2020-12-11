@@ -60,18 +60,16 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.csi-code-server.loadbalancer.server.port=40002"
-      - "traefik.http.middlewares.csi-code-server--redirect.redirectscheme.permanent=true"
-      - "traefik.http.middlewares.csi-code-server--redirect.redirectscheme.scheme=https"
 
       # Configure basic HTTP mapping
       - "traefik.http.routers.csi-code-server--80.entrypoints=http80"
+      - "traefik.http.routers.csi-code-server--80.middlewares=csi-redirect"
       - "traefik.http.routers.csi-code-server--80.rule=Host(`${CODE_SERVER_DNS}`)"
-      - "traefik.http.routers.csi-code-server--80.middlewares=csi-code-server--redirect"
 
       # Configure HTTPS mapping with automatic Letsencrypt certificate management
       - "traefik.http.routers.csi-code-server--443.tls=true"
-      - "traefik.http.routers.csi-code-server--443.tls.certresolver=letsencrypt"
       - "traefik.http.routers.csi-code-server--443.entrypoints=http443"
+      - "traefik.http.routers.csi-code-server--443.tls.certresolver=letsencrypt"
       - "traefik.http.routers.csi-code-server--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/`)"
       
       # Simple Auth
