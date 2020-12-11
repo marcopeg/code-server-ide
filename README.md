@@ -144,6 +144,18 @@ In a few minutes your system should be up and running, and a new _SSL_ certifica
 > **👉 RE-ENABLE AUTO START:**  
 > When everything works, you should change the value of `CODE_SERVER_AUTO_START` to `yes` (or simply remove the variable) from `~/code-server-ide/.env` so that your IDE will start automatically in case you restart the EC2 machine.
 
+## Fix Cmd+Z or Ctrl+Z
+
+The default configuration has an issue with that keyboard shortcut that could be easily fixed
+by a change of configuration:
+
+1. Open: `File > Preferences > Settings`
+2. Search: `keyboard.dispatch`
+3. Set: `keyCode`
+
+Now, it should work fine.  
+<small>[You can find the issue page here](https://github.com/cdr/code-server/issues/1477).</small>
+
 ## Proxy any process throgh HTTPS
 
 You can run any process on the host's machine (aka: NodeJS or anything else) and easily proxy it
