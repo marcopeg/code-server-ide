@@ -144,6 +144,37 @@ In a few minutes your system should be up and running, and a new _SSL_ certifica
 > **👉 RE-ENABLE AUTO START:**  
 > When everything works, you should change the value of `CODE_SERVER_AUTO_START` to `yes` (or simply remove the variable) from `~/code-server-ide/.env` so that your IDE will start automatically in case you restart the EC2 machine.
 
+## Proxy any process throgh HTTPS
+
+You can run any process on the host's machine (aka: NodeJS or anything else) and easily proxy it
+so to get an _https_ enabled DNS automatically.
+
+**Step 1:** start a NodeJS App:
+
+```bash
+npx create-react-app foobar
+cd foobar
+npm start
+```
+
+**Step 2:** proxy it:
+
+```bash
+cs proxy up -p 3000
+```
+
+The proxy will be available at:
+
+```
+https://p3000.your.website.com
+```
+
+When you want to remove the proxy, just type:
+
+```bash
+cs proxy down -p 3000
+```
+
 ## Run a simple website with NGiNX on Docker
 
 [[ TO BE COMPLETED ]]
