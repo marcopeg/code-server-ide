@@ -15,7 +15,7 @@ function up() {
     read PROXY_PORT
   fi
   
-  echo "Running a proxy on port ${PROXY_PORT}"
+  echo "Running a proxy on port ${PROXY_PORT}" >> ${CODE_SERVER_LOGS}/cs.log
   docker run -d \
     --name csi-p${PROXY_PORT} \
     --network host \
@@ -33,8 +33,10 @@ function up() {
     -l traefik.http.routers.csi-p${PROXY_PORT}--443.entrypoints=http443 \
     -l traefik.http.routers.csi-p${PROXY_PORT}--443.tls.certresolver=letsencrypt \
     -l traefik.http.routers.csi-p${PROXY_PORT}--443.rule=Host\(\`p${PROXY_PORT}.${CODE_SERVER_DNS}\`\) \
-    marcopeg/nginx-proxy:0.0.1
+    marcopeg/nginx-proxy:0.0.2 >> ${CODE_SERVER_LOGS}/cs.log 2>&1
 
+  echo "New proxy to port ${PROXY_PORT} available at:"
+  echo "https://p${PROXY_PORT}.${CODE_SERVER_DNS}"
   exit 0
 }
 
@@ -44,9 +46,11 @@ function down() {
     read PROXY_PORT
   fi
 
-  echo "Removing proxy on port ${PROXY_PORT}"
-  docker stop csi-p${PROXY_PORT}
-  docker rm csi-p${PROXY_PORT}
+  echo "Removing proxy on port ${PROXY_PORT}" >> ${CODE_SERVER_LOGS}/cs.log
+  docker stop csi-p${PROXY_PORT} >> ${CODE_SERVER_LOGS}/cs.log 2>&1
+  docker rm csi-p${PROXY_PORT} >> ${CODE_SERVER_LOGS}/cs.log 2>&1
+
+  echo "Proxy to port ${PROXY_PORT} successfully removed"
   exit 0
 }
 
