@@ -104,7 +104,7 @@ services:
       # https://community.traefik.io/t/fixed-how-to-add-the-missing-trailing-slash-redirectregex-stripprefixregex-no-need-for-replacepathregex/3816
       - "traefik.http.middlewares.csi-netdata--trailingslash.replacepathregex.regex=^/netdata(.*)"
       - "traefik.http.middlewares.csi-netdata--trailingslash.replacepathregex.replacement=/netdata/$$1"
-    image: netdata/netdata
+    image: netdata/netdata:1.26.0
     hostname: ${CODE_SERVER_DNS}
     cap_add:
       - SYS_PTRACE
