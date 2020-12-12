@@ -38,7 +38,8 @@ Here is what you get:
   - [Make]
   - [Ctop]
   - [NVM], [NodeJS], [NPM]
-  - [AWS CLI]
+  - [dotNET] SDK & Framework
+  - [AWS-CLI]
   - [NetData]
   - [FileBrowser]
 
@@ -290,3 +291,4 @@ run in Docker and get automatically proxied through Traefik.
 [aws cli]: https://aws.amazon.com/cli/
 [make]: https://en.wikipedia.org/wiki/Make_(software)
 [filebrowser]: https://filebrowser.org/
+[dotnet]: https://dotnet.microsoft.com/
