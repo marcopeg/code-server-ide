@@ -27,8 +27,8 @@ services:
       # - "--entrypoints.http80.http.redirections.entrypoint.to=http443"
       # - "--entrypoints.http80.http.redirections.entrypoint.scheme=https"
 
-#      - "--log.level=DEBUG"
-#      - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      #      - "--log.level=DEBUG"
+      #      - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
     ports:
       - 80:80
       - 443:443
@@ -104,7 +104,7 @@ services:
       # https://community.traefik.io/t/fixed-how-to-add-the-missing-trailing-slash-redirectregex-stripprefixregex-no-need-for-replacepathregex/3816
       - "traefik.http.middlewares.csi-netdata--trailingslash.replacepathregex.regex=^/netdata(.*)"
       - "traefik.http.middlewares.csi-netdata--trailingslash.replacepathregex.replacement=/netdata/$$1"
-    image: netdata/netdata:1.26.0
+    image: netdata/netdata:v1.26.0
     hostname: ${CODE_SERVER_DNS}
     cap_add:
       - SYS_PTRACE
@@ -123,3 +123,31 @@ services:
       # - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: on-failure
     
+  filebrowser:
+    image: filebrowser/filebrowser:v2.10.0
+    volumes:
+      - /home/ubuntu:/srv
+    command:
+      - "--baseurl=/filebrowser"
+      - "--noauth"
+    labels:
+      - "traefik.enable=true"
+
+      # Configure basic HTTP mapping
+      - "traefik.http.routers.csi-filebrowser--80.entrypoints=http80"
+      - "traefik.http.routers.csi-filebrowser--80.middlewares=csi-redirect"
+      - "traefik.http.routers.csi-filebrowser--80.rule=Host(`${CODE_SERVER_DNS}`)"
+
+      # Configure HTTPS mapping with automatic Letsencrypt certificate management
+      - "traefik.http.routers.csi-filebrowser--443.tls=true"
+      - "traefik.http.routers.csi-filebrowser--443.entrypoints=http443"
+      - "traefik.http.routers.csi-filebrowser--443.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.csi-filebrowser--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/filebrowser`)"
+      - "traefik.http.routers.csi-filebrowser--443.middlewares=csi-basic-auth,csi-filebrowser--stripprefix,csi-filebrowser--trailingslash"
+
+      # Configure Middlewares
+      - "traefik.http.middlewares.csi-filebrowser--stripprefix.stripprefix.prefixes=/filebrowser"
+      # Try to automatically add the trailing slash (not yet working)
+      # https://community.traefik.io/t/fixed-how-to-add-the-missing-trailing-slash-redirectregex-stripprefixregex-no-need-for-replacepathregex/3816
+      - "traefik.http.middlewares.csi-filebrowser--trailingslash.replacepathregex.regex=^/filebrowser(.*)"
+      - "traefik.http.middlewares.csi-filebrowser--trailingslash.replacepathregex.replacement=/filebrowser/$$1"

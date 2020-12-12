@@ -20,6 +20,7 @@ Here is what you get:
 - [VSCode] running in a browser
 - An automatic reverse proxy for [Docker] containers and local processes
 - Real-time monitoring with [NetData]
+- File system management FUI with [FileBrowser]
 - Automatic DNS updates with [CloudFlare]
 - A _CLI_ that helps performing lot of tasks:
   - Start/stop/restart services
@@ -31,12 +32,15 @@ Here is what you get:
   - Update DNS
   - Update the IDE
 - Lot of pre-installed software:
+  - [Code-Server]
   - [Docker]
   - [Docker-Compose]
   - [Make]
   - [Ctop]
   - [NVM], [NodeJS], [NPM]
   - [AWS CLI]
+  - [NetData]
+  - [FileBrowser]
 
 
 ## What do I need to try this out?
@@ -231,6 +235,34 @@ cs stop netdata
 
 Yes, it is that simple 😎.
 
+## Run the File System GUI
+
+It's often useful to have a _GUI_ to walk through files and folders, upload and download stuff.
+[FileBrowser] is a very decent tool for that, and works fine in Docker.
+
+Take advantage of the _CLI_ to run this service:
+
+```bash
+cs start filebrowser
+```
+
+then go to:
+
+```bash
+# The trailing slash is important!
+https://your.development.box/filebrowser/
+```
+
+and when you want to stop it:
+
+```bash
+cs stop filebrowser
+```
+
+> **👉 NOTE:** This service has full access to your home folder.  
+> 
+> I strongly suggest you keep it running only while you need it and **then you stop it**.
+
 ## Run some examples to get acquainted
 
 Take a look at the `examples` folders, where you can find a few apps that
@@ -257,3 +289,4 @@ run in Docker and get automatically proxied through Traefik.
 [ubuntu]: https://ubuntu.com/
 [aws cli]: https://aws.amazon.com/cli/
 [make]: https://en.wikipedia.org/wiki/Make_(software)
+[filebrowser]: https://filebrowser.org/

@@ -12,7 +12,7 @@ set +o allexport
 # Collect command line arguments:
 while [ "$#" -ne 0 ] ; do
   case "$1" in
-    ide|netdata)
+    ide|netdata|filebrowser)
       CMD="$1"
       shift
       ;;
@@ -27,7 +27,7 @@ if [ -z ${CMD+x} ]
 then
   echo "Which service do you feel like stopping?"
   PS3='Pick a number:'
-  options=("Code Server IDE" "NetData")
+  options=("Code Server IDE" "NetData" "FileBrowser")
   select opt in "${options[@]}"
   do
     case $opt in
@@ -37,6 +37,10 @@ then
         ;;
       "NetData")
         CMD=netdata
+        break
+        ;;
+      "FileBrowser")
+        CMD=filebrowser
         break
         ;;
       *) echo "invalid option";;
@@ -58,6 +62,13 @@ case ${CMD} in
     echo "[$(date -u)] Stopping NetData" >> ${CODE_SERVER_LOGS}/cs.log
     docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml stop netdata >> ${CODE_SERVER_LOGS}/cs.log 2>&1
     docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml rm -f netdata >> ${CODE_SERVER_LOGS}/cs.log 2>&1
+    echo "done!"
+    ;;
+  "filebrowser")
+    echo "[$(date -u)] Stopping Filebrowser..."
+    echo "[$(date -u)] Stopping Filebrowser" >> ${CODE_SERVER_LOGS}/cs.log
+    docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml stop filebrowser >> ${CODE_SERVER_LOGS}/cs.log 2>&1
+    docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml rm -f filebrowser >> ${CODE_SERVER_LOGS}/cs.log 2>&1
     echo "done!"
     ;;
   *) echo "invalid option";;

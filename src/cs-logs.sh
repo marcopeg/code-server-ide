@@ -32,6 +32,14 @@ else
                 CMD=traefik
                 break
                 ;;
+            "NetData")
+                CMD=netdata
+                break
+                ;;
+            "FileBrowser")
+                CMD=filebrowser
+                break
+                ;;
             "IDE Setup logs")
                 CMD=setup
                 break
@@ -62,6 +70,12 @@ case ${CMD} in
         ;;
     "traefik")
         (cd ${CODE_SERVER_CWD} && humble logs -f traefik ${@:2})
+        ;;
+    "netdata")
+        (cd ${CODE_SERVER_CWD} && humble logs -f netdata ${@:2})
+        ;;
+    "filebrowser")
+        (cd ${CODE_SERVER_CWD} && humble logs -f filebrowser ${@:2})
         ;;
     "setup")
         tail ${@:2} ${CODE_SERVER_LOGS}/${CMD}.log
