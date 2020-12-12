@@ -6,6 +6,34 @@ Hello friend, and welcome to the **Code Server IDE** project.
 > **cloud based development environment** 
 > with [VSCode][vscode] as main UI 😎.
 
+## What do I get, if I keep reading?
+
+You will get a virtual machine that is ready for **any kind of development** you can possibly do on a Linux machine. 
+
+You can **link your machine to a custom DNS** like `dev.yourname.com` and **expose any service you are working on** as `service.dev.yourname.com` with both `http` and `https` interfaces thanks to the [Letsencrypt] integration. You can access your IDE from different browsers on different devices and everything will stay in sync, this way you will be able to enjoy **endless multiple screens**.
+
+You can stop your virtual machine when you don't need it, and you can change its power at any time adjusting it to the task you're about to perform. This means **you will use money wisely**, when you need it, for the task at hand.
+
+Here is what you get:
+
+- Your fully dedicated Linux machine running [Ubuntu]
+- [VSCode] running in a browser
+- An automatic reverse proxy for [Docker] containers and local processes
+- Real-time monitoring with [NetData]
+- Automatic DNS updates with [CloudFlare]
+- A _CLI_ that helps performing lot of tasks:
+  - Start/stop services
+  - Create _https enabled_ proxies to your local processes
+  - Access logs
+- Lot of pre-installed software:
+  - [Docker]
+  - [Docker-Compose]
+  - [Make]
+  - [Ctop]
+  - [NVM], [NodeJS], [NPM]
+  - [AWS CLI]
+
+
 ## What do I need to try this out?
 
 In order to follow this tutorial and get to the final result, I suggest you get prepared with:
@@ -23,32 +51,18 @@ You should also consider this desired skills:
 - You should setup your [Sendgrid][sendgrid] account and retrieve a valid `API KEY`
 - You may want to proxy your domain name through [CloudFlare][cloudflare] and retrieve an `API KEY` and `ZONE ID`
 
-## What will I get out of this?
-
-You will get a virtual machine that is ready for **any kind of development** you can possibly do on a Linux machine. 
-
-You can **link your machine to a custom DNS** like `dev.yourname.com` and **expose any service you are working on** as `service.dev.yourname.com` with both `http` and `https` interfaces. You can access your IDE from different browsers on different devices and everything will stay in sync, this way you will be able to enjoy **endless multiple screens**.
-
-You can stop your virtual machine when you don't need it, and you can change its power at any time. This means **you will use money wisely**, when you need it, for the task at hand.
-
-You will be able to:
-
-- Edit files using [Code Server][code-server] on a browser
-- Run [Docker][docker] containers
-- Run [Docker Compose][docker-compose] projects
-- Use [CTOP][ctop] to monitor and control your running containers
-- Install and switch between different versions of Nodejs using [NVM][nvm]
-- Code in [NodeJS][nodejs]
-- Interact with AWS using [AWS CLI v2][aws-cli]
-- Proxy Code Server through ports `80` and `443` using [NGiNX][nginx] _(via Docker)_
-- Automagically setup secure DNS using [Traefik][traefik] and [Letsencrypt][letsencrypt] _(via Docker)_
-- Push to private repos using SSH authentication
-
 ## Step By Step Tutorial
 
 ### Security Group
 
-Cloud Server IDE uses ports `80` and `443` that should be accessible from anywhere for the [Letsencrypt][letsencrypt] integration to take place smoothly.
+Cloud Server IDE, you  uses ports `80` and `443` that should be have an even easier time:
+
+```bash
+cs start netdata
+
+then go to:```a
+
+ccessible from anywhere for the [Letsencrypt][letsencrypt] integration to take place smoothly.
 
 You should also open up port `22` in case you need to access your machine via _ssh_.  
 <small>(This is needed in case you configure your _DNS_ manually)</small>
@@ -187,6 +201,31 @@ When you want to remove the proxy, just type:
 cs proxy down -p 3000
 ```
 
+## Run Real Time Monitoring
+
+If you are a little bit like me, you want to know what's going on in your machine. [Ctop] helps out a bit with [Docker] containers, but you may be running plenty more processes on the OS.
+
+[NetData] is among the coolest data-collection tools I've found online. And it's easy to run it in Docker. With Cloud Server IDE, you have an even easier time:
+
+```bash
+cs start netdata
+```
+
+then go to:
+
+```bash
+# The trailing slash is important!
+https://your.development.box/netdata/
+```
+
+and when you want to stop it:
+
+```bash
+cs stop netdata
+```
+
+Yes, it is that simple 😎.
+
 ## Run some examples to get acquainted
 
 Take a look at the `examples` folders, where you can find a few apps that
@@ -204,7 +243,12 @@ run in Docker and get automatically proxied through Traefik.
 [traefik]: https://traefik.io/
 [nvm]: https://github.com/nvm-sh/nvm "Node Version Manager"
 [nodejs]: https://nodejs.org/
+[npm]: https://www.npmjs.com/
 [aws-cli]: https://aws.amazon.com/cli/ "AWS Command Line Interface"
 [sendgrid]: https://sendgrid.com/
 [letsencrypt]: https://letsencrypt.org/
 [ctop]: https://github.com/bcicen/ctop
+[netdata]: https://www.netdata.cloud/
+[ubuntu]: https://ubuntu.com/
+[aws cli]: https://aws.amazon.com/cli/
+[make]: https://en.wikipedia.org/wiki/Make_(software)

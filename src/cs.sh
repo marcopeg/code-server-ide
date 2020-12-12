@@ -80,22 +80,13 @@ case ${CMD} in
         ${CODE_SERVER_CWD}/src/cs-dns.sh ${@:2}
         ;;
     "start")
-        echo "[$(date -u)] Starting IDE" >> ${CODE_SERVER_LOGS}/cs.log
-        sudo systemctl start code-server-ide
-        docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml up -d
+        ${CODE_SERVER_CWD}/src/cs-start.sh ${@:2}
         ;;
     "stop")
-        echo "[$(date -u)] Stopping IDE" >> ${CODE_SERVER_LOGS}/cs.log
-        docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml down
-        sudo systemctl stop code-server-ide
+        ${CODE_SERVER_CWD}/src/cs-stop.sh ${@:2}
         ;;
     "restart")
-        echo "[$(date -u)] Stopping IDE" >> ${CODE_SERVER_LOGS}/cs.log
-        docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml down
-        sudo systemctl stop code-server-ide
-        echo "[$(date -u)] Starting IDE" >> ${CODE_SERVER_LOGS}/cs.log
-        sudo systemctl start code-server-ide
-        docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml up -d
+        ${CODE_SERVER_CWD}/src/cs-restart.sh ${@:2}
         ;;
     "status")
         sudo systemctl status code-server-ide

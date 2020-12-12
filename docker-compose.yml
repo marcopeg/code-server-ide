@@ -81,3 +81,45 @@ services:
      - NGINX_UPSTREAM_PORT=40001
     network_mode: host
     restart: on-failure
+
+  netdata:
+    labels:
+      - "traefik.enable=true"
+
+      # Configure basic HTTP mapping
+      - "traefik.http.routers.csi-netdata--80.entrypoints=http80"
+      - "traefik.http.routers.csi-netdata--80.middlewares=csi-redirect"
+      - "traefik.http.routers.csi-netdata--80.rule=Host(`${CODE_SERVER_DNS}`)"
+
+      # Configure HTTPS mapping with automatic Letsencrypt certificate management
+      - "traefik.http.routers.csi-netdata--443.tls=true"
+      - "traefik.http.routers.csi-netdata--443.entrypoints=http443"
+      - "traefik.http.routers.csi-netdata--443.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.csi-netdata--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/netdata`)"
+      - "traefik.http.routers.csi-netdata--443.middlewares=csi-basic-auth,csi-netdata--stripprefix,csi-netdata--trailingslash"
+
+      # Configure Middlewares
+      - "traefik.http.middlewares.csi-netdata--stripprefix.stripprefix.prefixes=/netdata"
+      # Try to automatically add the trailing slash (not yet working)
+      # https://community.traefik.io/t/fixed-how-to-add-the-missing-trailing-slash-redirectregex-stripprefixregex-no-need-for-replacepathregex/3816
+      - "traefik.http.middlewares.csi-netdata--trailingslash.replacepathregex.regex=^/netdata(.*)"
+      - "traefik.http.middlewares.csi-netdata--trailingslash.replacepathregex.replacement=/netdata/$$1"
+    image: netdata/netdata
+    hostname: ${CODE_SERVER_DNS}
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      # @TODO: map to local data folder
+      # - netdataconfig:/etc/netdata
+      # - netdatalib:/var/lib/netdata
+      # - netdatacache:/var/cache/netdata
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      # - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: on-failure
+    
