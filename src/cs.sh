@@ -20,7 +20,7 @@ then
     CMD=${1}
 else
     PS3='Please enter your choice: '
-    options=("Start IDE" "Stop IDE" "Restart IDE" "Get CodeServer Status" "Read logs" "Get info about this machine" "Change password" "Update DNS entries on CloudFlare" "Update Code Server IDE" "Manage proxies" "Cancel")
+    options=("Start IDE" "Stop IDE" "Restart IDE" "Manage proxies" "Kill process ad port" "Get CodeServer Status" "Read logs" "Get info about this machine" "Change password" "Update DNS entries on CloudFlare" "Update Code Server IDE" "Cancel")
     select opt in "${options[@]}"
     do
         case $opt in
@@ -34,6 +34,14 @@ else
                 ;;
             "Restart IDE")
                 CMD=restart
+                break
+                ;;
+            "Manage proxies")
+                CMD=proxy
+                break
+                ;;
+            "Kill process ad port")
+                CMD=kill
                 break
                 ;;
             "Get CodeServer Status")
@@ -58,10 +66,6 @@ else
                 ;;
             "Update Code Server IDE")
                 CMD=update
-                break
-                ;;
-            "Manage proxies")
-                CMD=proxy
                 break
                 ;;
             "Cancel")
@@ -106,6 +110,9 @@ case ${CMD} in
         ;;
     "proxy")
         ${CODE_SERVER_CWD}/src/cs-proxy.sh ${@:2}
+        ;;
+    "kill")
+        ${CODE_SERVER_CWD}/src/cs-kill.sh ${@:2}
         ;;
     "cancel")
         echo "Goobye."

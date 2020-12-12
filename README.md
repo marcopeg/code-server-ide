@@ -22,9 +22,14 @@ Here is what you get:
 - Real-time monitoring with [NetData]
 - Automatic DNS updates with [CloudFlare]
 - A _CLI_ that helps performing lot of tasks:
-  - Start/stop services
-  - Create _https enabled_ proxies to your local processes
+  - Start/stop/restart services
   - Access logs
+  - Get generic info such IP or machine's DNS
+  - Create _https enabled_ proxies to your local processes
+  - Kill a running process on a specific port
+  - Change password
+  - Update DNS
+  - Update the IDE
 - Lot of pre-installed software:
   - [Docker]
   - [Docker-Compose]
