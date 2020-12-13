@@ -17,6 +17,8 @@ echo "[$(date -u)] Adding .NET 5.0 SDK..." >> ${CODE_SERVER_LOGS}/setup.log
 apt-get update >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 apt-get install -y apt-transport-https >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 apt-get update >> ${CODE_SERVER_LOGS}/setup.log 2>&1
+apt-get install -y dotnet-sdk-2.1 >> ${CODE_SERVER_LOGS}/setup.log 2>&1
+apt-get install -y dotnet-sdk-3.1 >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 apt-get install -y dotnet-sdk-5.0 >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 
 echo "[$(date -u)] Adding .NET 5.0 Runtime..." >> ${CODE_SERVER_LOGS}/setup.log
