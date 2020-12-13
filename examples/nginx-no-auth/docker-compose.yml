@@ -1,5 +1,4 @@
 version: "3.7"
-
 services:
   nginx:
     image: nginx
@@ -9,19 +8,17 @@ services:
     labels:
       - "traefik.enable=true"
 
-      # Configure middlewares:
-      - "traefik.http.middlewares.nginx-no-auth--prefix.stripprefix.prefixes=/nginx-no-auth"
-      - "traefik.http.middlewares.nginx-no-auth--redirect.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.nginx-no-auth--redirect.redirectscheme.permanent=true"
-
       # Configure basic HTTP mapping:
-      - "traefik.http.routers.nginx-no-auth-80.entrypoints=http80"
-      - "traefik.http.routers.nginx-no-auth-80.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/nginx-no-auth`)"
-      - "traefik.http.routers.nginx-no-auth-80.middlewares=nginx-no-auth--redirect,nginx-no-auth--prefix"
+      - "traefik.http.routers.nginx-no-auth--80.entrypoints=http80"
+      - "traefik.http.routers.nginx-no-auth--80.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/nginx-no-auth`)"
+      - "traefik.http.routers.nginx-no-auth--80.middlewares=csi-redirect"
 
       # Configure HTTPS mapping with automatic Letsencrypt certificate management
-      - "traefik.http.routers.nginx-no-auth-443.tls=true"
-      - "traefik.http.routers.nginx-no-auth-443.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.nginx-no-auth-443.entrypoints=http443"
-      - "traefik.http.routers.nginx-no-auth-443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/nginx-no-auth`)"
-      - "traefik.http.routers.nginx-no-auth-443.middlewares=nginx-no-auth--prefix"
+      - "traefik.http.routers.nginx-no-auth--443.tls=true"
+      - "traefik.http.routers.nginx-no-auth--443.entrypoints=http443"
+      - "traefik.http.routers.nginx-no-auth--443.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.nginx-no-auth--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/nginx-no-auth`)"
+      - "traefik.http.routers.nginx-no-auth--443.middlewares=nginx-no-auth--prefix"
+
+      # Configure middlewares:
+      - "traefik.http.middlewares.nginx-no-auth--prefix.stripprefix.prefixes=/nginx-no-auth"

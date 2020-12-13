@@ -1,0 +1,23 @@
+version: "3.7"
+services:
+  dotnet:
+    image: mcr.microsoft.com/dotnet/sdk:3.1
+    expose:
+      - 5000
+    volumes:
+      - ./myWebApp:/app
+    working_dir: /app
+    command: ["dotnet", "watch", "run"]
+    labels:
+      - "traefik.enable=true"
+
+      # Configure basic HTTP mapping:
+      - "traefik.http.routers.aspdotnet--80.entrypoints=http80"
+      - "traefik.http.routers.aspdotnet--80.rule=Host(`aspdotnet.${CODE_SERVER_DNS}`)"
+      - "traefik.http.routers.aspdotnet--80.middlewares=csi-redirect"
+
+      # Configure HTTPS mapping with automatic Letsencrypt certificate management
+      - "traefik.http.routers.aspdotnet--443.tls=true"
+      - "traefik.http.routers.aspdotnet--443.entrypoints=http443"
+      - "traefik.http.routers.aspdotnet--443.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.aspdotnet--443.rule=Host(`aspdotnet.${CODE_SERVER_DNS}`)"
