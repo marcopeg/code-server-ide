@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "sfyc39AnE9SVt7SouaZQ/wyC0kTRnbka+i9Cr9ym+ewk3GuXFLmRC/dw2B46XdYDGpRl2EdIkxVINB1I1e2NBg==",
+  "dgSpecHash": "77zpxYAAhggNmRHv6p9rlRYw+EFqmdTlq2toHU7VuZIYcWrGWtjsifpKWgOmKRTvpiYBP1aAQvnIzxxF5ekF8A==",
   "success": true,
   "projectFilePath": "/home/ubuntu/code-server-ide/examples/aspdotnet/myWebApp/myWebApp.csproj",
   "expectedPackageFiles": [],
