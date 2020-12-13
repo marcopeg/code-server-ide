@@ -25,7 +25,7 @@ Type=simple
 User=ubuntu
 Environment=SHELL=/bin/bash
 Environment=CODE_SERVER_CWD=${CODE_SERVER_CWD}
-ExecStart=/usr/bin/code-server --bind-addr 127.0.0.1:40001
+ExecStart=/usr/bin/code-server --no-auth --bind-addr 127.0.0.1:40001
 Restart=always
 
 [Install]

@@ -1,0 +1,39 @@
+version: "3.7"
+services:
+  csi-auth:
+    image: node:12.2
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+    volumes:
+      - ./package.json:/usr/src/app/package.json:delegated
+      - ./package-lock.json:/usr/src/app/package-lock.json:delegated
+      - ./index.js:/usr/src/app/index.js:delegated
+      - ${CODE_SERVER_CWD}/data/passwd:/passwd
+    environment:
+      - "BASE_URL=https://${CODE_SERVER_DNS}/auth/passwd"
+    working_dir: /usr/src/app
+    entrypoint: ["npm", "run", "compose:start"]
+    # healthcheck:
+    #   test: ["CMD", "wget", "-qO", "-", "http://auth-server:4000/healthz"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 20
+    labels:
+      - "traefik.enable=true"
+
+      # Configure basic HTTP mapping:
+      - "traefik.http.routers.csi-auth--80.entrypoints=http80"
+      - "traefik.http.routers.csi-auth--80.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/auth/passwd`)"
+      - "traefik.http.routers.csi-auth--80.middlewares=csi-redirect"
+
+      # Configure HTTPS mapping with automatic Letsencrypt certificate management
+      - "traefik.http.routers.csi-auth--443.tls=true"
+      - "traefik.http.routers.csi-auth--443.entrypoints=http443"
+      - "traefik.http.routers.csi-auth--443.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.csi-auth--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/auth/passwd`)"
+      - "traefik.http.routers.csi-auth--443.middlewares=csi-auth--prefix"
+
+      # Configure middlewares:
+      - "traefik.http.middlewares.csi-auth--prefix.stripprefix.prefixes=/auth/passwd"

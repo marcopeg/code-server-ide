@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+  csi-auth:
+    image: marcopeg/auth-passwd:0.0.1
+    restart: always
+    volumes:
+      - ${CODE_SERVER_CWD}/data/passwd:/passwd
+    environment:
+      - "BASE_URL=https://${CODE_SERVER_DNS}/auth/passwd"
+    labels:
+      - "traefik.enable=true"
+
+      # Configure basic HTTP mapping:
+      - "traefik.http.routers.csi-auth--80.entrypoints=http80"
+      - "traefik.http.routers.csi-auth--80.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/auth/passwd`)"
+      - "traefik.http.routers.csi-auth--80.middlewares=csi-redirect"
+
+      # Configure HTTPS mapping with automatic Letsencrypt certificate management
+      - "traefik.http.routers.csi-auth--443.tls=true"
+      - "traefik.http.routers.csi-auth--443.entrypoints=http443"
+      - "traefik.http.routers.csi-auth--443.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.csi-auth--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/auth/passwd`)"
+      - "traefik.http.routers.csi-auth--443.middlewares=csi-auth--prefix"
+
+      # Configure middlewares:
+      - "traefik.http.middlewares.csi-auth--prefix.stripprefix.prefixes=/auth/passwd"

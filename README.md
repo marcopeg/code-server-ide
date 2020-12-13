@@ -269,6 +269,22 @@ cs stop filebrowser
 Take a look at the `examples` folders, where you can find a few apps that
 run in Docker and get automatically proxied through Traefik.
 
+## Troubleshooting
+
+### NodeJS - Nodemon fails to start
+
+Using Nodemon caused the following error:
+
+```
+[nodemon] Internal watch failed: ENOSPC: System limit for number of file watchers reached, watch '/home/ubuntu/projects/tmp/auth-server'
+```
+
+Found the following solution [from this Stackoverflow](https://stackoverflow.com/questions/34662574/node-js-getting-error-nodemon-internal-watch-failed-watch-enospc):
+
+```bash
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+```
+
 
 
 
