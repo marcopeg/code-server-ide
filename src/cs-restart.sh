@@ -55,7 +55,7 @@ case ${CMD} in
     docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml stop auth-passwd code-server traefik >> ${CODE_SERVER_LOGS}/cs.log 2>&1
     docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml rm -f auth-passwd code-server traefik >> ${CODE_SERVER_LOGS}/cs.log 2>&1
     sudo systemctl start code-server-ide >> ${CODE_SERVER_LOGS}/cs.log 2>&1
-    docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml up -d traefik code-server >> ${CODE_SERVER_LOGS}/cs.log 2>&1
+    docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml up -d auth-passwd traefik code-server >> ${CODE_SERVER_LOGS}/cs.log 2>&1
     echo ""
     echo "Code Server IDE will be available shortly at:"
     echo "https://${CODE_SERVER_DNS}"

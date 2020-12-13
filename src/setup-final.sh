@@ -23,7 +23,6 @@ htpasswd -b -c ${CODE_SERVER_CWD}/data/.htpasswd ${SIMPLE_AUTH_USERNAME} ${SIMPL
 
 # Generate default auth/passwd
 echo "[$(date -u)] Writing Auth/passwd default password..." >> ${CODE_SERVER_LOGS}/setup.log
-touch ${CODE_SERVER_DATA}/passwd >> ${CODE_SERVER_LOGS}/setup.log 2>&1
-echo "admin" > ${CODE_SERVER_DATA}/passwd
+echo "admin" > ${CODE_SERVER_CWD}/data/passwd
 
 echo "[$(date -u)] Setup completed" >> ${CODE_SERVER_LOGS}/setup.log
