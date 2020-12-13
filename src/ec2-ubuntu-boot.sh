@@ -23,7 +23,7 @@ ${CODE_SERVER_CWD}/src/ec2-ubuntu-dns-cloudflare-upsert.sh
 # This phase needs the DNS in place for Letsencrypt to work properly
 if [ "no" != "${CODE_SERVER_AUTO_START}" ];
 then
-  (cd ${CWD} && docker-compose -f ${CWD}/docker-compose.yml up -d traefik auth-passwd code-server)
+  docker-compose -f ${CWD}/docker-compose.yml up -d auth-passwd traefik code-server
 fi
 
 # Send welcome email:

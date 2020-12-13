@@ -45,11 +45,6 @@ services:
       - "traefik.http.services.csi.loadbalancer.server.port=1337"
       - "traefik.http.routers.csi-traefik-http.rule=Host(`127.0.0.11`)"
 
-      - "traefik.http.middlewares.csi-basic-auth.basicauth.usersfile=/basic-auth/.htpasswd"
-      - "traefik.http.middlewares.csi-auth-passwd.forwardauth.address=https://${CODE_SERVER_DNS}"
-      - "traefik.http.middlewares.csi-redirect.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.csi-redirect.redirectscheme.permanent=true"
-      
       - "traefik.http.routers.csi-traefik-https.tls=true"
       - "traefik.http.routers.csi-traefik-https.entrypoints=http443"
       - "traefik.http.routers.csi-traefik-https.tls.certresolver=letsencrypt"
@@ -57,6 +52,10 @@ services:
       - "traefik.http.routers.csi-traefik-https.middlewares=csi-traefik-stripprefix,csi-auth-passwd"
       - "traefik.http.routers.csi-traefik-https.rule=Host(`${CODE_SERVER_DNS}`) && (PathPrefix(`/traefik`) || PathPrefix(`/api`))"
   
+      - "traefik.http.middlewares.csi-basic-auth.basicauth.usersfile=/basic-auth/.htpasswd"
+      - "traefik.http.middlewares.csi-auth-passwd.forwardauth.address=https://${CODE_SERVER_DNS}"
+      - "traefik.http.middlewares.csi-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.csi-redirect.redirectscheme.permanent=true"
       - "traefik.http.middlewares.csi-traefik-stripprefix.stripprefix.prefixes=/traefik"
 
   auth-passwd:
@@ -67,6 +66,8 @@ services:
     environment:
       - "BASE_URL=https://${CODE_SERVER_DNS}"
       - "COOKIE_DOMAIN=${CODE_SERVER_DNS}"
+    ports:
+      - 9000:8080
     labels:
       - "traefik.enable=true"
 
@@ -79,12 +80,7 @@ services:
       - "traefik.http.routers.auth-passwd--443.tls=true"
       - "traefik.http.routers.auth-passwd--443.entrypoints=http443"
       - "traefik.http.routers.auth-passwd--443.tls.certresolver=letsencrypt"
-      # - "traefik.http.routers.auth-passwd--443.middlewares=auth-passwd--ratelimit"
-      - "traefik.http.routers.auth-passwd--443.rule=Host(`${CODE_SERVER_DNS}`)"
-
-      # Configure middlewares:
-      # - "traefik.http.middlewares.auth-passwd--ratelimit.ratelimit.average=60"
-      # - "traefik.http.middlewares.auth-passwd--ratelimit.ratelimit.burst=60"
+      - "traefik.http.routers.auth-passwd--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/`)"
 
   code-server:
     labels:
@@ -100,7 +96,7 @@ services:
       - "traefik.http.routers.csi-code-server--443.tls=true"
       - "traefik.http.routers.csi-code-server--443.entrypoints=http443"
       - "traefik.http.routers.csi-code-server--443.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.csi-code-server--443.middlewares=csi-code-server--stripprefix,csi-auth-passwd"
+      - "traefik.http.routers.csi-code-server--443.middlewares=csi-auth-passwd,csi-code-server--stripprefix"
       - "traefik.http.routers.csi-code-server--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/code-server`)"
 
       - "traefik.http.middlewares.csi-code-server--stripprefix.stripprefix.prefixes=/code-server"
@@ -110,6 +106,37 @@ services:
      - NGINX_UPSTREAM_PORT=40001
     network_mode: host
     restart: on-failure
+
+  filebrowser:
+    image: filebrowser/filebrowser:v2.10.0
+    volumes:
+      - /home/ubuntu:/srv
+    command:
+      - "--baseurl=/filebrowser"
+      - "--noauth"
+    labels:
+      - "traefik.enable=true"
+
+      # Configure basic HTTP mapping
+      - "traefik.http.routers.csi-filebrowser--80.entrypoints=http80"
+      - "traefik.http.routers.csi-filebrowser--80.middlewares=csi-redirect"
+      - "traefik.http.routers.csi-filebrowser--80.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/filebrowser`)"
+
+      # Configure HTTPS mapping with automatic Letsencrypt certificate management
+      - "traefik.http.routers.csi-filebrowser--443.tls=true"
+      - "traefik.http.routers.csi-filebrowser--443.entrypoints=http443"
+      - "traefik.http.routers.csi-filebrowser--443.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.csi-filebrowser--443.middlewares=csi-auth-passwd"
+      - "traefik.http.routers.csi-filebrowser--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/filebrowser`)"
+
+      # Configure Middlewares
+      # - "traefik.http.middlewares.csi-filebrowser--auth.forwardauth.address=https://${CODE_SERVER_DNS}"
+      # - "traefik.http.middlewares.csi-filebrowser--stripprefix.stripprefix.prefixes=/filebrowser"
+      # Try to automatically add the trailing slash (not yet working)
+      # https://community.traefik.io/t/fixed-how-to-add-the-missing-trailing-slash-redirectregex-stripprefixregex-no-need-for-replacepathregex/3816
+      # - "traefik.http.middlewares.csi-filebrowser--trailingslash.replacepathregex.regex=^/filebrowser(.*)"
+      # - "traefik.http.middlewares.csi-filebrowser--trailingslash.replacepathregex.replacement=/filebrowser/$$1"
+
 
   netdata:
     labels:
@@ -125,14 +152,14 @@ services:
       - "traefik.http.routers.csi-netdata--443.entrypoints=http443"
       - "traefik.http.routers.csi-netdata--443.tls.certresolver=letsencrypt"
       - "traefik.http.routers.csi-netdata--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/netdata`)"
-      - "traefik.http.routers.csi-netdata--443.middlewares=csi-netdata--stripprefix,csi-netdata--trailingslash,csi-auth-passwd"
+      - "traefik.http.routers.csi-netdata--443.middlewares=csi-netdata--stripprefix,csi-auth-passwd"
 
       # Configure Middlewares
       - "traefik.http.middlewares.csi-netdata--stripprefix.stripprefix.prefixes=/netdata"
       # Try to automatically add the trailing slash (not yet working)
       # https://community.traefik.io/t/fixed-how-to-add-the-missing-trailing-slash-redirectregex-stripprefixregex-no-need-for-replacepathregex/3816
-      - "traefik.http.middlewares.csi-netdata--trailingslash.replacepathregex.regex=^/netdata(.*)"
-      - "traefik.http.middlewares.csi-netdata--trailingslash.replacepathregex.replacement=/netdata/$$1"
+      # - "traefik.http.middlewares.csi-netdata--trailingslash.replacepathregex.regex=^/netdata(.*)"
+      # - "traefik.http.middlewares.csi-netdata--trailingslash.replacepathregex.replacement=/netdata/$$1"
     image: netdata/netdata:v1.26.0
     hostname: ${CODE_SERVER_DNS}
     cap_add:
@@ -152,31 +179,4 @@ services:
       # - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: on-failure
     
-  filebrowser:
-    image: filebrowser/filebrowser:v2.10.0
-    volumes:
-      - /home/ubuntu:/srv
-    command:
-      - "--baseurl=/filebrowser"
-      - "--noauth"
-    labels:
-      - "traefik.enable=true"
-
-      # Configure basic HTTP mapping
-      - "traefik.http.routers.csi-filebrowser--80.entrypoints=http80"
-      - "traefik.http.routers.csi-filebrowser--80.middlewares=csi-redirect"
-      - "traefik.http.routers.csi-filebrowser--80.rule=Host(`${CODE_SERVER_DNS}`)"
-
-      # Configure HTTPS mapping with automatic Letsencrypt certificate management
-      - "traefik.http.routers.csi-filebrowser--443.tls=true"
-      - "traefik.http.routers.csi-filebrowser--443.entrypoints=http443"
-      - "traefik.http.routers.csi-filebrowser--443.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.csi-filebrowser--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/filebrowser`)"
-      - "traefik.http.routers.csi-filebrowser--443.middlewares=csi-filebrowser--stripprefix,csi-filebrowser--trailingslash,csi-auth-passwd"
-
-      # Configure Middlewares
-      - "traefik.http.middlewares.csi-filebrowser--stripprefix.stripprefix.prefixes=/filebrowser"
-      # Try to automatically add the trailing slash (not yet working)
-      # https://community.traefik.io/t/fixed-how-to-add-the-missing-trailing-slash-redirectregex-stripprefixregex-no-need-for-replacepathregex/3816
-      - "traefik.http.middlewares.csi-filebrowser--trailingslash.replacepathregex.regex=^/filebrowser(.*)"
-      - "traefik.http.middlewares.csi-filebrowser--trailingslash.replacepathregex.replacement=/filebrowser/$$1"
+  
