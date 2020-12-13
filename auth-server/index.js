@@ -23,7 +23,8 @@ const createLoginPage = (request, tpl) => {
   const { message, action } = tpl
 
   return `
-    ${message}
+    <h4>CodeServerIDE</h4>
+    <pre>${message}</pre>
     <form method="post" action="${action}">
       <input name="passwd" type="password" />
       <input name="referral" type="hidden" value="${referral}" />
@@ -36,10 +37,23 @@ const createConfirmPage = (request, tpl) => {
   const { referral } = tpl;
 
   return `
-    <meta http-equiv="refresh" content="2;url=${referral}" />
+    <meta http-equiv="refresh" content="0;url=${referral}/" />
+    <h4>CodeServerIDE</h4>
     <b>Login succeeded!</b><br>
     You will be redirected within 2 seconds.<br />
     <a href="${referral}">If you are in a hurry, click here.</a>
+  `
+}
+
+const createWelcomePage = (request, tpl) => {
+  return `
+    <h4>CodeServerIDE</h4>
+    <ul>
+      <li><a target="_blank" href="/code-server/">Open VSCode</a></li>
+      <li><a target="_blank" href="/traefik/">Open Traefik</a></li>
+      <li><a target="_blank" href="/filebrowser/">Open Filebrowser</a></li>
+      <li><a target="_blank" href="/netdata/">Open NetData</a></li>
+    </ul>
   `
 }
 
@@ -55,7 +69,7 @@ const homePageHandler = async (request, reply) => {
       return;
     }
 
-    reply.send(`+ok`);
+    reply.code(200).type('text/html').send(createWelcomePage(request, {}));
   } else {
     reply.code(401).type('text/html').send(createLoginPage(request, {
       message: "Hello user, please login:",
