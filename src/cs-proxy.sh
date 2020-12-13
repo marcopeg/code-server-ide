@@ -24,11 +24,9 @@ function up() {
     -e NGINX_UPSTREAM_PORT=${PROXY_PORT} \
     -l traefik.enable=true \
     -l traefik.http.services.csi-p${PROXY_PORT}.loadbalancer.server.port=5${PROXY_PORT} \
-    -l traefik.http.middlewares.csi-p${PROXY_PORT}--redirect.redirectscheme.permanent=true \
-    -l traefik.http.middlewares.csi-p${PROXY_PORT}--redirect.redirectscheme.scheme=https \
     -l traefik.http.routers.csi-p${PROXY_PORT}--80.entrypoints=http80 \
     -l traefik.http.routers.csi-p${PROXY_PORT}--80.rule=Host\(\`p${PROXY_PORT}.${CODE_SERVER_DNS}\`\) \
-    -l traefik.http.routers.csi-p${PROXY_PORT}--80.middlewares=csi-code-server--redirect \
+    -l traefik.http.routers.csi-p${PROXY_PORT}--80.middlewares=csi-redirect \
     -l traefik.http.routers.csi-p${PROXY_PORT}--443.tls=true \
     -l traefik.http.routers.csi-p${PROXY_PORT}--443.entrypoints=http443 \
     -l traefik.http.routers.csi-p${PROXY_PORT}--443.tls.certresolver=letsencrypt \
