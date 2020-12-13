@@ -79,12 +79,12 @@ services:
       - "traefik.http.routers.auth-passwd--443.tls=true"
       - "traefik.http.routers.auth-passwd--443.entrypoints=http443"
       - "traefik.http.routers.auth-passwd--443.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.auth-passwd--443.middlewares=auth-passwd--ratelimit"
+      # - "traefik.http.routers.auth-passwd--443.middlewares=auth-passwd--ratelimit"
       - "traefik.http.routers.auth-passwd--443.rule=Host(`${CODE_SERVER_DNS}`)"
 
       # Configure middlewares:
-      - "traefik.http.middlewares.auth-passwd--ratelimit.ratelimit.average=60"
-      - "traefik.http.middlewares.auth-passwd--ratelimit.ratelimit.burst=60"
+      # - "traefik.http.middlewares.auth-passwd--ratelimit.ratelimit.average=60"
+      # - "traefik.http.middlewares.auth-passwd--ratelimit.ratelimit.burst=60"
 
   code-server:
     labels:
