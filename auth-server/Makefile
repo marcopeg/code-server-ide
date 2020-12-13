@@ -2,11 +2,11 @@ all: run
 
 name ?= auth-passwd
 registry ?= marcopeg
-version ?= 0.0.1
+version ?= 0.0.7
 
 image:
 	$(call blue, "Building docker image...")
-	docker build --no-cache -t ${registry}/${name}:${version} -f Dockerfile .
+	docker build -t ${registry}/${name}:${version} -f Dockerfile .
 	docker tag ${registry}/${name}:${version} ${registry}/${name}:latest
 	$(MAKE) clean
 

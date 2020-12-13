@@ -59,12 +59,13 @@ services:
       - "traefik.http.routers.csi-traefik-https.rule=Host(`${CODE_SERVER_DNS}`) && (PathPrefix(`/traefik`) || PathPrefix(`/api`))"
   
   csi-auth-passwd:
-    image: marcopeg/auth-passwd:0.0.1
+    image: marcopeg/auth-passwd:0.0.7
     restart: always
     volumes:
       - ${CODE_SERVER_CWD}/data/passwd:/passwd
     environment:
       - "BASE_URL=https://${CODE_SERVER_DNS}/auth/passwd"
+      - "COOKIE_DOMAIN=${CODE_SERVER_DNS}"
     labels:
       - "traefik.enable=true"
 

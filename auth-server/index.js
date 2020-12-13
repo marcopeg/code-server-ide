@@ -68,15 +68,15 @@ const homePageHandler = async (request, reply) => {
 const loginHandler = async (request, reply) => {
   try {
     // The password is willfully read every time so it is possible to change it on the fly
-    const passwd = fs.readFileSync(request.getConfig('auth.source'), 'utf8');
+    const passwd = fs.readFileSync(request.getConfig('auth.source'), 'utf8').trim();
     
     if (passwd === request.body.passwd) {
       reply
-        .setCookie("auth", `${Date.now}`, {
+        .setCookie("auth", `${Date.now()}`, {
           httpOnly: true,
           secure: true,
           signed: true,
-          domain: 'dev.marcopeg.com',
+          domain: request.getConfig('fastify.cookie.domain'),
           path: '/'
         })
         .code(200)
@@ -85,6 +85,7 @@ const loginHandler = async (request, reply) => {
           referral: request.body.referral,
         }));
     } else {
+      // console.log(`expected: "${passwd}", received: "${request.body.passwd}"`)
       reply.code(401).type('text/html').send(createLoginPage(request, {
         message: "Login failed",
         referral: request.body.referral,
@@ -108,12 +109,13 @@ const loginHandler = async (request, reply) => {
 const env = envalid.cleanEnv(process.env, {
   BASE_URL: envalid.url(),
   PASSWD_FILE_PATH: envalid.str({ default: '/passwd' }),
+  COOKIE_DOMAIN: envalid.str(),
   COOKIE_SECRET: envalid.str({ 
     default: generator.generate({
       length: 10,
       numbers: true
     }) 
-  })
+  }),
 });
 
 runHookApp({
@@ -122,6 +124,7 @@ runHookApp({
     fastify: {
       cookie: {
         secret: env.COOKIE_SECRET,
+        domain: env.COOKIE_DOMAIN,
       }
     },
     auth: {
