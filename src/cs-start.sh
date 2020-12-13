@@ -53,7 +53,7 @@ case ${CMD} in
     echo "Starting IDE..."
     echo "[$(date -u)] Starting IDE" >> ${CODE_SERVER_LOGS}/cs.log
     sudo systemctl start code-server-ide >> ${CODE_SERVER_LOGS}/cs.log 2>&1
-    docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml up -d traefik code-server >> ${CODE_SERVER_LOGS}/cs.log 2>&1
+    docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml up -d traefik auth-passwd code-server >> ${CODE_SERVER_LOGS}/cs.log 2>&1
     echo ""
     echo "Code Server IDE will be available shortly at:"
     echo "https://${CODE_SERVER_DNS}"

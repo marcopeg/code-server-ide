@@ -52,8 +52,8 @@ case ${CMD} in
   "ide")
     echo "[$(date -u)] Stopping IDE..."
     echo "[$(date -u)] Stopping IDE" >> ${CODE_SERVER_LOGS}/cs.log
-    docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml stop code-server traefik >> ${CODE_SERVER_LOGS}/cs.log 2>&1
-    docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml rm -f code-server traefik >> ${CODE_SERVER_LOGS}/cs.log 2>&1
+    docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml stop auth-passwd code-server traefik >> ${CODE_SERVER_LOGS}/cs.log 2>&1
+    docker-compose -f ${CODE_SERVER_CWD}/docker-compose.yml rm -f auth-passwd code-server traefik >> ${CODE_SERVER_LOGS}/cs.log 2>&1
     sudo systemctl stop code-server-ide >> ${CODE_SERVER_LOGS}/cs.log 2>&1
     echo "done!"
     ;;

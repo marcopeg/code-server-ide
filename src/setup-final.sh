@@ -21,4 +21,8 @@ echo "[$(date -u)] Writing Simple Auth .htpasswd..." >> ${CODE_SERVER_LOGS}/setu
 touch ${CODE_SERVER_CWD}/data/.htpasswd
 htpasswd -b -c ${CODE_SERVER_CWD}/data/.htpasswd ${SIMPLE_AUTH_USERNAME} ${SIMPLE_AUTH_PASSWORD} >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 
+# Generate default auth/passwd
+echo "[$(date -u)] Writing Auth/passwd default password..." >> ${CODE_SERVER_LOGS}/setup.log
+echo "admin" > ${CODE_SERVER_DATA}/passwd
+
 echo "[$(date -u)] Setup completed" >> ${CODE_SERVER_LOGS}/setup.log

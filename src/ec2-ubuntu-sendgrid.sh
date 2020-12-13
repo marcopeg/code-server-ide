@@ -20,8 +20,7 @@ then
   PUBLIC_IP=$(curl -s -m 0.1 http://169.254.169.254/latest/meta-data/public-ipv4)
   PUBLIC_IP=${PUBLIC_IP:-$(curl -s icanhazip.com)}
 
-  CODE_SERVER_PASSWORD=$(grep "password:" /home/ubuntu/.config/code-server/config.yaml | tail -1)
-  CODE_SERVER_PASSWORD=${CODE_SERVER_PASSWORD:10}
+  AUTH_PASSWD=$(cat ${CODE_SERVER_DATA}/passwd)
 
   SIMPLE_AUTH_USERNAME=$(grep "Simple Auth Username" ${CODE_SERVER_LOGS}/setup.log | tail -1)
   SIMPLE_AUTH_USERNAME=${SIMPLE_AUTH_USERNAME:53}
@@ -42,6 +41,6 @@ then
       "subject": "Welcome to Code Server IDE",
       "content": [{
           "type": "text/plain", 
-          "value": "IPv4: '"${PUBLIC_IP}"'\nDNS: '"${CODE_SERVER_DNS}"'\n\nCODE SERVER PASSWORD:\n'"${CODE_SERVER_PASSWORD}"'\n\nSIMPLE AUTH:\nUsername: '"${SIMPLE_AUTH_USERNAME}"'\nPassword: '"${SIMPLE_AUTH_PASSWORD}"'\n\nOpen Code Server IDE:\nhttp://'"${CODE_SERVER_DNS}"'\n\nOpen Traefik Daskboard:\nhttps://'"${CODE_SERVER_DNS}"'/traefik"
+          "value": "IPv4: '"${PUBLIC_IP}"'\nDNS: '"${CODE_SERVER_DNS}"'\n\nAUTH PASSWD:\n'"${AUTH_PASSWD}"'\n\nSIMPLE AUTH:\nUsername: '"${SIMPLE_AUTH_USERNAME}"'\nPassword: '"${SIMPLE_AUTH_PASSWORD}"'\n\nOpen Code Server IDE:\nhttp://'"${CODE_SERVER_DNS}"'\n\nOpen Traefik Daskboard:\nhttps://'"${CODE_SERVER_DNS}"'/traefik"
       }]}' >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 fi

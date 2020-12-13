@@ -58,7 +58,7 @@ services:
       - "traefik.http.routers.csi-traefik-https.middlewares=csi-traefik-stripprefix,csi-auth-passwd"
       - "traefik.http.routers.csi-traefik-https.rule=Host(`${CODE_SERVER_DNS}`) && (PathPrefix(`/traefik`) || PathPrefix(`/api`))"
   
-  csi-auth-passwd:
+  auth-passwd:
     image: marcopeg/auth-passwd:0.0.7
     restart: always
     volumes:
@@ -70,19 +70,19 @@ services:
       - "traefik.enable=true"
 
       # Configure basic HTTP mapping:
-      - "traefik.http.routers.csi-auth-passwd--80.entrypoints=http80"
-      - "traefik.http.routers.csi-auth-passwd--80.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/auth/passwd`)"
-      - "traefik.http.routers.csi-auth-passwd--80.middlewares=csi-redirect"
+      - "traefik.http.routers.auth-passwd--80.entrypoints=http80"
+      - "traefik.http.routers.auth-passwd--80.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/auth/passwd`)"
+      - "traefik.http.routers.auth-passwd--80.middlewares=csi-redirect"
 
       # Configure HTTPS mapping with automatic Letsencrypt certificate management
-      - "traefik.http.routers.csi-auth-passwd--443.tls=true"
-      - "traefik.http.routers.csi-auth-passwd--443.entrypoints=http443"
-      - "traefik.http.routers.csi-auth-passwd--443.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.csi-auth-passwd--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/auth/passwd`)"
-      - "traefik.http.routers.csi-auth-passwd--443.middlewares=csi-auth-passwd--prefix"
+      - "traefik.http.routers.auth-passwd--443.tls=true"
+      - "traefik.http.routers.auth-passwd--443.entrypoints=http443"
+      - "traefik.http.routers.auth-passwd--443.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.auth-passwd--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/auth/passwd`)"
+      - "traefik.http.routers.auth-passwd--443.middlewares=auth-passwd--prefix"
 
       # Configure middlewares:
-      - "traefik.http.middlewares.csi-auth-passwd--prefix.stripprefix.prefixes=/auth/passwd"
+      - "traefik.http.middlewares.auth-passwd--prefix.stripprefix.prefixes=/auth/passwd"
 
   code-server:
     labels:
