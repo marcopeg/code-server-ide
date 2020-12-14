@@ -21,4 +21,5 @@ echo "[$(date -u)] Writing Simple Auth .htpasswd..." >> ${CODE_SERVER_LOGS}/setu
 touch ${CODE_SERVER_CWD}/data/.htpasswd
 htpasswd -b -c ${CODE_SERVER_CWD}/data/.htpasswd ${SIMPLE_AUTH_USERNAME} ${SIMPLE_AUTH_PASSWORD} >> ${CODE_SERVER_LOGS}/setup.log 2>&1
 
-echo "[$(date -u)] Setup completed" >> ${CODE_SERVER_LOGS}/setup.log
+echo "[$(date -u)] Setup completed, rebooting" >> ${CODE_SERVER_LOGS}/setup.log
+reboot

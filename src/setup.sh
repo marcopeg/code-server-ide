@@ -17,4 +17,3 @@ source "${CODE_SERVER_SETUP_SRC_CWD}/setup-final.sh"
 
 # First boot:
 # source "${CODE_SERVER_SETUP_SRC_CWD}/ec2-ubuntu-boot.sh"
-reboot
