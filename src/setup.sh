@@ -16,5 +16,4 @@ source "${CODE_SERVER_SETUP_SRC_CWD}/setup-software-aws-cli.sh"
 source "${CODE_SERVER_SETUP_SRC_CWD}/setup-final.sh"
 
 # First boot:
-# source "${CODE_SERVER_SETUP_SRC_CWD}/ec2-ubuntu-boot.sh"
-reboot
+source "${CODE_SERVER_SETUP_SRC_CWD}/ec2-ubuntu-boot.sh"
