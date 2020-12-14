@@ -30,9 +30,6 @@ services:
 
       #      - "--log.level=DEBUG"
       #      - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-    ports:
-      - 80:80
-      - 443:443
     volumes:
       - ${CODE_SERVER_CWD}/data/letsencrypt:/letsencrypt
       - ${CODE_SERVER_CWD}/data/.htpasswd:/basic-auth/.htpasswd
@@ -49,11 +46,11 @@ services:
       - "traefik.http.routers.csi-traefik-https.entrypoints=http443"
       - "traefik.http.routers.csi-traefik-https.tls.certresolver=letsencrypt"
       - "traefik.http.routers.csi-traefik-https.service=api@internal"
-      - "traefik.http.routers.csi-traefik-https.middlewares=csi-traefik-stripprefix,csi-auth-passwd"
+      - "traefik.http.routers.csi-traefik-https.middlewares=csi-auth-passwd,csi-traefik-stripprefix"
       - "traefik.http.routers.csi-traefik-https.rule=Host(`${CODE_SERVER_DNS}`) && (PathPrefix(`/traefik`) || PathPrefix(`/api`))"
   
       - "traefik.http.middlewares.csi-basic-auth.basicauth.usersfile=/basic-auth/.htpasswd"
-      - "traefik.http.middlewares.csi-auth-passwd.forwardauth.address=https://${CODE_SERVER_DNS}"
+      - "traefik.http.middlewares.csi-auth-passwd.forwardauth.address=http://${CODE_SERVER_IPv4_LOCAL}:40003"
       - "traefik.http.middlewares.csi-redirect.redirectscheme.scheme=https"
       - "traefik.http.middlewares.csi-redirect.redirectscheme.permanent=true"
       - "traefik.http.middlewares.csi-traefik-stripprefix.stripprefix.prefixes=/traefik"
@@ -64,12 +61,14 @@ services:
     volumes:
       - ${CODE_SERVER_CWD}/data/passwd:/passwd
     environment:
+      - "PORT=40003"
       - "BASE_URL=https://${CODE_SERVER_DNS}"
       - "COOKIE_DOMAIN=${CODE_SERVER_DNS}"
-    ports:
-      - 9000:8080
+      - "COOKIE_SECRET=sdv678fdb66876dfjh23bjhjk54"
+    network_mode: host
     labels:
       - "traefik.enable=true"
+      - "traefik.http.services.csi-auth-passwd.loadbalancer.server.port=40003"
 
       # Configure basic HTTP mapping:
       - "traefik.http.routers.auth-passwd--80.entrypoints=http80"
@@ -83,6 +82,12 @@ services:
       - "traefik.http.routers.auth-passwd--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/`)"
 
   code-server:
+    image: marcopeg/nginx-proxy:0.0.2
+    environment:
+     - NGINX_PORT=40002
+     - NGINX_UPSTREAM_PORT=40001
+    network_mode: host
+    restart: on-failure
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.csi-code-server.loadbalancer.server.port=40002"
@@ -97,15 +102,10 @@ services:
       - "traefik.http.routers.csi-code-server--443.entrypoints=http443"
       - "traefik.http.routers.csi-code-server--443.tls.certresolver=letsencrypt"
       - "traefik.http.routers.csi-code-server--443.middlewares=csi-auth-passwd,csi-code-server--stripprefix"
+      # - "traefik.http.routers.csi-code-server--443.middlewares=csi-code-server--stripprefix"
       - "traefik.http.routers.csi-code-server--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/code-server`)"
 
       - "traefik.http.middlewares.csi-code-server--stripprefix.stripprefix.prefixes=/code-server"
-    image: marcopeg/nginx-proxy:0.0.2
-    environment:
-     - NGINX_PORT=40002
-     - NGINX_UPSTREAM_PORT=40001
-    network_mode: host
-    restart: on-failure
 
   filebrowser:
     image: filebrowser/filebrowser:v2.10.0
@@ -137,7 +137,6 @@ services:
       # - "traefik.http.middlewares.csi-filebrowser--trailingslash.replacepathregex.regex=^/filebrowser(.*)"
       # - "traefik.http.middlewares.csi-filebrowser--trailingslash.replacepathregex.replacement=/filebrowser/$$1"
 
-
   netdata:
     labels:
       - "traefik.enable=true"
@@ -152,7 +151,7 @@ services:
       - "traefik.http.routers.csi-netdata--443.entrypoints=http443"
       - "traefik.http.routers.csi-netdata--443.tls.certresolver=letsencrypt"
       - "traefik.http.routers.csi-netdata--443.rule=Host(`${CODE_SERVER_DNS}`) && PathPrefix(`/netdata`)"
-      - "traefik.http.routers.csi-netdata--443.middlewares=csi-netdata--stripprefix,csi-auth-passwd"
+      - "traefik.http.routers.csi-netdata--443.middlewares=csi-auth-passwd,csi-netdata--stripprefix"
 
       # Configure Middlewares
       - "traefik.http.middlewares.csi-netdata--stripprefix.stripprefix.prefixes=/netdata"
@@ -178,5 +177,3 @@ services:
       - /etc/os-release:/host/etc/os-release:ro
       # - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: on-failure
-    
-  

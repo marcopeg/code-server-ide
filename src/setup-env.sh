@@ -16,6 +16,7 @@ then
   echo "CODE_SERVER_TRAEFIK=${CODE_SERVER_TRAEFIK}" >> ${CODE_SERVER_CWD}/.env
   echo "CODE_SERVER_EMAIL=${CODE_SERVER_EMAIL}" >> ${CODE_SERVER_CWD}/.env
   echo "CODE_SERVER_DNS=${CODE_SERVER_DNS:-'$(curl -s -m 0.1 http://169.254.169.254/latest/meta-data/public-hostname)'}" >> ${CODE_SERVER_CWD}/.env
+  echo "CODE_SERVER_IPv4_LOCAL=${CODE_SERVER_IPv4_LOCAL:-'$(curl -s -m 0.1 http://169.254.169.254/latest/meta-data/local-ipv4)'}" >> ${CODE_SERVER_CWD}/.env
   echo "CODE_SERVER_AUTO_START=${CODE_SERVER_AUTO_START:-yes}" >> ${CODE_SERVER_CWD}/.env
 
   # CloudFlare Config
