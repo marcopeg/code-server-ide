@@ -41,7 +41,7 @@ dotnet run --project myWebApp/
 Or start the app and automatically re-build it on every file change:
 
 ```bash
-dotnet watch run --project myWebApp/
+dotnet watch --project myWebApp/ run
 ```
 
 ## Distribute it with Docker
@@ -98,3 +98,21 @@ And open your browser to:
 ```bash
 https://aspdotnet.your.machine.com
 ```
+
+## Troubleshooting
+
+### dotnet watch - too many inotify watches
+
+Using `dotnet watch run` caused the following error:
+
+```
+The file watcher observing '/home/ubuntu/code-server-ide/examples/aspdotnet/myWebApp/Pages/' encountered an error: The configured user limit (524288) on the number of inotify watches has been reached, or the operating system failed to allocate a required resource.
+```
+
+Found the following solution [from this Stackoverflow](https://stackoverflow.com/questions/34662574/node-js-getting-error-nodemon-internal-watch-failed-watch-enospc):
+
+```bash
+echo fs.inotify.max_user_watches=999999 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+```
+
+You can try with lower numbers of course!
