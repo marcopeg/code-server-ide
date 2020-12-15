@@ -64,7 +64,7 @@ services:
       - "PORT=40003"
       - "BASE_URL=https://${CODE_SERVER_DNS}"
       - "COOKIE_DOMAIN=${CODE_SERVER_DNS}"
-      - "COOKIE_SECRET=sdv678fdb66876dfjh23bjhjk54"
+      - "COOKIE_SECRET=${CODE_SERVER_MGM_COOKIE_SECRET:-}"
     network_mode: host
     labels:
       - "traefik.enable=true"
