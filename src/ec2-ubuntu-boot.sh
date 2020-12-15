@@ -6,7 +6,7 @@ CWD="`( cd \"$CWD\" && cd .. && pwd )`"
 
 # Load the environment variables
 set -o allexport
-source "${CWD}/.env"
+source "${CWD}/data/.env"
 set +o allexport
 
 echo "[$(date -u)] Booting up..." >> ${CODE_SERVER_LOGS}/setup.log
