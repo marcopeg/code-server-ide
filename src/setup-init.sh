@@ -1,7 +1,6 @@
 #!/bin/bash
 source "$(dirname "$0")/setup-profile.sh"
 
-mkdir -p $CODE_SERVER_DATA
 mkdir -p $CODE_SERVER_LOGS
 mkdir -p ${CODE_SERVER_TRAEFIK}
 

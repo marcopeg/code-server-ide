@@ -25,7 +25,7 @@ Type=simple
 User=ubuntu
 Environment=SHELL=/bin/bash
 Environment=CODE_SERVER_CWD=${CODE_SERVER_CWD}
-ExecStart=/usr/bin/code-server --auth=none --bind-addr 127.0.0.1:40001
+ExecStart=/usr/bin/code-server --auth=none --bind-addr 127.0.0.1:40001 --user-data-dir ${CODE_SERVER_CWD}/data/code-server-user --extensions-dir ${CODE_SERVER_CWD}/data/code-server-extensions
 Restart=always
 
 [Install]
@@ -33,4 +33,4 @@ WantedBy=multi-user.target
 EOT
 systemctl daemon-reload
 
-echo "[$(date -u)] CodeServer files are stored in: ${CODE_SERVER_DATA}" >> ${CODE_SERVER_LOGS}/setup.log
+echo "[$(date -u)] CodeServer files are stored in: ${CODE_SERVER_CWD}/code-server-(user/extensions)" >> ${CODE_SERVER_LOGS}/setup.log

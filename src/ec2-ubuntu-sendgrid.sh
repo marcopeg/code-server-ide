@@ -20,7 +20,7 @@ then
   PUBLIC_IP=$(curl -s -m 0.1 http://169.254.169.254/latest/meta-data/public-ipv4)
   PUBLIC_IP=${PUBLIC_IP:-$(curl -s icanhazip.com)}
 
-  AUTH_PASSWD=$(cat ${CODE_SERVER_DATA}/passwd)
+  AUTH_PASSWD=$(cat ${CODE_SERVER_CWD}/passwd)
 
   SIMPLE_AUTH_USERNAME=$(grep "Simple Auth Username" ${CODE_SERVER_LOGS}/setup.log | tail -1)
   SIMPLE_AUTH_USERNAME=${SIMPLE_AUTH_USERNAME:53}
