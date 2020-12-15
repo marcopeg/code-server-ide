@@ -16,7 +16,7 @@ else
 
   # Export environment variables
   echo "set -o allexport" >> /etc/bash.bashrc
-  echo "source ${CODE_SERVER_CWD}/.env" >> /etc/bash.bashrc
+  echo "source ${CODE_SERVER_CWD}/data/.env" >> /etc/bash.bashrc
   echo "set +o allexport" >> /etc/bash.bashrc
 
   # Load ssh agent
