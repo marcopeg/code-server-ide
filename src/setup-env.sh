@@ -11,7 +11,6 @@ then
   touch ${CODE_SERVER_CWD}/data/.env
   echo "# Code Server IDE Configuration" >> ${CODE_SERVER_CWD}/data/.env
   echo "CODE_SERVER_CWD=${CODE_SERVER_CWD}" >> ${CODE_SERVER_CWD}/data/.env
-  echo "CODE_SERVER_DATA=${CODE_SERVER_DATA}" >> ${CODE_SERVER_CWD}/data/.env
   echo "CODE_SERVER_LOGS=${CODE_SERVER_LOGS}" >> ${CODE_SERVER_CWD}/data/.env
   echo "CODE_SERVER_TRAEFIK=${CODE_SERVER_TRAEFIK}" >> ${CODE_SERVER_CWD}/data/.env
   echo "CODE_SERVER_EMAIL=${CODE_SERVER_EMAIL}" >> ${CODE_SERVER_CWD}/data/.env
