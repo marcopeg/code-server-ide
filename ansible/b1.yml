@@ -13,16 +13,16 @@
         - unzip
         - make
         - apache2-utils
-    - name: Install or upgrade Docker
+    - name: Docker - Install or upgrade
       apt:
         name: docker.io
         state: present
         update_cache: yes
-    - name: Start Docker
+    - name: Docker - start daemon
       become: true
       service:
         name: docker
         state: started
-    - name: Add Docker to Ubuntu
+    - name: Docker - run as ubuntu user
       become: true
-      shell: usermod -aG docker ubuntu
+      shell: usermod -aG docker ${USER}
