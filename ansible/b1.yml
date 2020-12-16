@@ -20,7 +20,7 @@
         update_cache: yes
     - name: Start Docker
       sudo: yes
-      service:
+      systemd:
         name: docker
         state: started
-        use: service
+        enabled: yes
