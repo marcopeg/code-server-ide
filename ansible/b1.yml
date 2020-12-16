@@ -19,8 +19,10 @@
         state: present
         update_cache: yes
     - name: Start Docker
-      sudo: yes
-      systemd:
+      become: true
+      service:
         name: docker
         state: started
-        enabled: yes
+    - name: Add Docker to Ubuntu
+      become: true
+      shell: usermod -aG docker ubuntu
