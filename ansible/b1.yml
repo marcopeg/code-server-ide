@@ -1,5 +1,6 @@
-- name: This is a hello-world example
+- name: Installs basic stuff
   hosts: localhost
+  become: true
   tasks:
     - name: Upgrade APT
       apt:
@@ -13,16 +14,16 @@
         - unzip
         - make
         - apache2-utils
-    - name: Docker - Install or upgrade
-      apt:
-        name: docker.io
-        state: present
-        update_cache: yes
-    - name: Docker - start daemon
-      become: true
-      service:
-        name: docker
-        state: started
-    - name: Docker - run as ubuntu user
-      become: true
-      shell: usermod -aG docker ${USER}
+    # - name: Docker - Install or upgrade
+    #   apt:
+    #     name: docker.io
+    #     state: present
+    #     update_cache: yes
+    # - name: Docker - start daemon
+    #   become: true
+    #   service:
+    #     name: docker
+    #     state: started
+    # - name: Docker - run as ubuntu user
+    #   become: true
+    #   shell: usermod -aG docker ${USER}
