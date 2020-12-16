@@ -1,0 +1,11 @@
+---
+
+# docker.yml
+
+- name: Example
+  hosts: localhost
+  become: true
+  roles:
+    - role: "nickjj.docker"
+      tags: ["docker"]
+      
