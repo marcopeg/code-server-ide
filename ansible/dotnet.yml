@@ -8,9 +8,9 @@
         dest: /tmp/packages-microsoft-prod.deb
     - name: Install MS product repository
       apt: deb=/tmp/packages-microsoft-prod.deb
-    - name: Install .NET Core SDK 2.2
+    - name: Install .NET Core SDK 2.1
       apt:
-        name: dotnet-sdk-2.2
+        name: dotnet-sdk-2.1
         state: present
         update_cache: yes
     - name: Install .NET Core SDK 3.1
