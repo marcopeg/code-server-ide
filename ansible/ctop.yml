@@ -1,0 +1,15 @@
+- name: Installs .NET Frameworks
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Import CTOP Key
+      apt_key:
+        url: https://azlux.fr/repo.gpg.key
+        state: present
+    - name: Upgrade APT
+      apt:
+        update_cache: yes
+    - name: Install CTOP
+      apt:
+        name: docker-ctop
+        state: present

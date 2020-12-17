@@ -1,3 +1,6 @@
+# Look into this role:
+# https://github.com/ocha/ansible-role-dotnet-core
+
 - name: Installs .NET Frameworks
   hosts: localhost
   become: true
