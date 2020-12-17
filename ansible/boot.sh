@@ -14,3 +14,4 @@ ansible-galaxy install nickjj.docker
 # Run playbooks
 ansible-playbook ${CWD}/ansible/utilities.yml
 ansible-playbook ${CWD}/ansible/docker.yml
+ansible-playbook ${CWD}/ansible/dotnet.yml
