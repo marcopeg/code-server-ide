@@ -11,6 +11,7 @@ apt install -y ansible
 # Install Dependent Roles
 ansible-galaxy install nickjj.docker
 ansible-galaxy install gantsign.ctop
+ansible-galaxy install ansible-role-nvm
 
 # Run playbooks
 ansible-playbook ${CWD}/ansible/utilities.yml
