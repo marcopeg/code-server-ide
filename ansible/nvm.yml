@@ -2,7 +2,7 @@
   hosts: all
 
   roles:
-    - role: ansible-role-nvm
+    - role: morgangraphics.ansible_role_nvm
       # nodejs_version: "12"
       # nvm_commands:
       #  - "nvm exec default npm install"
