@@ -2,7 +2,7 @@
 
 # docker.yml
 
-- name: Example
+- name: Install Docker
   hosts: localhost
   become: true
   roles:
