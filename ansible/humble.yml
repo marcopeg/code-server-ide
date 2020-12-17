@@ -1,0 +1,15 @@
+---
+
+# HumbleCLI
+
+- name: Install HumbleCLI
+  hosts: localhost
+  - name: Git checkout
+    git:
+      repo: https://github.com/marcopeg/humble-cli.git
+      dest: /home/ubuntu/.humble-cli
+  - name: Link the executable
+    file:
+      src: /home/ubuntu/.humble-cli/bin/humble.sh
+      dest: /usr/local/bin/humble
+      state: link
