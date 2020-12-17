@@ -1,16 +1,16 @@
 #!/bin/bash
 
-git clone -b dev/24 https://github.com/marcopeg/code-server-ide.git
+# Calculate the CWD:
+CWD="`dirname \"$0\"`"
+CWD="`( cd \"$CWD\" && cd .. && pwd )`"
 
 # Install Ansible
 apt update -y 
 apt install -y ansible
 
-# Install Dependent Rolesz
+# Install Dependent Roles
 ansible-galaxy install nickjj.docker
 
 # Run playbooks
-ansible-playbook ./code-server-ide/ansible/b1.yml
-ansible-playbook ./code-server-ide/ansible/docker.yml
-
-reboot
+ansible-playbook ${CWD}/utilities.yml
+ansible-playbook ${CWD}/docker.yml
