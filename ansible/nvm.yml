@@ -1,5 +1,5 @@
 - name: Installs NVM & Node
-  hosts: all
+  hosts: localhost
 
   roles:
     - role: morgangraphics.ansible_role_nvm
