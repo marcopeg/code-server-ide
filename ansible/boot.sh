@@ -15,5 +15,6 @@ ansible-galaxy install gantsign.ctop
 # Run playbooks
 ansible-playbook ${CWD}/ansible/utilities.yml
 ansible-playbook ${CWD}/ansible/docker.yml
+ansible-playbook ${CWD}/ansible/humble.yml
 ansible-playbook ${CWD}/ansible/dotnet.yml
 ansible-playbook ${CWD}/ansible/ctop.yml
