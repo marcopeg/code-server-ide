@@ -22,16 +22,18 @@
       file:
         state: directory
         path: "{{ nvm_dir.stdout }}/"
+      become: true
       become_user: ubuntu
     - name: Download NVM
       get_url:
         url: https://raw.githubusercontent.com/nvm-sh/nvm/{{ nvm_version.stdout }}/install.sh
         dest: /tmp/nvm-install-{{ nvm_version.stdout }}.sh
-        mode: 755
+        mode: 644
     - name: Setup NVM
       script: /tmp/nvm-install-{{ nvm_version.stdout }}.sh
       environment:
         NVM_DIR: "{{ nvm_dir.stdout }}"
+      become: true
       become_user: ubuntu
 
 
