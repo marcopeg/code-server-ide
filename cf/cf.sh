@@ -98,10 +98,10 @@ function applyStack() {
 }
 
 function getAmiId() {
-  AWS_EC2_AMI_ID=$(aws --region eu-west-1 --profile default ec2 describe-images  \
-  --filters "Name=name,Values=ubuntu*server*20.04*" "Name=root-device-type,Values=ebs" \
-  --query "sort_by(Images, &CreationDate)[-1].[ImageId]" \
-  --output text)
+  # https://discourse.ubuntu.com/t/finding-ubuntu-images-with-the-aws-ssm-parameter-store/15507
+  AWS_EC2_AMI_ID=$(aws --region eu-west-1 --profile default ssm get-parameters --names \
+        /aws/service/canonical/ubuntu/server/focal/stable/current/amd64/hvm/ebs-gp2/ami-id \
+    --query 'Parameters[0].[Value]' --output text)
 }
 
 function createStack() {
@@ -112,6 +112,7 @@ function createStack() {
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2ImageId,ParameterValue=${AWS_EC2_AMI_ID}"
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2KeyPairName,ParameterValue=${PEM}"
   applyStack "create"
+  echo ${CLI_CF_RESULT}
 }
 
 function updateStack() {
@@ -120,6 +121,7 @@ function updateStack() {
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2KeyPairName,UsePreviousValue=true"
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2InstanceType,UsePreviousValue=true"
   applyStack "update"
+  echo ${CLI_CF_RESULT}
 }
 
 
