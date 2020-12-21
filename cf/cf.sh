@@ -53,7 +53,6 @@ function error() {
   exit -1
 }
 
-# Sync S3 template files
 function syncS3() {
   echo "Syncing S3 templates..."
   CLI_SYNC_S3="aws --profile=${AWS_PROFILE} --region=${AWS_REGION}"
@@ -90,10 +89,22 @@ function applyStack() {
   CLI_CF_APPLY="${CLI_CF_APPLY} --capabilities  ${STACK_CAPABILITIES}"
   CLI_CF_APPLY="${CLI_CF_APPLY} --parameters ${STACK_PARAMS}"
 
+  # Execute command and get resulting status
   CLI_CF_RESULT=$($CLI_CF_APPLY 2>&1)
+  CLI_CF_STATUS=$?
 
-  if ! jq -e . >/dev/null 2>&1 <<<"${CLI_CF_RESULT}"; then
-    error "${CLI_CF_RESULT}"
+  # Catch no-updates needed
+  if [ $CLI_CF_STATUS -ne 0 ] ; then
+    if [[ $CLI_CF_RESULT == *"ValidationError"* && $CLI_CF_RESULT == *"No updates"* ]] ; then
+      echo -e "\nFinished ${1} - no updates to be performed"
+      exit 0
+    else
+      error "${CLI_CF_RESULT}"
+    fi
+  else
+    if ! jq -e . >/dev/null 2>&1 <<<"${CLI_CF_RESULT}"; then
+      error "${CLI_CF_RESULT}"
+    fi
   fi
 }
 
@@ -105,18 +116,23 @@ function getAmiId() {
 }
 
 function createStack() {
-  [ -z ${PEM+x} ] && help "Required parameter: --pem"
+  # Validate required parameters
+  [ -z ${PAR_PEM+x} ] && help "Required parameter: --pem"
 
-  echo "Creating stack..."
+  echo "Creating stack: ${STACK_NAME}..."
   getAmiId
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2ImageId,ParameterValue=${AWS_EC2_AMI_ID}"
-  STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2KeyPairName,ParameterValue=${PEM}"
+  STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2KeyPairName,ParameterValue=${PAR_PEM}"
   applyStack "create"
+
+  echo "Waiting for stack to be created ..."
+  aws cloudformation wait stack-create-complete --profile=${AWS_PROFILE} --region=${AWS_REGION} 2>&1
+
   echo ${CLI_CF_RESULT}
 }
 
 function updateStack() {
-  echo "Updating stack..."
+  echo "Updating stack: ${STACK_NAME}..."
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2ImageId,UsePreviousValue=true"
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2KeyPairName,UsePreviousValue=true"
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2InstanceType,UsePreviousValue=true"
@@ -124,9 +140,34 @@ function updateStack() {
   echo ${CLI_CF_RESULT}
 }
 
+function deleteStack() {
+  echo "Deleting stack: ${STACK_NAME}..."
+
+  echo "Figuring out current stack state..."
+  upsertStack_actionStr=$(getStackAction)
+  if [ "${upsertStack_actionStr}" == "create" ]; then
+    echo -e "The stack doesn't exists - nothing to delete here"
+    exit 0
+  fi
+
+  CLI_CF_DELETE="aws --profile=${AWS_PROFILE} --region=${AWS_REGION}"
+  CLI_CF_DELETE="${CLI_CF_DELETE} cloudformation delete-stack"
+  CLI_CF_DELETE="${CLI_CF_DELETE} --stack-name "box-${STACK_NAME}""
+
+  # Execute command and get resulting status
+  CLI_CF_RESULT=$($CLI_CF_DELETE 2>&1)
+  CLI_CF_STATUS=$?
+
+  # Catch no-updates needed
+  if [ $CLI_CF_STATUS -ne 0 ] ; then
+    error "${CLI_CF_RESULT:-"Could not delete the stack"}"
+  else
+    echo -e "Stack successfully deleted"
+  fi
+}
 
 function upsertStack() {
-  [ -z ${DNS+x} ] && help "Required parameter: --dns"
+  [ -z ${PAR_DNS+x} ] && help "Required parameter: --dns"
   echo "Upserting stack: ${STACK_NAME}"
   syncS3
   
@@ -147,12 +188,12 @@ STACK_CAPABILITIES="CAPABILITY_IAM CAPABILITY_NAMED_IAM"
 STACK_PARAMS=""
 
 # Show help if no params were given
-CHKP=${1:-} ; [ -z ${CHKP} ] && help
+#CHKP=${1:-} ; [ -z ${CHKP} ] && help
 
 while [ "$#" -ne 0 ] ; do
   case "$1" in
     up|down|apply)
-      CMD="$1"
+      PAR_CMD="$1"
       shift
       ;;
     -h|--help)
@@ -160,18 +201,20 @@ while [ "$#" -ne 0 ] ; do
       shift
       ;;
     --dns)
-      DNS="${2}"
+      PAR_DNS="${2}"
       shift 2
       ;;
     --pem)
-      PEM="${2}"
+      PAR_PEM="${2}"
       shift 2
       ;;
     --cf-id)
+      # @TODO: move to a PAR_XX
       STACK_PARAMS="${STACK_PARAMS} ParameterKey=CloudFlareZoneID,ParameterValue=${2}"
       shift 2
       ;;
     --cf-key)
+      # @TODO: move to a PAR_XX
       STACK_PARAMS="${STACK_PARAMS} ParameterKey=CloudFlareZoneKEY,ParameterValue=${2}"
       shift 2
       ;;
@@ -195,11 +238,11 @@ while [ "$#" -ne 0 ] ; do
 done
 
 # Check for a command and required options to be placed:
-[ -z ${CMD+x} ] && help "Missing command"
-[ -z ${DNS+x} ] && help "Required parameter: --dns"
+[ -z ${PAR_CMD+x} ] && help "Missing command: up / down"
+[ -z ${PAR_DNS+x} ] && help "Required parameter: --dns"
 
 # Calculate stack name from DNS entry:
-STACK_NAME=$(echo "${DNS//./ }" | awk '{n=split($0,A);S=A[n];{for(i=n-1;i>0;i--)S=S" "A[i]}}END{print S}')
+STACK_NAME=$(echo "${PAR_DNS//./ }" | awk '{n=split($0,A);S=A[n];{for(i=n-1;i>0;i--)S=S" "A[i]}}END{print S}')
 STACK_NAME=${STACK_NAME// /-}
 
 # Calculate S3 template's url:
@@ -209,12 +252,12 @@ BUCKET_URL_HTTP="https://${AWS_BUCKET}.s3-${AWS_REGION}.amazonaws.com/${STACK_NA
 # Fill stack parameters
 STACK_PARAMS="${STACK_PARAMS} ParameterKey=S3TemplateRoot,ParameterValue=${BUCKET_URL_HTTP}"
 
-case ${CMD} in
+case ${PAR_CMD} in
   up|upsert|apply|create)
     upsertStack
     ;;
-  delete|drop|remove|destroy)
-    echo "delete stack"
+  down|delete|drop|remove|destroy)
+    deleteStack
     ;;
   *)
     help 

@@ -68,11 +68,14 @@ Resources:
   #       - !Ref SecurityGroup
   #     SourceDestCheck: true
 
-  EC2Instance:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: !Ref EC2ImageId
-      KeyName: !Ref EC2KeyPairName
-      InstanceType: !Ref EC2InstanceType
-      SecurityGroups:
-      - !Ref EC2SecurityGroup
+  # EC2Instance:
+  #   Type: AWS::EC2::Instance
+  #   Properties:
+  #     ImageId: !Ref EC2ImageId
+  #     KeyName: !Ref EC2KeyPairName
+  #     InstanceType: !Ref EC2InstanceType
+  #     SecurityGroups:
+  #     - !Ref EC2SecurityGroup
+  #     Tags:
+  #       - Key: Name
+  #         Value: !Ref AWS::StackName
