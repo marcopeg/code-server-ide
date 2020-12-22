@@ -137,6 +137,10 @@ function updateStack() {
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2KeyPairName,UsePreviousValue=true"
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2InstanceType,UsePreviousValue=true"
   applyStack "update"
+
+  echo "Waiting for stack to be updated ..."
+  aws cloudformation wait stack-update-complete --profile=${AWS_PROFILE} --region=${AWS_REGION} 2>&1
+
   echo ${CLI_CF_RESULT}
 }
 

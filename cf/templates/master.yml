@@ -1,3 +1,6 @@
+# @TODO: Create tag for the associated volume
+#        https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-instance-tag-root-volume/
+
 Description: >
 
   Keeps up to date a code-ide on AWS
@@ -11,20 +14,6 @@ Parameters:
     Description: How to resolve sub-stack templates
     Type: String
 
-  # VPCId:
-  #   Description: Target VPC id
-  #   Type: String
-
-  # VPCSubnets:
-  #   Description: Available subnets
-  #   Type: String
-  #   Default: subnet-230f2e5e,subnet-2489634e,subnet-ad2410e0
-
-  # EC2ImageId:
-  #   Description: AMI ID to run the machine upon
-  #   Type: String
-  #   Default: ami-05c26ae4789875080
-
   EC2InstanceType:
     Description: Class of machine to run
     Type: String
@@ -37,7 +26,6 @@ Parameters:
   EC2KeyPairName:
     Description: PEM to access the machine
     Type: String
-
 
 Resources:
   EC2SecurityGroup:
@@ -60,22 +48,37 @@ Resources:
       Tags:
         - Key: Name
           Value: !Ref AWS::StackName
-     
-  # NetworkInterface:
-  #   Type: AWS::EC2::NetworkInterface
-  #   Properties:
-  #     GroupSet:
-  #       - !Ref SecurityGroup
-  #     SourceDestCheck: true
 
-  # EC2Instance:
-  #   Type: AWS::EC2::Instance
-  #   Properties:
-  #     ImageId: !Ref EC2ImageId
-  #     KeyName: !Ref EC2KeyPairName
-  #     InstanceType: !Ref EC2InstanceType
-  #     SecurityGroups:
-  #     - !Ref EC2SecurityGroup
-  #     Tags:
-  #       - Key: Name
-  #         Value: !Ref AWS::StackName
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref EC2ImageId
+      KeyName: !Ref EC2KeyPairName
+      InstanceType: !Ref EC2InstanceType
+      SecurityGroups:
+        - !Ref EC2SecurityGroup
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeType: gp2
+            VolumeSize: '15'
+            DeleteOnTermination: 'true'
+            Encrypted: 'true'
+      Tags:
+        - Key: Name
+          Value: !Ref AWS::StackName
+
+  EIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref EC2Instance
+      Tags:
+        - Key: Name
+          Value: !Ref AWS::StackName
+
+Outputs:
+  PublicIP:
+    Value: !GetAtt EC2Instance.PublicIp
+
+  PrivateIp:
+    Value: !GetAtt EC2Instance.PrivateIp
