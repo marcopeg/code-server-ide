@@ -200,16 +200,32 @@ function upsertStack() {
   fi
 }
 
+function applyEc2() {
+  echo "Gathering instanceId from the stack..."
+  EC2_INSTANCE_ID=$(getInstanceId)
+
+  echo "${1}ing EC2 instance: ${EC2_INSTANCE_ID}..."
+  CLI_EC2_APPLY="aws --profile=${AWS_PROFILE} --region=${AWS_REGION}"
+  CLI_EC2_APPLY="${CLI_EC2_APPLY} ec2 ${1}-instances"
+  CLI_EC2_APPLY="${CLI_EC2_APPLY} --instance-ids "${EC2_INSTANCE_ID}""
+
+  # Execute command and get resulting status
+  CLI_EC2_RESULT=$($CLI_EC2_APPLY 2>&1)
+  CLI_EC2_STATUS=$?
+
+  
+}
+
 function startInstance() {
-  getInstanceId
-  echo "START"
+  applyEc2 "start"
+  echo "status: ${CLI_EC2_STATUS}"
+  echo "result: ${CLI_EC2_RESULT}"
 }
 
 function stopInstance() {
-  echo "Gathering instanceId from the stack..."
-  EC2_INSTANCE_ID=$(getInstanceId)
-  echo "Stopping EC2 instance: ${EC2_INSTANCE_ID}..."
-  # @TODO: run command
+  applyEc2 "stop"
+  echo "status: ${CLI_EC2_STATUS}"
+  echo "result: ${CLI_EC2_RESULT}"
 }
 
 # Default variables
