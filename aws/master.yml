@@ -27,6 +27,28 @@ Parameters:
     Description: PEM to access the machine
     Type: String
 
+  CSDns:
+    Description: The DNS associated with the machine
+    Type: String
+  
+  CSEmail:
+    Description: The email used to send out the creation update
+    Type: String
+  
+  CFZoneId:
+    Description: CloudFormation ZoneID
+    Type: String
+
+  CFApiKey:
+    Description: CloudFormation API KEY
+    Type: String
+    NoEcho: 'true'
+
+  SGApiKey:
+    Description: SendGrid API KEY
+    Type: String
+    NoEcho: 'true'
+
 Resources:
   EC2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -61,9 +83,24 @@ Resources:
         - DeviceName: /dev/sda1
           Ebs:
             VolumeType: gp2
-            VolumeSize: '15'
+            VolumeSize: '10'
             DeleteOnTermination: 'true'
             Encrypted: 'true'
+      UserData:
+        Fn::Base64:
+          Fn::Sub: |
+            #!/bin/bash
+            exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+
+            export CODE_SERVER_DNS="${CSDns}"
+            export CODE_SERVER_EMAIL="${CSEmail}"
+            export CLOUDFLARE_ZONE_ID="${CFZoneId}"
+            export CLOUDFLARE_API_KEY="${CFApiKey}"
+            export SENDGRID_API_KEY="${SGApiKey}"
+
+            export CODE_SERVER_CWD="/home/ubuntu/code-server-ide"
+            git clone https://github.com/marcopeg/code-server-ide.git /home/ubuntu/code-server-ide
+            /home/ubuntu/code-server-ide/src/setup.sh
       Tags:
         - Key: Name
           Value: !Ref AWS::StackName

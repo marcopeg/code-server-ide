@@ -59,7 +59,7 @@ function syncS3() {
   CLI_SYNC_S3="${CLI_SYNC_S3} s3 sync"
   CLI_SYNC_S3="${CLI_SYNC_S3} --exclude '*'"
   CLI_SYNC_S3="${CLI_SYNC_S3} --include '*.yml'"
-  CLI_SYNC_S3="${CLI_SYNC_S3} ${CWD}/templates"
+  CLI_SYNC_S3="${CLI_SYNC_S3} ${CWD}"
   CLI_SYNC_S3="${CLI_SYNC_S3} ${BUCKET_URL_S3}"
   $CLI_SYNC_S3
 }
@@ -134,28 +134,74 @@ function getInstanceId() {
 function createStack() {
   # Validate required parameters
   [ -z ${PAR_PEM+x} ] && help "Required parameter: --pem"
+  [ -z ${PAR_EMAIL+x} ] && help "Required parameter: --email"
+  [ -z ${PAR_CF_ZONE_ID+x} ] && help "Required parameter: --cf-zone-id"
+  [ -z ${PAR_CF_API_KEY+x} ] && help "Required parameter: --cf-api-key"
+  [ -z ${PAR_SG_API_KEY+x} ] && help "Required parameter: --sg-api-key"
 
   echo "Creating stack: ${STACK_NAME}..."
   getAmiId
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2ImageId,ParameterValue=${AWS_EC2_AMI_ID}"
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2KeyPairName,ParameterValue=${PAR_PEM}"
+  STACK_PARAMS="${STACK_PARAMS} ParameterKey=CSDns,ParameterValue=${PAR_DNS}"
+  STACK_PARAMS="${STACK_PARAMS} ParameterKey=CSEmail,ParameterValue=${PAR_EMAIL}"
+  STACK_PARAMS="${STACK_PARAMS} ParameterKey=CFZoneId,ParameterValue=${PAR_CF_ZONE_ID}"
+  STACK_PARAMS="${STACK_PARAMS} ParameterKey=CFApiKey,ParameterValue=${PAR_CF_API_KEY}"
+  STACK_PARAMS="${STACK_PARAMS} ParameterKey=SGApiKey,ParameterValue=${PAR_SG_API_KEY}"
   applyStack "create"
 
-  echo "Waiting for stack to be created ..."
-  aws cloudformation wait stack-create-complete --profile=${AWS_PROFILE} --region=${AWS_REGION} 2>&1
+  # echo "Waiting for stack to be created ..."
+  # aws cloudformation wait stack-create-complete --profile=${AWS_PROFILE} --region=${AWS_REGION} 2>&1
 
   echo ${CLI_CF_RESULT}
 }
 
 function updateStack() {
   echo "Updating stack: ${STACK_NAME}..."
+
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2ImageId,UsePreviousValue=true"
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2KeyPairName,UsePreviousValue=true"
-  STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2InstanceType,UsePreviousValue=true"
+
+  if [ -z ${PAR_PEM+x} ]; then
+    STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2InstanceType,UsePreviousValue=true"
+  else
+    STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2InstanceType,ParameterValue=${PAR_EC2_TYPE}"
+  fi
+  
+  if [ -z ${PAR_CF_ZONE_ID+x} ]; then
+    STACK_PARAMS="${STACK_PARAMS} ParameterKey=CFZoneId,UsePreviousValue=true"
+  else
+    STACK_PARAMS="${STACK_PARAMS} ParameterKey=CFZoneId,ParameterValue=${PAR_CF_ZONE_ID}"
+  fi
+  
+  if [ -z ${PAR_CF_API_KEY+x} ]; then
+    STACK_PARAMS="${STACK_PARAMS} ParameterKey=CFApiKey,UsePreviousValue=true"
+  else
+    STACK_PARAMS="${STACK_PARAMS} ParameterKey=CFApiKey,ParameterValue=${PAR_CF_API_KEY}"
+  fi
+  
+  if [ -z ${PAR_SG_API_KEY+x} ]; then
+    STACK_PARAMS="${STACK_PARAMS} ParameterKey=SGApiKey,UsePreviousValue=true"
+  else
+    STACK_PARAMS="${STACK_PARAMS} ParameterKey=SGApiKey,ParameterValue=${PAR_SG_API_KEY}"
+  fi
+
+  if [ -z ${PAR_DNS+x} ]; then
+    STACK_PARAMS="${STACK_PARAMS} ParameterKey=CSDns,UsePreviousValue=true"
+  else
+    STACK_PARAMS="${STACK_PARAMS} ParameterKey=CSDns,ParameterValue=${PAR_DNS}"
+  fi
+
+  if [ -z ${PAR_EMAIL+x} ]; then
+    STACK_PARAMS="${STACK_PARAMS} ParameterKey=CSEmail,UsePreviousValue=true"
+  else
+    STACK_PARAMS="${STACK_PARAMS} ParameterKey=CSEmail,ParameterValue=${PAR_EMAIL}"
+  fi
+  
   applyStack "update"
 
-  echo "Waiting for stack to be updated ..."
-  aws cloudformation wait stack-update-complete --profile=${AWS_PROFILE} --region=${AWS_REGION} 2>&1
+  # echo "Waiting for stack to be updated ..."
+  # aws cloudformation wait stack-update-complete --profile=${AWS_PROFILE} --region=${AWS_REGION} 2>&1
 
   echo ${CLI_CF_RESULT}
 }
@@ -218,13 +264,11 @@ function applyEc2() {
 
 function startInstance() {
   applyEc2 "start"
-  echo "status: ${CLI_EC2_STATUS}"
   echo "result: ${CLI_EC2_RESULT}"
 }
 
 function stopInstance() {
   applyEc2 "stop"
-  echo "status: ${CLI_EC2_STATUS}"
   echo "result: ${CLI_EC2_RESULT}"
 }
 
@@ -256,14 +300,24 @@ while [ "$#" -ne 0 ] ; do
       PAR_PEM="${2}"
       shift 2
       ;;
-    --cf-id)
-      # @TODO: move to a PAR_XX
-      STACK_PARAMS="${STACK_PARAMS} ParameterKey=CloudFlareZoneID,ParameterValue=${2}"
+    --email)
+      PAR_EMAIL=${2}
       shift 2
       ;;
-    --cf-key)
-      # @TODO: move to a PAR_XX
-      STACK_PARAMS="${STACK_PARAMS} ParameterKey=CloudFlareZoneKEY,ParameterValue=${2}"
+    --cf-zone-id)
+      PAR_CF_ZONE_ID=${2}
+      shift 2
+      ;;
+    --cf-api-key)
+      PAR_CF_API_KEY=${2}
+      shift 2
+      ;;
+    --sg-api-key)
+      PAR_SG_API_KEY=${2}
+      shift 2
+      ;;
+    --ec2-type)
+      PAR_EC2_TYPE=${2}
       shift 2
       ;;
     --aws-region)
