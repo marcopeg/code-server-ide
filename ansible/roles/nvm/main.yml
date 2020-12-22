@@ -1,0 +1,66 @@
+- name: Installs NVM & Node
+  hosts: localhost
+  tasks:
+
+    ###
+    ### Install NVM
+    ###
+    - name: Set NVM install path
+      shell: echo "/home/ubuntu/.nvm"
+      register: nvm_dir
+    - name: Set NVM target bash file
+      shell: echo "/home/ubuntu/.profile"
+      register: nvm_profile
+    - name: Fetch latest NVM version
+      shell: echo $(curl --silent https://api.github.com/repos/nvm-sh/nvm/releases/latest | jq .name -r)
+      register: nvm_version
+    - name: Remove existing installation
+      file:
+        state: absent
+        path: "{{ nvm_dir.stdout }}/"
+    - name: Ensure target folder
+      file:
+        state: directory
+        path: "{{ nvm_dir.stdout }}/"
+      become: true
+      become_user: ubuntu
+    - name: Download NVM
+      get_url:
+        url: https://raw.githubusercontent.com/nvm-sh/nvm/{{ nvm_version.stdout }}/install.sh
+        dest: /tmp/nvm-install-{{ nvm_version.stdout }}.sh
+        mode: 644
+    - name: Setup NVM
+      script: /tmp/nvm-install-{{ nvm_version.stdout }}.sh
+      environment:
+        NVM_DIR: "{{ nvm_dir.stdout }}"
+      become: true
+      become_user: ubuntu
+
+
+    ###
+    ### Add NVM reference to bash profile
+    ###
+    - name: Add NVM header comment
+      lineinfile:
+        path: "{{ nvm_profile.stdout }}"
+        regexp: '# NVM'
+        line: '# NVM: Node Version Manager'
+        create: yes
+    - name: Export NVM directory in .profile
+      lineinfile:
+        path: "{{ nvm_profile.stdout }}"
+        regexp: '^export NVM_DIR'
+        line: export NVM_DIR="{{ nvm_dir.stdout }}"
+        create: yes
+    - name: Load NVM in .profile
+      lineinfile:
+        path: "{{ nvm_profile.stdout }}"
+        regexp: '^NVM_DIR/nvm.sh'
+        line: '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'
+        create: yes
+    - name: Add bash completion to .profile
+      lineinfile:
+        path: "{{ nvm_profile.stdout }}"
+        regexp: '^NVM_DIR/bash_completion'
+        line: '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'
+        create: yes

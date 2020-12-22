@@ -1,0 +1,34 @@
+# Look into this role:
+# https://github.com/ocha/ansible-role-dotnet-core
+
+- name: Installs .NET Frameworks
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Download MS product repository
+      get_url:
+        url: "{{DOTNETREPOURL}}"
+        dest: /tmp/packages-microsoft-prod.deb
+    - name: Install MS product repository
+      apt: deb=/tmp/packages-microsoft-prod.deb
+    - name: Install .NET Core SDK 2.1
+      apt:
+        name: dotnet-sdk-2.1
+        state: present
+        update_cache: yes
+    - name: Install .NET Core SDK 3.1
+      apt:
+        name: dotnet-sdk-3.1
+        state: present
+        update_cache: yes
+    - name: Install .NET Core SDK 5.0
+      apt:
+        name: dotnet-sdk-5.0
+        state: present
+        update_cache: yes
+    - name: Install .NET Core runtime 5.0
+      apt:
+        name: aspnetcore-runtime-5.0
+        state: present
+        update_cache: yes
+    

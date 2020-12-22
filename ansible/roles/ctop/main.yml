@@ -1,0 +1,8 @@
+# See this role
+# https://github.com/gantsign/ansible_role_ctop
+
+- name: Installs .NET Frameworks
+  hosts: localhost
+  roles:
+    - role: gantsign.ctop
+    
