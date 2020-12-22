@@ -1,0 +1,124 @@
+# @TODO: Create tag for the associated volume
+#        https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-instance-tag-root-volume/
+
+Description: >
+
+  Keeps up to date a code-ide on AWS
+
+  Last Modified: April 26th, 2020
+  Author: Marco Pegoraro <marco.pegoraro@gmail.com>
+
+Parameters:
+
+  S3TemplateRoot:
+    Description: How to resolve sub-stack templates
+    Type: String
+
+  EC2InstanceType:
+    Description: Class of machine to run
+    Type: String
+    Default: t2.micro
+  
+  EC2ImageId:
+    Description: Image id to use to create the machine
+    Type: String
+
+  EC2KeyPairName:
+    Description: PEM to access the machine
+    Type: String
+
+  CSDns:
+    Description: The DNS associated with the machine
+    Type: String
+  
+  CSEmail:
+    Description: The email used to send out the creation update
+    Type: String
+  
+  CFZoneId:
+    Description: CloudFormation ZoneID
+    Type: String
+
+  CFApiKey:
+    Description: CloudFormation API KEY
+    Type: String
+    NoEcho: 'true'
+
+  SGApiKey:
+    Description: SendGrid API KEY
+    Type: String
+    NoEcho: 'true'
+
+Resources:
+  EC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Ref AWS::StackName
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Ref AWS::StackName
+
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref EC2ImageId
+      KeyName: !Ref EC2KeyPairName
+      InstanceType: !Ref EC2InstanceType
+      SecurityGroups:
+        - !Ref EC2SecurityGroup
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeType: gp2
+            VolumeSize: '10'
+            DeleteOnTermination: 'true'
+            Encrypted: 'true'
+      UserData:
+        Fn::Base64:
+          Fn::Sub: |
+            #!/bin/bash
+            exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+
+            export CODE_SERVER_DNS="${CSDns}"
+            export CODE_SERVER_EMAIL="${CSEmail}"
+            export CLOUDFLARE_ZONE_ID="${CFZoneId}"
+            export CLOUDFLARE_API_KEY="${CFApiKey}"
+            export SENDGRID_API_KEY="${SGApiKey}"
+
+            export CODE_SERVER_CWD="/home/ubuntu/code-server-ide"
+            git clone https://github.com/marcopeg/code-server-ide.git /home/ubuntu/code-server-ide
+            /home/ubuntu/code-server-ide/src/setup.sh
+      Tags:
+        - Key: Name
+          Value: !Ref AWS::StackName
+
+  EIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref EC2Instance
+      Tags:
+        - Key: Name
+          Value: !Ref AWS::StackName
+
+Outputs:
+  InstanceId:
+    Value: !Ref EC2Instance
+
+  PublicIP:
+    Value: !GetAtt EC2Instance.PublicIp
+
+  PrivateIp:
+    Value: !GetAtt EC2Instance.PrivateIp
