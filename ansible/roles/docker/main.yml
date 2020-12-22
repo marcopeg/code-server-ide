@@ -1,0 +1,19 @@
+---
+- hosts: localhost
+  become: true
+  become_user: root
+  pre_tasks:
+          - name: Update cache
+            apt:
+                    update_cache: yes
+          - name: Remove old docker
+            apt:
+              name:
+                - docker-ce
+                - docker-ce-cli
+                - containerd.io
+                - docker-compose
+              state: absent
+                roles:
+    - role: "nickjj.docker"
+      tags: ["docker"]
