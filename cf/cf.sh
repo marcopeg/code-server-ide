@@ -115,6 +115,22 @@ function getAmiId() {
     --query 'Parameters[0].[Value]' --output text)
 }
 
+function getInstanceId() {
+  CLI_CF_GET_EC2_ID="aws --profile=${AWS_PROFILE} --region=${AWS_REGION}"
+  CLI_CF_GET_EC2_ID="${CLI_CF_GET_EC2_ID} cloudformation describe-stacks"
+  CLI_CF_GET_EC2_ID="${CLI_CF_GET_EC2_ID} --stack-name "box-${STACK_NAME}""
+
+  # Execute command and get resulting status
+  CLI_CF_RESULT=$($CLI_CF_GET_EC2_ID 2>&1)
+  CLI_CF_STATUS=$?
+
+  # Use jq to extract the InstanceId from the stack's output
+  # https://github.com/stedolan/jq/wiki/Cookbook#filter-objects-based-on-the-contents-of-a-key
+  JQ_OUTPUTS=$(jq -r '.Stacks[0].Outputs' <<<"${CLI_CF_RESULT}")
+  JQ_INSTANCE_OBJ=$(jq -r '.[] | select(.OutputKey | contains("InstanceId"))' <<<"${JQ_OUTPUTS}")
+  jq -r '.OutputValue' <<<"${JQ_INSTANCE_OBJ}"
+}
+
 function createStack() {
   # Validate required parameters
   [ -z ${PAR_PEM+x} ] && help "Required parameter: --pem"
@@ -184,6 +200,18 @@ function upsertStack() {
   fi
 }
 
+function startInstance() {
+  getInstanceId
+  echo "START"
+}
+
+function stopInstance() {
+  echo "Gathering instanceId from the stack..."
+  EC2_INSTANCE_ID=$(getInstanceId)
+  echo "Stopping EC2 instance: ${EC2_INSTANCE_ID}..."
+  # @TODO: run command
+}
+
 # Default variables
 AWS_REGION="eu-west-1"
 AWS_PROFILE="default"
@@ -196,7 +224,7 @@ STACK_PARAMS=""
 
 while [ "$#" -ne 0 ] ; do
   case "$1" in
-    up|down|apply)
+    up|down|stop|start)
       PAR_CMD="$1"
       shift
       ;;
@@ -257,11 +285,17 @@ BUCKET_URL_HTTP="https://${AWS_BUCKET}.s3-${AWS_REGION}.amazonaws.com/${STACK_NA
 STACK_PARAMS="${STACK_PARAMS} ParameterKey=S3TemplateRoot,ParameterValue=${BUCKET_URL_HTTP}"
 
 case ${PAR_CMD} in
-  up|upsert|apply|create)
+  up)
     upsertStack
     ;;
-  down|delete|drop|remove|destroy)
+  down)
     deleteStack
+    ;;
+  start)
+    startInstance
+    ;;
+  stop)
+    stopInstance
     ;;
   *)
     help 
