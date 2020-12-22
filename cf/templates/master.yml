@@ -77,6 +77,9 @@ Resources:
           Value: !Ref AWS::StackName
 
 Outputs:
+  InstanceId:
+    Value: !Ref EC2Instance
+
   PublicIP:
     Value: !GetAtt EC2Instance.PublicIp
 
