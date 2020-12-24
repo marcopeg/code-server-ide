@@ -4,9 +4,9 @@
   roles:
     - /home/ubuntu/code-server-ide/ansible-files/ansible/roles/bessonov.docker
     - /home/ubuntu/code-server-ide/ansible-files/ansible/roles/bessonov.docker-compose
+    - /home/ubuntu/code-server-ide/ansible-files/ansible/roles/humble
     # - gantsign.ctop
     # - ocha.dotnet-core
-    # - humble
     # - itnok.install_nvm_ubuntu
     # - utilities
     # - badpacketsllc.aws_cli
