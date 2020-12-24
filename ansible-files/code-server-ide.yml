@@ -6,10 +6,10 @@
     - bessonov.docker-compose
     - humble
     - gantsign.ctop
-    - itnok.install_nvm_ubuntu
-    - ocha.dotnet-core
-    # - utilities
-    # - badpacketsllc.aws_cli
+    # - itnok.install_nvm_ubuntu
+    # - ocha.dotnet-core
+    - utilities
+    #- badpacketsllc.aws_cli
 
   vars:
     docker_engine_version: 20.10.1 # https://docs.docker.com/engine/install/ubuntu/

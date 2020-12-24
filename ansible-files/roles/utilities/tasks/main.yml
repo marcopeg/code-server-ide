@@ -12,3 +12,4 @@
         - make
         - apache2-utils
         - apt-transport-https
+        - screen
