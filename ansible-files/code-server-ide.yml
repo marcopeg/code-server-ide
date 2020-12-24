@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: localhost
   become: true
   roles:
     - /home/ubuntu/code-server-ide/ansible-files/ansible/roles/bessonov.docker
