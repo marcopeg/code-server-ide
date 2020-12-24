@@ -1,0 +1,43 @@
+---
+language: python
+python: "3.6"
+
+# Use both...
+#   Ubuntu 18.04 Bionic Beaver
+#   Ubuntu 20.04 Focal Fossa
+jobs:
+  include:
+    - os: linux
+      dist: bionic
+    - os: linux
+      dist: focal
+
+# Install ansible
+addons:
+  apt:
+    packages:
+    - python3-pip
+    - curl
+
+install:
+  # Install ansible
+  - pip3 install ansible
+
+  # Check ansible version
+  - ansible --version
+
+  # Create ansible.cfg with correct roles_path
+  - printf '[defaults]\nroles_path=../' >ansible.cfg
+
+script:
+  # See if the repo is private
+  - if curl --silent --output /dev/null --dump-header - "https://github.com/${TRAVIS_REPO_SLUG}" | grep "Status:[[:space:]]*404"; then touch .private_repo; fi
+
+  # Download depended roles
+  - if [ -f requirements.yml ]; then ansible-galaxy install -r requirements.yml -p extra_roles; fi
+
+  # Basic role syntax check
+  - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
+
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
