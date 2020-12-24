@@ -17,6 +17,8 @@
     docker_compose_as_root: yes
     docker_compose_version: 1.27.4 # Versions https://github.com/docker/compose/releases
     dotnet_package: "dotnet-sdk-2.1" #Versions https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
+    dotnet_package: "dotnet-sdk-3.1"
+    dotnet_package: "dotnet-sdk-5.0"
     dotnet_debian_repo_gpg_key_url: "https://packages.microsoft.com/keys/microsoft.asc"
     install_nvm: "latest"
 #    install_nvm_version: "v0.37.1"
