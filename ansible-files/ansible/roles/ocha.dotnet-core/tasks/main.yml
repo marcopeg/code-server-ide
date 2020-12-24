@@ -10,3 +10,14 @@
     name: "{{ dotnet_package }}"
     state: present
     update_cache: true
+- name: Install dotnet core
+  package:
+    name: "{{ dotnet_package2 }}"
+    state: present
+    update_cache: true
+
+- name: Install dotnet core
+  package:
+    name: "{{ dotnet_package3 }}"
+    state: present
+    update_cache: true
