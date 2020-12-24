@@ -1,0 +1,36 @@
+---
+- name: Make sure HTTPS is supported by apt
+  apt:
+    name: apt-transport-https
+    state: present
+    update_cache: yes
+
+- name: Import Microsoft APT key
+  apt_key:
+    url: "{{ dotnet_debian_repo_gpg_key_url }}"
+    state: present
+
+- name: Add repo for Ubuntu Xenial
+  apt_repository:
+    repo: deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod xenial main
+    filename: "dotnetdev"
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"
+
+- name: Add repo for Ubuntu Bionic
+  apt_repository:
+    repo: deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-bionic-prod bionic main
+    filename: "dotnetdev"
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
+
+- name: Add repo for Ubuntu Focal
+  apt_repository:
+    repo: deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-focal-prod focal main
+    filename: "dotnetdev"
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "20"
+

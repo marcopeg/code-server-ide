@@ -1,0 +1,6 @@
+---
+# defaults file for ansible-role-install-nvm-ubuntu
+install_nvm_node_set_default: yes
+install_nvm_user: "root"
+install_nvm_node: "node"
+install_nvm: "latest"

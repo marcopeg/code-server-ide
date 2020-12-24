@@ -1,0 +1,22 @@
+---
+- hosts: all
+  become: true
+  roles:
+    - bessonov.docker
+    - Bessonov.docker-compose
+    - gantsign.ctop
+    - ocha.dotnet-core
+    - humble
+    - itnok.install_nvm_ubuntu
+    - utilities
+    - badpacketsllc.aws_cli
+
+  vars:
+    docker_engine_version: 20.10.1 # https://docs.docker.com/engine/install/ubuntu/
+    docker_compose_bin: /usr/local/bin/docker-compose
+    docker_compose_as_root: yes
+    docker_compose_version: 1.27.4 # Versions https://github.com/docker/compose/releases
+    dotnet_package: "dotnet-sdk-2.1" #Versions https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
+    dotnet_debian_repo_gpg_key_url: "https://packages.microsoft.com/keys/microsoft.asc"
+    install_nvm: "latest"
+#    install_nvm_version: "v0.37.1"
