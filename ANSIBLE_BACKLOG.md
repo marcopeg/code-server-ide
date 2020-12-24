@@ -91,11 +91,22 @@ git pull # update the ansible definition from remote
 
 ## HOW DID I TESTED IT
 
+**NOTE:** it is very critical NOT to use root user during the installation
+
+### Using "ubuntu" user:
+
 1. I created a new t2.small
 2. ssh into it
 3. git clone -b dev/24 https://github.com/marcopeg/code-server-ide.git
 4. cd ./code-server-ide/ansible-files
 5. sudo ./run.sh
+
+### Using "user-data" at boot time
+
+1. create new ec2
+2. choose instance type (t2.small)
+3. paste content of "user-data.sh" to the user data
+4. proceed to creation
 
 ## TASKS
 
@@ -110,5 +121,5 @@ git pull # update the ansible definition from remote
   it would be great to have always docker=latest installed by default, 
   but maybe someone would prefer a specific version
   a `.env` file would be gitignored, giving the user freedom of configuration
-
+- the NVM install seems quite complex, any way to simplify it?
   
