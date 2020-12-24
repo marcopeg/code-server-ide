@@ -2,11 +2,11 @@
 - hosts: localhost
   become: true
   roles:
-    - /home/ubuntu/code-server-ide/ansible-files/ansible/roles/bessonov.docker
-    - /home/ubuntu/code-server-ide/ansible-files/ansible/roles/bessonov.docker-compose
-    - /home/ubuntu/code-server-ide/ansible-files/ansible/roles/humble
-    - /home/ubuntu/code-server-ide/ansible-files/ansible/roles/gantsign.ctop
-    - /home/ubuntu/code-server-ide/ansible-files/ansible/roles/itnok.install_nvm_ubuntu
+    - bessonov.docker
+    - bessonov.docker-compose
+    - humble
+    - gantsign.ctop
+    - itnok.install_nvm_ubuntu
     # - ocha.dotnet-core
     # - utilities
     # - badpacketsllc.aws_cli
