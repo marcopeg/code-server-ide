@@ -7,5 +7,5 @@ ssh-copy user@127.0.0.1
 sudo apt update -y
 apt install -y ansible
 cp ansible ~/.ansible
-ansible-playbook code-server-ide.yml -l server-ip
+ansible-playbook code-server-ide.yml -l server-ip...
 ```
