@@ -2,17 +2,18 @@
 - hosts: all
   become: true
   roles:
-    - bessonov.docker
-    - Bessonov.docker-compose
-    - gantsign.ctop
-    - ocha.dotnet-core
-    - humble
-    - itnok.install_nvm_ubuntu
-    - utilities
-    - badpacketsllc.aws_cli
+    - /home/ubuntu/code-server-ide/ansible-files/ansible/roles/bessonov.docker
+    # - Bessonov.docker-compose
+    # - gantsign.ctop
+    # - ocha.dotnet-core
+    # - humble
+    # - itnok.install_nvm_ubuntu
+    # - utilities
+    # - badpacketsllc.aws_cli
 #    - /root/.ansible/roles/humble
   vars:
     docker_engine_version: 20.10.1 # https://docs.docker.com/engine/install/ubuntu/
+    docker_engine_allow_non_root: [ "ubuntu" ]
     docker_compose_bin: /usr/local/bin/docker-compose
     docker_compose_as_root: yes
     docker_compose_version: 1.27.4 # Versions https://github.com/docker/compose/releases
