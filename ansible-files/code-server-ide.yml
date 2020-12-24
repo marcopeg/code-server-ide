@@ -3,7 +3,7 @@
   become: true
   roles:
     - /home/ubuntu/code-server-ide/ansible-files/ansible/roles/bessonov.docker
-    # - Bessonov.docker-compose
+    - /home/ubuntu/code-server-ide/ansible-files/ansible/roles/bessonov.docker-compose
     # - gantsign.ctop
     # - ocha.dotnet-core
     # - humble
@@ -15,7 +15,7 @@
     docker_engine_version: 20.10.1 # https://docs.docker.com/engine/install/ubuntu/
     docker_engine_allow_non_root: [ "ubuntu" ]
     docker_compose_bin: /usr/local/bin/docker-compose
-    docker_compose_as_root: yes
+    docker_compose_as_root: no
     docker_compose_version: 1.27.4 # Versions https://github.com/docker/compose/releases
     dotnet_package: "dotnet-sdk-2.1" #Versions https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
     dotnet_package: "dotnet-sdk-3.1"
