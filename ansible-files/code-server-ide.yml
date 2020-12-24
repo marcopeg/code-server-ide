@@ -7,10 +7,10 @@
     - humble
     - gantsign.ctop
     - itnok.install_nvm_ubuntu
-    # - ocha.dotnet-core
+    - ocha.dotnet-core
     # - utilities
     # - badpacketsllc.aws_cli
-#    - /root/.ansible/roles/humble
+
   vars:
     docker_engine_version: 20.10.1 # https://docs.docker.com/engine/install/ubuntu/
     docker_engine_allow_non_root: [ "ubuntu" ]
