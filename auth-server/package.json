@@ -8,13 +8,13 @@
     "compose:start": "npm i && ./node_modules/.bin/nodemon -L ./index.js"
   },
   "dependencies": {
-    "@forrestjs/package-fastify": "3.19.1",
+    "@forrestjs/package-fastify": "3.19.6",
     "fastify-formbody": "^5.0.0",
     "envalid": "^6.0.2",
     "generate-password": "^1.5.1"
   },
   "devDependencies": {
-    "nodemon": "1.18.4"
+    "nodemon": "^2.0.6"
   },
   "keywords": [
     "fastify",

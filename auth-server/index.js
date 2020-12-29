@@ -6,6 +6,7 @@
 const { runHookApp } = require("@forrestjs/hooks");
 const serviceFastify = require("@forrestjs/service-fastify");
 const serviceFastifyCookie = require("@forrestjs/service-fastify-cookie");
+const serviceFastifyHealthz = require("@forrestjs/service-fastify-healthz");
 const fastifyFormbody = require('fastify-formbody')
 const envalid = require('envalid');
 const fs = require('fs');
@@ -146,7 +147,7 @@ runHookApp({
       action: env.BASE_URL,
     }
   },
-  services: [serviceFastify, serviceFastifyCookie],
+  services: [serviceFastify, serviceFastifyCookie, serviceFastifyHealthz],
   features: [({ registerAction }) => {
     registerAction({
       name: 'fastifyBodyPlugin',

@@ -2,7 +2,7 @@ all: run
 
 name ?= auth-passwd
 registry ?= marcopeg
-version ?= 0.0.8
+version ?= 0.0.9
 
 image:
 	$(call blue, "Building docker image...")
