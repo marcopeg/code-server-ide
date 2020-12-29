@@ -7,4 +7,4 @@ apt install -y ansible
 git config --global http.postBuffer 1048576000
 git clone -b dev/24 https://github.com/marcopeg/code-server-ide.git /home/ubuntu/code-server-ide
 
-(cd /home/ubuntu/code-server-ide/ansible-data && ansible-playbook ./code-server-ide.yml)
+(cd /home/ubuntu/code-server-ide/ansible-files && ansible-playbook ./code-server-ide.yml)
