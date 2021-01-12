@@ -9,5 +9,5 @@
     - roles/gantsign.ctop
     - roles/ocha.dotnet-core
     - roles/humble
-    - roles/ansible-role-nvm
+    - roles/ansible-nvm
     - roles/aws-cli
