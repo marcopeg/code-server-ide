@@ -11,5 +11,5 @@
     - roles/humble
     - roles/ansible-nvm
     - roles/aws-cli
-  vars:
-    ansible_python_interpreter: /usr/bin/python3
+#  vars:
+#    ansible_python_interpreter: /usr/bin/python3
