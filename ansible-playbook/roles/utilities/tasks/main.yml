@@ -3,11 +3,11 @@
   - name: Upgrade APT
     apt:
       update_cache: yes
-  - name: symlink /usr/bin/python -> /usr/bin/python3
-    raw: |
-      if [ -f /usr/bin/python3 ] && [ ! -f /usr/bin/python ]; then
-        ln --symbolic /usr/bin/python3 /usr/bin/python;
-      fi
+#  - name: symlink /usr/bin/python -> /usr/bin/python3
+#    raw: |
+#      if [ -f /usr/bin/python3 ] && [ ! -f /usr/bin/python ]; then
+#        ln --symbolic /usr/bin/python3 /usr/bin/python;
+#      fi
 
   - name: Install basic dependencies
     apt:
@@ -19,7 +19,6 @@
       - make
       - apache2-utils
       - apt-transport-https
-      - python
 
 
 
