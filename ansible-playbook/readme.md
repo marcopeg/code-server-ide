@@ -9,7 +9,9 @@ ssh-copy user@127.0.0.1
 sudo apt update -y
 
 # Install ansible (one time only)
-sudo apt update -y
+apt-get install software-properties-common
+apt-add-repository ppa:ansible/ansible
+apt-get update
 apt install -y ansible
 
 # Run the install script
