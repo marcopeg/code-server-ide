@@ -1,6 +1,0 @@
----
-# vars file for ansible-role-install-pkg-ubuntu
-__manage_pkg_dependency:
-  - "apt-transport-https"
-  - "ca-certificates"
-  - "gnupg-agent"
