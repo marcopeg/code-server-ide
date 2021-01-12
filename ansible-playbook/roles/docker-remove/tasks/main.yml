@@ -1,0 +1,14 @@
+---
+ - name: Upgrade APT
+   apt:
+     update_cache: yes
+
+ - name: Remove old docker
+   apt:
+     name: "{{item}}"
+     state: absent
+   loop:
+     - docker-ce
+     - docker-ce-cli
+     - containerd.io
+     - docker-compose

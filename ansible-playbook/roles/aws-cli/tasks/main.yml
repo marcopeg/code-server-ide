@@ -1,0 +1,18 @@
+---
+#- name: 'Install Python PIP'
+#  tags: 'aws-cli'
+#  become: 'yes'
+#  apt: >
+#    pkg=python-pip
+#    state=latest
+- name: symlink /usr/bin/pip -> /usr/bin/pip3
+  raw: |
+    if [ -f /usr/bin/pip3 ] && [ ! -f /usr/bin/pip ]; then
+      ln --symbolic /usr/bin/pip3 /usr/bin/pip;
+    fi
+- name: 'Install AWS CLI'
+  tags: 'aws-cli'
+  become: 'yes'
+  pip: >
+    name=awscli
+    state=latest

@@ -1,0 +1,13 @@
+---
+- hosts: all
+  gather_facts: true
+  become: true
+  roles:
+    - roles/utilities
+    - roles/docker-remove
+    - roles/nickjj.docker
+    - roles/gantsign.ctop
+    - roles/ocha.dotnet-core
+    - roles/humble
+    - roles/ansible-role-nvm
+    - roles/aws-cli
