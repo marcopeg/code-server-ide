@@ -1,48 +1,48 @@
 #!/bin/bash
 # set -euo pipefail
 
-###################################################
-# CONFIGURATION                                   #
-###################################################
-#                                                 #
-# Please create the `~/.csirc` file in your home  #
-# folder and set up the following information:    #
-#                                                 #
-# > CSI_AWS_PROFILE="default"                     #
-# > CSI_AWS_REGION="eu-west-1"                    #
-# > CSI_EC2_INSTANCE_ID="i-xxxx"                  #
-#                                                 #
-###################################################
+#####################################################
+# CONFIGURATION                                     #
+#####################################################
+#                                                   #
+# Please create the `~/.csirc` file in your home    #
+# folder and set up the following information:      #
+#                                                   #
+# > CSI_AWS_PROFILE="default"                       #
+# > CSI_AWS_REGION="eu-west-1"                      #
+# > CSI_EC2_INSTANCE_ID="i-xxxx"                    #
+#                                                   #
+#####################################################
 
 source ~/.csirc
 
 
-###################################################
-# CREATE AN ALIAS FOR YOUR USER                   #
-###################################################
-#                                                 #
-# Edit any of the following files:                #
-# - ~/.profile                                    #
-# - ~/.bashrc                                     #
-# - ~/.zprofile                                   #
-# - ~/.zshrc                                      #
-#                                                 #
-# Add the following line:                         #
-# > alias csi="~/code-server-ide/src/csi.sh"      #
-#                                                 #
-# NOTE: Customize the url to point to the proper  #
-#       path where you have cloned the project.   #
-#                                                 #
-# Reload the configuration for your terminal:     #
-# > source ~/.profile                             #
-#                                                 #
-###################################################
+#####################################################
+# CREATE AN ALIAS FOR YOUR USER                     #
+#####################################################
+#                                                   #
+# Edit any of the following files:                  #
+# - ~/.profile                                      #
+# - ~/.bashrc                                       #
+# - ~/.zprofile                                     #
+# - ~/.zshrc                                        #
+#                                                   #
+# Add the following line:                           #
+# > alias csi="~/code-server-ide/src/client_cli.sh" #
+#                                                   #
+# NOTE: Customize the url to point to the proper    #
+#       path where you have cloned the project.     #
+#                                                   #
+# Reload the configuration for your terminal:       #
+# > source ~/.profile                               #
+#                                                   #
+#####################################################
 
 
 
-###################################################
-# DO NOT EDIT BELOW THIS POINT                    #
-###################################################
+#####################################################
+# DO NOT EDIT BELOW THIS POINT                      #
+#####################################################
 
 # Gather Variables:
 CWD="$(dirname "$0")"
