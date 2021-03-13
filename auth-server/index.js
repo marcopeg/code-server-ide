@@ -38,7 +38,7 @@ const createConfirmPage = (request, tpl) => {
   const { referral } = tpl;
 
   return `
-    <meta http-equiv="refresh" content="0;url=//" />
+    <meta http-equiv="refresh" content="0;url=/" />
     <h4>CodeServerIDE</h4>
     <b>Login succeeded!</b><br>
     You will be redirected within 2 seconds.<br />

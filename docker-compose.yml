@@ -56,7 +56,7 @@ services:
       - "traefik.http.middlewares.csi-traefik-stripprefix.stripprefix.prefixes=/traefik"
 
   auth-passwd:
-    image: marcopeg/auth-passwd:0.0.10
+    image: marcopeg/auth-passwd:0.0.11
     restart: always
     volumes:
       - ${CODE_SERVER_CWD}/data/passwd:/passwd
