@@ -38,11 +38,11 @@ const createConfirmPage = (request, tpl) => {
   const { referral } = tpl;
 
   return `
-    <meta http-equiv="refresh" content="0;url=${referral}/" />
+    <meta http-equiv="refresh" content="0;url=//" />
     <h4>CodeServerIDE</h4>
     <b>Login succeeded!</b><br>
     You will be redirected within 2 seconds.<br />
-    <a href="${referral}">If you are in a hurry, click here.</a>
+    <a href="/">If you are in a hurry, click here.</a>
   `
 }
 
@@ -50,10 +50,10 @@ const createWelcomePage = (request, tpl) => {
   return `
     <h4>CodeServerIDE</h4>
     <ul>
-      <li><a target="_blank" href="/code-server/">Open VSCode</a></li>
-      <li><a target="_blank" href="/traefik/">Open Traefik</a></li>
-      <li><a target="_blank" href="/filebrowser/">Open Filebrowser</a></li>
-      <li><a target="_blank" href="/netdata/">Open NetData</a></li>
+      <li><a href="/code-server/">Open VSCode</a></li>
+      <li><a href="/traefik/">Open Traefik</a></li>
+      <li><a href="/filebrowser/">Open Filebrowser</a></li>
+      <li><a href="/netdata/">Open NetData</a></li>
     </ul>
   `
 }
