@@ -27,7 +27,7 @@ if [ -z ${CMD+x} ]
 then
   echo "Which service do you feel like restarting?"
   PS3='Pick a number:'
-  options=("Code Server IDE" "NetData" "FileBrowser")
+  options=("Code Server IDE" "NetData" "FileBrowser", "Server")
   select opt in "${options[@]}"
   do
     case $opt in
@@ -41,6 +41,10 @@ then
         ;;
       "FileBrowser")
         CMD=filebrowser
+        break
+        ;;
+      "Server")
+        CMD=server
         break
         ;;
       *) echo "invalid option";;
@@ -82,6 +86,11 @@ case ${CMD} in
     echo ""
     echo "FileBrowser will be available shortly at:"
     echo "https://${CODE_SERVER_DNS}/filebrowser/"
+    ;;
+  "server")
+    echo "Restarting Server..."
+    echo "[$(date -u)] Restarting Server" >> ${CODE_SERVER_LOGS}/cs.log
+    sudo reboot
     ;;
   *) echo "invalid option";;
 esac
