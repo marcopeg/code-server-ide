@@ -57,7 +57,7 @@ You should also consider this desired skills:
 
 - You should feel comfortable creating EC2 instances
 - You should feel comfortable accessing EC2 instances via SSH
-- You should feel comfortable creating `A` DNS entries for your domain name
+- You should feel comfortable creating `type A` DNS entries for your domain name
 - You should setup your [Sendgrid][sendgrid] account and retrieve a valid `API KEY`
 - You may want to proxy your domain name through [CloudFlare][cloudflare] and retrieve an `API KEY` and `ZONE ID`
 
@@ -65,14 +65,7 @@ You should also consider this desired skills:
 
 ### Security Group
 
-Cloud Server IDE, you  uses ports `80` and `443` that should be have an even easier time:
-
-```bash
-cs start netdata
-
-then go to:```a
-
-ccessible from anywhere for the [Letsencrypt][letsencrypt] integration to take place smoothly.
+Cloud Server IDE, uses ports `80` and `443` that should be accessible from anywhere for the [Letsencrypt][letsencrypt] integration to take place smoothly.
 
 You should also open up port `22` in case you need to access your machine via _ssh_.  
 <small>(This is needed in case you configure your _DNS_ manually)</small>
@@ -82,7 +75,7 @@ You should also open up port `22` in case you need to access your machine via _s
 Create a new EC2 Instance based on `Ubuntu 20.04 LTS`, a `t2.micro` is more than enough to try this out.  
 <small>(Later on you will be able to create a bigger machine for real development)</small>
 
-Be careful during the step **Step 3: Configure Instance Details** as you need to paste and fix up one of the following configurations. This is actually the script that will install all the needed software and setup your system so to use it properly.
+Be careful during the step **Step 3: Configure Instance Details** as you need to paste and customize one of the following configurations. This is actually the script that will install all the needed software and setup your system so to boot properly.
 
 **User Data - With AWS' default DNS:**
 
@@ -91,12 +84,19 @@ Be careful during the step **Step 3: Configure Instance Details** as you need to
 ```bash
 #!/bin/bash
 
-export CODE_SERVER_EMAIL="welcome@yourname.com"
-export SENDGRID_API_KEY="xxx"
-
 git clone https://github.com/marcopeg/code-server-ide.git ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}
 ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}/src/setup.sh
 ```
+
+In order to follow what's going on, ssh into the machine and tail the setup logs file:
+
+```bash
+tail -f code-server-ide/data/logs/setup.log
+```
+
+**NOTE:** With this minimal configuration, you will be able to access the machine using EC2's default DNS which will NOT allow Letsencrypt to provide a valid SSL certificate as they are black-listed. 
+
+Therefore, you will have to go through the security alert and accept the risks in accessing your machine via `http`. Don't use it for production purposes!
 
 **User Data - With CloudFlare DNS Management:**
 
@@ -105,11 +105,14 @@ ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}/src/setup.sh
 ```bash
 #!/bin/bash
 
+# This configuration will automaticall setup the DNS for you:
 export CODE_SERVER_DNS="dev.yourname.com"
-export CODE_SERVER_EMAIL="welcome@yourname.com"
-
 export CLOUDFLARE_ZONE_ID="xxx"
 export CLOUDFLARE_API_KEY="yyy"
+
+# This (optional) configuration is used to send a welcom email
+# every time the machine boots up:
+export CODE_SERVER_EMAIL="welcome@yourname.com"
 export SENDGRID_API_KEY="zzz"
 
 git clone https://github.com/marcopeg/code-server-ide.git ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}
@@ -123,10 +126,19 @@ ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}/src/setup.sh
 ```bash
 #!/bin/bash
 
+# This configuration sets up the DNS inside the machine, but will
+# NOT run the application.
+# You should first manually configure your DNS, then ssh into the
+# EC2 machien and run `cs start ide` to run the application.
+#
+# It is a good idea to give an ElasticIP to your machine.
 export CODE_SERVER_AUTO_START="no" # <- this is very important
 export CODE_SERVER_DNS="dev.yourname.com"
+
+# This (optional) configuration is used to send a welcom email
+# every time the machine boots up:
 export CODE_SERVER_EMAIL="welcome@yourname.com"
-export SENDGRID_API_KEY="xxx"
+export SENDGRID_API_KEY="zzz"
 
 git clone https://github.com/marcopeg/code-server-ide.git ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}
 ${CODE_SERVER_CWD:-/home/ubuntu/code-server-ide}/src/setup.sh
