@@ -15,6 +15,7 @@ echo "[$(date -u)] Booting up..." >> ${CODE_SERVER_LOGS}/setup.log
 if [ ! -f "${CODE_SERVER_CWD}/data/passwd" ]; then
   echo "[$(date -u)] Writing Auth/passwd default password..." >> ${CODE_SERVER_LOGS}/setup.log
   echo "admin" > "${CODE_SERVER_CWD}/data/passwd"
+  chown ubuntu:ubuntu "${CODE_SERVER_CWD}/data/passwd"
 fi
 
 # Start CodeServer:
@@ -41,3 +42,6 @@ do
   sleep 1
 done
 ${CODE_SERVER_CWD}/src/ec2-ubuntu-sendgrid.sh
+
+
+echo "[$(date -u)] Setup completed :-)" >> ${CODE_SERVER_LOGS}/setup.log
