@@ -28,12 +28,12 @@ function help() {
   echo "--dns .............. set the project's DNS name"
   echo ""
   echo "Optional Parameters:"
-  echo "--aws-profile ...... set the pem key file to use to access the eC2 machine"
+  echo "--aws-profile ...... set the AWS profile to use to authenticate while operating CloudFormation"
   echo "--aws-region ....... set the target region in AWS"
   echo "--aws-bucket ....... set the target S3 bucket where to store the stack templates"
   echo "--pem .............. set the pem key file to use to access the eC2 machine"
-  echo "--cf-id ............ set the CloudFormation API Zone ID"
-  echo "--cf-key ........... set the CloudFormation API Key"
+  echo "--cf-id ............ set the CloudFlare API Zone ID"
+  echo "--cf-key ........... set the CloudFlare API Key"
 
   # Show error message
   if [ ! -z "$1" ]; then
@@ -142,18 +142,22 @@ function createStack() {
   echo "Creating stack: ${STACK_NAME}..."
   getAmiId
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2ImageId,ParameterValue=${AWS_EC2_AMI_ID}"
+  STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2InstanceType,ParameterValue=${PAR_EC2_TYPE}"
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=EC2KeyPairName,ParameterValue=${PAR_PEM}"
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=CSDns,ParameterValue=${PAR_DNS}"
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=CSEmail,ParameterValue=${PAR_EMAIL}"
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=CFZoneId,ParameterValue=${PAR_CF_ZONE_ID}"
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=CFApiKey,ParameterValue=${PAR_CF_API_KEY}"
   STACK_PARAMS="${STACK_PARAMS} ParameterKey=SGApiKey,ParameterValue=${PAR_SG_API_KEY}"
-  applyStack "create"
+
+  echo $STACK_PARAMS
+
+  #applyStack "create"
 
   # echo "Waiting for stack to be created ..."
   # aws cloudformation wait stack-create-complete --profile=${AWS_PROFILE} --region=${AWS_REGION} 2>&1
 
-  echo ${CLI_CF_RESULT}
+  #echo ${CLI_CF_RESULT}
 }
 
 function updateStack() {

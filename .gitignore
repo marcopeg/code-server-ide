@@ -3,3 +3,7 @@ data/
 .env
 .vscode
 *.code-workspace
+
+test.sh
+start.sh
+stop.sh
