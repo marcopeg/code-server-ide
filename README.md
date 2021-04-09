@@ -180,17 +180,14 @@ In a few minutes your system should be up and running, and a new _SSL_ certifica
 > **👉 RE-ENABLE AUTO START:**  
 > When everything works, you should change the value of `CODE_SERVER_AUTO_START` to `yes` (or simply remove the variable) from `~/code-server-ide/.env` so that your IDE will start automatically in case you restart the EC2 machine.
 
-## Fix Cmd+Z or Ctrl+Z
+## Update Code-Server
 
-The default configuration has an issue with that keyboard shortcut that could be easily fixed
-by a change of configuration:
+You can find detailed information about [installing & upgrading `code-server` here](https://github.com/cdr/code-server/blob/v3.9.3/docs/install.md#upgrading), but the gist of it is:
 
-1. Open: `File > Preferences > Settings`
-2. Search: `keyboard.dispatch`
-3. Set: `keyCode`
-
-Now, it should work fine.  
-<small>[You can find the issue page here](https://github.com/cdr/code-server/issues/1477).</small>
+```bash
+curl -fsSL https://code-server.dev/install.sh | sh
+sudo reboot
+```
 
 ## Proxy any process throgh HTTPS
 
@@ -282,6 +279,18 @@ Take a look at the `examples` folders, where you can find a few apps that
 run in Docker and get automatically proxied through Traefik.
 
 ## Troubleshooting
+
+### Fix Cmd+Z or Ctrl+Z
+
+The default configuration has an issue with that keyboard shortcut that could be easily fixed
+by a change of configuration:
+
+1. Open: `File > Preferences > Settings`
+2. Search: `keyboard.dispatch`
+3. Set: `keyCode`
+
+Now, it should work fine.  
+<small>[You can find the issue page here](https://github.com/cdr/code-server/issues/1477).</small>
 
 ### NodeJS - Nodemon fails to start
 
